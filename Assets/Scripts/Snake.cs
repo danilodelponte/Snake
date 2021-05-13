@@ -11,6 +11,8 @@ public class Snake : MonoBehaviour
     private float movementTimer = 0;
     [SerializeField] private float movementTimerMax = .5f;
 
+    [SerializeField] private float movementTimerAddIncrease = .1f;
+
     private Vector3 intendedDirection = Vector3.up; // starting direction
 
     private void Start() {
@@ -23,15 +25,15 @@ public class Snake : MonoBehaviour
         AddSegment();
         AddSegment();
     }
-
-    private void AddSegment() {
+    public void AddSegment() {
         Vector3 newHeadPosition = head.transform.position + intendedDirection;
         Quaternion newHeadRotation = head.transform.rotation;
-	    SnakeSegment newHead = Instantiate<SnakeSegment>(segmentPrefab, newHeadPosition, newHeadRotation);
+	    SnakeSegment newHead = Instantiate<SnakeSegment>(segmentPrefab, newHeadPosition, newHeadRotation, transform);
+
         newHead.NextSegment = head;
         newHead.CurrentDirection = head.CurrentDirection;
 	    head = newHead;
-        speed -= .1f;
+        movementTimerMax += movementTimerAddIncrease;
     }
     
     private void FixedUpdate() {
