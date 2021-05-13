@@ -354,7 +354,7 @@ GameObject:
   - component: {fileID: 2137730963}
   - component: {fileID: 2137730962}
   m_Layer: 0
-  m_Name: Space
+  m_Name: Arena
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -372,7 +372,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b68e500cb9d8da7e5aaa796149071212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 5, y: 5, z: 5}
 --- !u!4 &2137730963
 Transform:
   m_ObjectHideFlags: 0

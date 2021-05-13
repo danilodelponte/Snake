@@ -15,8 +15,4 @@ public class Fruit : MonoBehaviour
     {
         
     }
-
-    public void Destroy() {
-        Destroy(this);
-    }
 }

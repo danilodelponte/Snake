@@ -18,8 +18,8 @@ public class GameplayController : MonoBehaviour
 
         foreach (Player player in players) {
             Vector3 position = Vector3.zero;
-            PlaceSnake(player, position);
-            PlaceCollectible();
+            SpawnSnake(player, position);
+            SpawnCollectible();
         }
     }
 
@@ -31,12 +31,12 @@ public class GameplayController : MonoBehaviour
         Singleton = this;
     }
 
-    private void PlaceSnake(Player player, Vector3 position) {
+    private void SpawnSnake(Player player, Vector3 position) {
         var snake = Instantiate(snakePrefab, position, Quaternion.Euler(Vector3.zero));
         snake.gameObject.AddComponent(typeof(PlayerControl));
     }
 
-    private void PlaceCollectible() {
+    private void SpawnCollectible() {
         Vector3 pos = new Vector3(Random.Range(0, width), Random.Range(0, height), 0);
         Instantiate(fruitPrefab, pos, Quaternion.Euler(Vector3.zero));
     }
@@ -44,6 +44,6 @@ public class GameplayController : MonoBehaviour
         GameObject.Destroy(fruit.gameObject);
         Snake snake = segment.ParentSnake;
         snake.AddSegment();
-        PlaceCollectible();
+        SpawnCollectible();
     }
 }
