@@ -7,11 +7,10 @@ public class Snake : MonoBehaviour
 {
     [SerializeField] private SnakeSegment segmentPrefab;
     private SnakeSegment head;
-    [SerializeField] private float speed = 1;
     private float movementTimer = 0;
-    [SerializeField] private float movementTimerMax = .5f;
+    [SerializeField] private float movementTimerMax = .01f;
 
-    [SerializeField] private float movementTimerAddIncrease = .1f;
+    [SerializeField] private float movementTimerAddIncrease = .01f;
 
     private Vector3 intendedDirection = Vector3.up; // starting direction
 

@@ -18,7 +18,8 @@ public class SnakeSegment : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.GetComponent<Fruit>() != null) {
-            new SnakeEatsFruit(this, other.gameObject.GetComponent<Fruit>());
+            var gameplay = GameplayController.Singleton;
+            gameplay.SnakeEatsFruit(this, other.gameObject.GetComponent<Fruit>());
         }
     }
 }
