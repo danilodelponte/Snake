@@ -13,6 +13,7 @@ public class Snake : MonoBehaviour
     [SerializeField] private float movementTimerAddIncrease = .01f;
 
     private Vector3 intendedDirection = Vector3.up; // starting direction
+    public Vector3 Direction { get { return intendedDirection;} }
 
     private void Start() {
         InitializeSegments();

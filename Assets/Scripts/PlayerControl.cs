@@ -1,10 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerControl : MonoBehaviour
 {
     private Snake snake;
+    public KeyCode LeftKey { get; set; }
+    private KeyCode RightKey { get; set; }
+
+    private Vector3[] directions = { Vector3.up, Vector3.right, Vector3.down, Vector3.left };
+
     void Awake()
     {
         snake = gameObject.GetComponent<Snake>();
@@ -13,20 +19,15 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 direction = Vector3.zero;
-        if (Input.GetKeyDown(KeyCode.UpArrow)) {
-             direction = Vector3.up;
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            direction = Vector3.down;
-        }
+        var dirIndex = Array.IndexOf(directions, snake.Direction);
         if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-            direction = Vector3.left;
+            dirIndex--;
+            if(dirIndex < 0) dirIndex = directions.Length -1;
         }
         if (Input.GetKeyDown(KeyCode.RightArrow)) {
-            direction = Vector3.right;
+            dirIndex++;
+            if(dirIndex > directions.Length -1) dirIndex = 0;
         }
-
-        if(direction != Vector3.zero) snake.SetDirection(direction);
+        snake.SetDirection(directions[dirIndex]);
     }
 }
