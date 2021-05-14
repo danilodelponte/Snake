@@ -30,4 +30,9 @@ public class PlayerControl : MonoBehaviour
         }
         snake.SetDirection(directions[dirIndex]);
     }
+
+    public void SetKeys(KeyCode left, KeyCode right) {
+        LeftKey = left;
+        RightKey = right;
+    }
 }

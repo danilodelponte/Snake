@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class Snake : MonoBehaviour
 {
+    public Player Player { get; set; }
     [SerializeField] private SnakeSegment segmentPrefab;
     private SnakeSegment head;
+    public SnakeSegment Head { get { return head; } }
     private float movementTimer = 0;
     [SerializeField] private float movementTimerMax = .01f;
 
@@ -15,20 +17,25 @@ public class Snake : MonoBehaviour
     private Vector3 intendedDirection = Vector3.up; // starting direction
     public Vector3 Direction { get { return intendedDirection;} }
 
-    private void Start() {
-        InitializeSegments();
+    private void Awake() {
+        AddHead();
+        AddSegment();
+        AddSegment();
     }
 
-    private void InitializeSegments() {
-        head = Instantiate<SnakeSegment>(segmentPrefab);
+    public void AddHead() {
+        if(head !=null) return;
+
+        head = Instantiate<SnakeSegment>(segmentPrefab, transform);
         head.CurrentDirection = intendedDirection;
-        AddSegment();
-        AddSegment();
     }
+
     public void AddSegment() {
         Vector3 newHeadPosition = head.transform.position + intendedDirection;
         Quaternion newHeadRotation = head.transform.rotation;
-	    SnakeSegment newHead = Instantiate<SnakeSegment>(segmentPrefab, newHeadPosition, newHeadRotation, transform);
+	    SnakeSegment newHead = Instantiate<SnakeSegment>(
+            segmentPrefab, newHeadPosition, newHeadRotation, transform
+        );
 
         newHead.NextSegment = head;
         newHead.CurrentDirection = head.CurrentDirection;
@@ -37,8 +44,6 @@ public class Snake : MonoBehaviour
     }
     
     private void FixedUpdate() {
-        //when speed 
-
         movementTimer += Time.deltaTime;
         if(movementTimer >= movementTimerMax) {
             movementTimer -= movementTimerMax;

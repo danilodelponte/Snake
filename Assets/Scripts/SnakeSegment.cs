@@ -6,9 +6,11 @@ public class SnakeSegment : MonoBehaviour
 {
     public Vector3 CurrentDirection { get; set; }
     public SnakeSegment NextSegment { get; set; }
+    private Snake parentSnake;
+    public Snake ParentSnake { get { return parentSnake; } }
 
-    public Snake ParentSnake {
-        get { return transform.parent.gameObject.GetComponent<Snake>(); }
+    private void Awake() {
+        parentSnake = transform.parent.gameObject.GetComponent<Snake>();
     }
 
     public void Move(Vector3 direction) {
@@ -21,5 +23,14 @@ public class SnakeSegment : MonoBehaviour
             var gameplay = GameplayController.Singleton;
             gameplay.SnakeEatsFruit(this, other.gameObject.GetComponent<Fruit>());
         }
+
+        if(other.gameObject.GetComponent<SnakeSegment>() != null) {
+            var gameplay = GameplayController.Singleton;
+            gameplay.SnakeCrash(this, other.gameObject.GetComponent<SnakeSegment>());
+        }
+    }
+
+    public bool IsHead() {
+        return ParentSnake.Head == this;
     }
 }

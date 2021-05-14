@@ -25,9 +25,7 @@ public class GameplayController : MonoBehaviour
         players.Add(playerB);
 
         foreach (Player player in players) {
-            Vector3 position = RandomVector3(width, height);
-            SpawnSnake(player, position);
-            SpawnCollectible();
+            SpawnSnake(player);
         }
     }
 
@@ -39,11 +37,15 @@ public class GameplayController : MonoBehaviour
         Singleton = this;
     }
 
-    private void SpawnSnake(Player player, Vector3 position) {
+    private void SpawnSnake(Player player) {
+        Vector3 position = RandomVector3(width, height);
         var snake = Instantiate(snakePrefab, position, Quaternion.Euler(Vector3.zero));
+        snake.Player = player;
+
         PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
-        playerControl.LeftKey = player.LeftKey;
-        playerControl.RightKey = player.RightKey;
+        playerControl.SetKeys(player.LeftKey, player.RightKey);
+
+        SpawnCollectible();
     }
 
     private void SpawnCollectible() {
@@ -55,6 +57,14 @@ public class GameplayController : MonoBehaviour
         Snake snake = segment.ParentSnake;
         snake.AddSegment();
         SpawnCollectible();
+    }
+    public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {
+        if(segment1.IsHead()) KillSnake(segment1.ParentSnake);
+        if(segment2.IsHead()) KillSnake(segment2.ParentSnake);
+    }
+
+    private void KillSnake(Snake snake) {
+        GameObject.Destroy(snake.gameObject);
     }
 
     private Vector3 RandomVector3(int maxX, int maxY, int maxZ = 0) {
