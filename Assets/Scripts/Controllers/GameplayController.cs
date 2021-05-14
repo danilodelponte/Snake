@@ -14,10 +14,18 @@ public class GameplayController : MonoBehaviour
     void Awake()
     {
         InitSingleton();
-        players.Add(new Player());
+        Player playerA = new Player();
+        playerA.LeftKey = KeyCode.A;
+        playerA.RightKey = KeyCode.S;
+        players.Add(playerA);
+
+        Player playerB = new Player();
+        playerB.LeftKey = KeyCode.LeftArrow;
+        playerB.RightKey = KeyCode.RightArrow;
+        players.Add(playerB);
 
         foreach (Player player in players) {
-            Vector3 position = Vector3.zero;
+            Vector3 position = RandomVector3(width, height);
             SpawnSnake(player, position);
             SpawnCollectible();
         }
@@ -33,11 +41,13 @@ public class GameplayController : MonoBehaviour
 
     private void SpawnSnake(Player player, Vector3 position) {
         var snake = Instantiate(snakePrefab, position, Quaternion.Euler(Vector3.zero));
-        snake.gameObject.AddComponent(typeof(PlayerControl));
+        PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
+        playerControl.LeftKey = player.LeftKey;
+        playerControl.RightKey = player.RightKey;
     }
 
     private void SpawnCollectible() {
-        Vector3 pos = new Vector3(Random.Range(0, width), Random.Range(0, height), 0);
+        Vector3 pos = RandomVector3(width, height);
         Instantiate(fruitPrefab, pos, Quaternion.Euler(Vector3.zero));
     }
     public void SnakeEatsFruit(SnakeSegment segment, Fruit fruit) {
@@ -45,5 +55,9 @@ public class GameplayController : MonoBehaviour
         Snake snake = segment.ParentSnake;
         snake.AddSegment();
         SpawnCollectible();
+    }
+
+    private Vector3 RandomVector3(int maxX, int maxY, int maxZ = 0) {
+        return new Vector3(Random.Range(-maxX, maxX), Random.Range(-maxY, maxY), 0);
     }
 }

@@ -7,7 +7,7 @@ public class PlayerControl : MonoBehaviour
 {
     private Snake snake;
     public KeyCode LeftKey { get; set; }
-    private KeyCode RightKey { get; set; }
+    public KeyCode RightKey { get; set; }
 
     private Vector3[] directions = { Vector3.up, Vector3.right, Vector3.down, Vector3.left };
 
@@ -20,11 +20,11 @@ public class PlayerControl : MonoBehaviour
     void Update()
     {
         var dirIndex = Array.IndexOf(directions, snake.Direction);
-        if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+        if (Input.GetKeyDown(LeftKey)) {
             dirIndex--;
             if(dirIndex < 0) dirIndex = directions.Length -1;
         }
-        if (Input.GetKeyDown(KeyCode.RightArrow)) {
+        if (Input.GetKeyDown(RightKey)) {
             dirIndex++;
             if(dirIndex > directions.Length -1) dirIndex = 0;
         }
