@@ -5,17 +5,17 @@ using UnityEngine;
 
 public class Snake : MonoBehaviour
 {
-    public Player Player { get; set; }
     [SerializeField] private SnakeSegment segmentPrefab;
-    private SnakeSegment head;
-    public SnakeSegment Head { get { return head; } }
-    private float movementTimer = 0;
     [SerializeField] private float movementTimerMax = .01f;
-
     [SerializeField] private float movementTimerAddIncrease = .01f;
 
-    private Vector3 intendedDirection = Vector3.up; // starting direction
+    public Player Player { get; set; }
+    public SnakeSegment Head { get { return head; } }
     public Vector3 Direction { get { return intendedDirection;} }
+
+    private SnakeSegment head;
+    private float movementTimer = 0;
+    private Vector3 intendedDirection = Vector3.up;
 
     private void Awake() {
         AddHead();

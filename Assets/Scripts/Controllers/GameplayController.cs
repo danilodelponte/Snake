@@ -5,11 +5,14 @@ using UnityEngine;
 public class GameplayController : MonoBehaviour
 {
     public static GameplayController Singleton;
+
+    [SerializeField] private GUIController gUI;
+    [SerializeField] private Fruit fruitPrefab;
+    [SerializeField] private Snake snakePrefab;
+
     private int width = 10;
     private int height = 10;
     private List<Player> players = new List<Player>();
-    [SerializeField] private Fruit fruitPrefab;
-    [SerializeField] private Snake snakePrefab;
     
     void Awake()
     {
@@ -17,15 +20,17 @@ public class GameplayController : MonoBehaviour
         Player playerA = new Player();
         playerA.LeftKey = KeyCode.A;
         playerA.RightKey = KeyCode.S;
+        playerA.Name = "Player A";
         players.Add(playerA);
 
         Player playerB = new Player();
         playerB.LeftKey = KeyCode.LeftArrow;
         playerB.RightKey = KeyCode.RightArrow;
+        playerB.Name = "Player B";
         players.Add(playerB);
 
         foreach (Player player in players) {
-            SpawnSnake(player);
+            InitPlayer(player);
         }
     }
 
@@ -35,6 +40,11 @@ public class GameplayController : MonoBehaviour
             return;
         }
         Singleton = this;
+    }
+
+    private void InitPlayer(Player player) {
+        SpawnSnake(player);
+        gUI.AddPlayerLabel(player);
     }
 
     private void SpawnSnake(Player player) {
@@ -56,8 +66,15 @@ public class GameplayController : MonoBehaviour
         GameObject.Destroy(fruit.gameObject);
         Snake snake = segment.ParentSnake;
         snake.AddSegment();
+        IncrementPlayerScore(snake.Player, +1);
         SpawnCollectible();
     }
+
+    public void IncrementPlayerScore(Player player, int score) {
+        player.Score += score;
+        gUI.UpdatePlayerScore(player);
+    }
+
     public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {
         if(segment1.IsHead()) KillSnake(segment1.ParentSnake);
         if(segment2.IsHead()) KillSnake(segment2.ParentSnake);
