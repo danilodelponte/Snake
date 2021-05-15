@@ -62,6 +62,19 @@ public class GameplayController : MonoBehaviour
         Vector3 pos = RandomVector3(width, height);
         Instantiate(fruitPrefab, pos, Quaternion.Euler(Vector3.zero));
     }
+
+    public void HandleCollision(SnakeSegment segment, Collider other) {
+        if(other.gameObject.GetComponent<Fruit>() != null) {
+            SnakeEatsFruit(segment, other.gameObject.GetComponent<Fruit>());
+        }
+        if(other.gameObject.GetComponent<SnakeSegment>() != null) {
+            SnakeCrash(segment, other.gameObject.GetComponent<SnakeSegment>());
+        }
+        if(other.gameObject.GetComponent<Portal>() != null) {
+            Teleport(segment, other.gameObject.GetComponent<Portal>());
+        }
+    }
+
     public void SnakeEatsFruit(SnakeSegment segment, Fruit fruit) {
         GameObject.Destroy(fruit.gameObject);
         Snake snake = segment.ParentSnake;
@@ -70,18 +83,22 @@ public class GameplayController : MonoBehaviour
         SpawnCollectible();
     }
 
-    public void IncrementPlayerScore(Player player, int score) {
-        player.Score += score;
-        gUI.UpdatePlayerScore(player);
-    }
-
     public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {
         if(segment1.IsHead()) KillSnake(segment1.ParentSnake);
         if(segment2.IsHead()) KillSnake(segment2.ParentSnake);
     }
 
+    public void Teleport(SnakeSegment segment, Portal portal) {
+        portal.Teleport(segment);
+    }
+
     private void KillSnake(Snake snake) {
         GameObject.Destroy(snake.gameObject);
+    }
+
+    public void IncrementPlayerScore(Player player, int score) {
+        player.Score += score;
+        gUI.UpdatePlayerScore(player);
     }
 
     private Vector3 RandomVector3(int maxX, int maxY, int maxZ = 0) {

@@ -19,15 +19,8 @@ public class SnakeSegment : MonoBehaviour
         CurrentDirection = direction;
     }
     private void OnTriggerEnter(Collider other) {
-        if(other.gameObject.GetComponent<Fruit>() != null) {
-            var gameplay = GameplayController.Singleton;
-            gameplay.SnakeEatsFruit(this, other.gameObject.GetComponent<Fruit>());
-        }
-
-        if(other.gameObject.GetComponent<SnakeSegment>() != null) {
-            var gameplay = GameplayController.Singleton;
-            gameplay.SnakeCrash(this, other.gameObject.GetComponent<SnakeSegment>());
-        }
+        var gameplay = GameplayController.Singleton;
+        gameplay.HandleCollision(this, other);
     }
 
     public bool IsHead() {
