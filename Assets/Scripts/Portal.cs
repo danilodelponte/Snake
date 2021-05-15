@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Portal : MonoBehaviour
 {
-    [SerializeField] Portal otherEnd;
-    [SerializeField] private Vector3 transportFilter = Vector3.one;
-    [SerializeField] private Vector3 offSet = Vector3.zero;
+    public Portal OtherEnd { get; set; }
+    public Vector3 TransportFilter { get; set; }
+    public Vector3 OffSet { get; set; }
     
     public void Teleport(SnakeSegment segment) {
-        Vector3 positionDiff = otherEnd.transform.position - segment.transform.position;
-        positionDiff = Vector3.Scale(positionDiff, transportFilter);
-        segment.transform.position += positionDiff + offSet;
+        Vector3 positionDiff = OtherEnd.transform.position - segment.transform.position;
+        positionDiff = Vector3.Scale(positionDiff, TransportFilter);
+        segment.transform.position += positionDiff + OffSet;
     }
 }

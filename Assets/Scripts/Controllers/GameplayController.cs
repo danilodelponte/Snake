@@ -9,9 +9,8 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private GUIController gUI;
     [SerializeField] private Fruit fruitPrefab;
     [SerializeField] private Snake snakePrefab;
+    [SerializeField] private Arena arena;
 
-    private int width = 10;
-    private int height = 10;
     private List<Player> players = new List<Player>();
     
     void Awake()
@@ -48,7 +47,7 @@ public class GameplayController : MonoBehaviour
     }
 
     private void SpawnSnake(Player player) {
-        Vector3 position = RandomVector3(width, height);
+        Vector3 position = arena.RandomPosition();
         var snake = Instantiate(snakePrefab, position, Quaternion.Euler(Vector3.zero));
         snake.Player = player;
 
@@ -59,8 +58,8 @@ public class GameplayController : MonoBehaviour
     }
 
     private void SpawnCollectible() {
-        Vector3 pos = RandomVector3(width, height);
-        Instantiate(fruitPrefab, pos, Quaternion.Euler(Vector3.zero));
+        Vector3 position = arena.RandomPosition();
+        Instantiate(fruitPrefab, position, Quaternion.Euler(Vector3.zero));
     }
 
     public void HandleCollision(SnakeSegment segment, Collider other) {
@@ -99,9 +98,5 @@ public class GameplayController : MonoBehaviour
     public void IncrementPlayerScore(Player player, int score) {
         player.Score += score;
         gUI.UpdatePlayerScore(player);
-    }
-
-    private Vector3 RandomVector3(int maxX, int maxY, int maxZ = 0) {
-        return new Vector3(Random.Range(-maxX, maxX), Random.Range(-maxY, maxY), 0);
     }
 }
