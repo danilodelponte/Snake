@@ -11,23 +11,11 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private Snake snakePrefab;
     [SerializeField] private Arena arena;
 
-    private List<Player> players = new List<Player>();
     
     void Awake()
     {
         InitSingleton();
-        Player playerA = new Player();
-        playerA.LeftKey = KeyCode.A;
-        playerA.RightKey = KeyCode.S;
-        playerA.Name = "Player A";
-        players.Add(playerA);
-
-        Player playerB = new Player();
-        playerB.LeftKey = KeyCode.LeftArrow;
-        playerB.RightKey = KeyCode.RightArrow;
-        playerB.Name = "Player B";
-        players.Add(playerB);
-
+        Player[] players = GameManager.Instance.Players;
         foreach (Player player in players) {
             InitPlayer(player);
         }

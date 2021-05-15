@@ -9,7 +9,8 @@ public class GUIController : MonoBehaviour
     public void AddPlayerLabel(Player player) {
         RectTransform lastTransform = lastLabelTransform();
         PlayerScoreLabel scoreLabel = Instantiate(scoreLabelPrefab, transform);
-        if(lastTransform != null) scoreLabel.transform.position -= new Vector3(0, lastTransform.rect.height, 0);
+        float offsetY = ((RectTransform) scoreLabel.transform).rect.height * ScoreLabels().Length;
+        scoreLabel.transform.localPosition -= new Vector3(0, offsetY, 0);
         scoreLabel.Player = player;
         scoreLabel.UpdateScore();
     }
