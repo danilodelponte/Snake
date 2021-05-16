@@ -26,6 +26,7 @@ public class SnakeSegment : MonoBehaviour
 
     public void Move(Vector3 direction) {
         transform.position += direction;
+        transform.rotation = Quaternion.Euler(direction * 90);
         if(NextSegment != null) NextSegment.Move(CurrentDirection);
         CurrentDirection = direction;
     }
