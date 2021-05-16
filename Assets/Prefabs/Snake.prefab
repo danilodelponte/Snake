@@ -45,5 +45,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentPrefab: {fileID: 1657520354136158151, guid: cd90998b4887440e184ffc5d452c2055,
     type: 3}
-  movementTimerMax: 0.1
-  movementTimerAddIncrease: 0.01
+  movingMaxDeltaTime: 0.1

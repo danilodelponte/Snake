@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fruit : MonoBehaviour
+public class SpecialPowerComponent : MonoBehaviour
 {
+    public SpecialPower SpecialPower { get; set; }
+
     // Start is called before the first frame update
     void Start()
     {

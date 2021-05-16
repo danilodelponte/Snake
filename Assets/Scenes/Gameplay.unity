@@ -300,7 +300,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gUI: {fileID: 1658263416}
-  fruitPrefab: {fileID: 7999598781234892037, guid: 7a06f454abfa053968799d6f1f27c10c,
+  collectablePrefab: {fileID: 7999598781234892037, guid: 7a06f454abfa053968799d6f1f27c10c,
     type: 3}
   snakePrefab: {fileID: 3023000758315942140, guid: 2e9268fc063781c13a6a378c812ad58d,
     type: 3}

@@ -7,11 +7,10 @@ public class GameplayController : MonoBehaviour
     public static GameplayController Singleton;
 
     [SerializeField] private GUIController gUI;
-    [SerializeField] private Fruit fruitPrefab;
+    [SerializeField] private Collectable collectablePrefab;
     [SerializeField] private Snake snakePrefab;
     [SerializeField] private Arena arena;
 
-    
     void Awake()
     {
         InitSingleton();
@@ -42,17 +41,23 @@ public class GameplayController : MonoBehaviour
         PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
         playerControl.SetKeys(player.LeftKey, player.RightKey);
 
-        SpawnCollectible();
+        SpawnCollectable();
     }
 
-    private void SpawnCollectible() {
+    private void SpawnCollectable() {
         Vector3 position = arena.RandomPosition();
-        Instantiate(fruitPrefab, position, Quaternion.Euler(Vector3.zero));
+        Quaternion rotation = Quaternion.Euler(Vector3.zero);
+        Collectable collectable = Instantiate(collectablePrefab, position, rotation);
+        int chance = Random.Range(0,10);
+        if(chance > 7) {
+            collectable.SpecialPower = new EnginePower();
+            Debug.Log("spawned engine!");
+        }
     }
 
     public void HandleCollision(SnakeSegment segment, Collider other) {
-        if(other.gameObject.GetComponent<Fruit>() != null) {
-            SnakeEatsFruit(segment, other.gameObject.GetComponent<Fruit>());
+        if(other.gameObject.GetComponent<Collectable>() != null) {
+            CollectablePickedUp(segment, other.gameObject.GetComponent<Collectable>());
         }
         if(other.gameObject.GetComponent<SnakeSegment>() != null) {
             SnakeCrash(segment, other.gameObject.GetComponent<SnakeSegment>());
@@ -62,12 +67,12 @@ public class GameplayController : MonoBehaviour
         }
     }
 
-    public void SnakeEatsFruit(SnakeSegment segment, Fruit fruit) {
-        GameObject.Destroy(fruit.gameObject);
+    public void CollectablePickedUp(SnakeSegment segment, Collectable collectable) {
+        GameObject.Destroy(collectable.gameObject);
         Snake snake = segment.ParentSnake;
-        snake.AddSegment();
+        SnakeSegment newSegment = snake.AddSegment(collectable.SpecialPower);
         IncrementPlayerScore(snake.Player, +1);
-        SpawnCollectible();
+        SpawnCollectable();
     }
 
     public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {
