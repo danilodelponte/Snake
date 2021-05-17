@@ -6,7 +6,7 @@ public class EnginePower : SpecialPower
 {
     private float movementDeltaDecrease = .03f;
 
-    public override float EvaluateMovementDelta(float maxDeltaTime){
+    public override float SpecialMovement(float maxDeltaTime){
         return maxDeltaTime - movementDeltaDecrease;
     }
 }

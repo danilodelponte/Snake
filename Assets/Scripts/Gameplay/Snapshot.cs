@@ -34,6 +34,18 @@ public class Snapshot
         return new Snapshot(savedSnakes, savedCollectables);
     }
 
+    public static void Destroy(Snapshot snapshot) {
+        foreach (var snake in snapshot.Snakes) {
+            snake.gameObject.SetActive(false);
+            GameObject.Destroy(snake.gameObject);
+        };
+
+        foreach (var collectable in snapshot.Collectables) {
+            collectable.gameObject.SetActive(false);
+            GameObject.Destroy(collectable.gameObject);
+        };
+    }
+
     public static void Load(Snapshot snapshot) {
         Snake[] snakes = GameObject.FindObjectsOfType<Snake>();
         foreach (var snake in snakes) {
@@ -52,9 +64,9 @@ public class Snapshot
         }
 
         foreach (var snake in snapshot.Snakes) {
+            snake.gameObject.SetActive(true);
             PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
             playerControl.SetKeys(snake.Player.LeftKey, snake.Player.RightKey);
-            snake.gameObject.SetActive(true);
         };
 
         foreach (var collectable in snapshot.Collectables) {

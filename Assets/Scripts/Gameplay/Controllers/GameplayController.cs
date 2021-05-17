@@ -15,6 +15,11 @@ public class GameplayController : MonoBehaviour
     {
         InitSingleton();
         Player[] players = GameManager.Instance.Players;
+        if(players == null) {
+            Player player = new Player("dan", KeyCode.A, KeyCode.S);
+            players = new Player[1];
+            players[0] = player;
+        }
         foreach (Player player in players) {
             InitPlayer(player);
         }
@@ -52,14 +57,12 @@ public class GameplayController : MonoBehaviour
         Collectable collectable = Instantiate(collectablePrefab, position, rotation);
         int chance = UnityEngine.Random.Range(0,10);
         if(chance > 4) {
-            collectable.SpecialPower = new TimeTravel();
+            collectable.PowerType = typeof(TimeTravel);
             Debug.Log("spawned time travel!");
         }
     }
 
     public void HandleCollision(SnakeSegment segment, Collider other) {
-        if(segment.SpecialPower != null && segment.SpecialPower.HandleCollision(segment, other)) return;
-
         if(other.gameObject.GetComponent<Collectable>() != null) {
             CollectablePickedUp(segment, other.gameObject.GetComponent<Collectable>());
         }
@@ -74,11 +77,12 @@ public class GameplayController : MonoBehaviour
     public void CollectablePickedUp(SnakeSegment segment, Collectable collectable) {
         collectable.gameObject.SetActive(false);
         GameObject.Destroy(collectable.gameObject);
+
         Snake snake = segment.ParentSnake;
-        SnakeSegment newSegment = snake.AddSegment(collectable.SpecialPower);
-        if(newSegment.SpecialPower != null) newSegment.SpecialPower.Activate();
-        IncrementPlayerScore(snake.Player, +1);
+        SnakeSegment newSegment = snake.AddSegment(collectable.PowerType);
+
         SpawnCollectable();
+        IncrementPlayerScore(snake.Player, collectable.Score);
     }
 
     public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {

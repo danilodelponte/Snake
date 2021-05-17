@@ -8,7 +8,6 @@ public class SnakeSegment : MonoBehaviour
 
     public Vector3 CurrentDirection { get; set; }
     public SnakeSegment NextSegment { get; set; }
-    public SpecialPower SpecialPower { get; set; }
     public Snake ParentSnake { get { return parentSnake; } }
     public bool IsTail { get => NextSegment == null; }
     public bool IsHead { get => ParentSnake.Head == this; }
@@ -20,22 +19,19 @@ public class SnakeSegment : MonoBehaviour
         SnakeSegment copy = Instantiate(this, parenSnakeCopy.transform);
         copy.gameObject.name = $"segment {i}";
         copy.CurrentDirection = CurrentDirection;
-        copy.SpecialPower = SpecialPower;
         copy.NextSegment = nextSegmentCopy;
         return copy;
     }
 
     private void Start() {
         parentSnake = transform.parent.gameObject.GetComponent<Snake>();
-        DecorateWithPower();
     }
 
-    private void DecorateWithPower() {
-        if(SpecialPower == null) return;
+    // public void DecorateWithPower(SpecialPower specialPower) {
+    //     if(specialPower == null) return;
 
-        Debug.Log(SpecialPower.ToString());
-        // transform.Find(SpecialPower.ToString()).gameObject.SetActive(true);
-    }
+    //     transform.Find(specialPower.ToString()).gameObject.SetActive(true);
+    // }
 
     public void Move(Vector3 direction) {
         transform.position += direction;
@@ -45,13 +41,11 @@ public class SnakeSegment : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        var gameplay = GameplayController.Singleton;
-        gameplay.HandleCollision(this, other);
+        ParentSnake.EvaluateCollision(this, other);
     }
 
     public float EvaluateMovementDelta(float movingDelta){
         movingDelta += movingDeltaIncrease;
-        if(SpecialPower != null) movingDelta = SpecialPower.EvaluateMovementDelta(movingDelta);
         if(!IsTail) return NextSegment.EvaluateMovementDelta(movingDelta);
 
         return movingDelta;

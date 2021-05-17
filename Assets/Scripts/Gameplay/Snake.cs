@@ -6,7 +6,7 @@ using UnityEngine;
 public class Snake : MonoBehaviour
 {
     [SerializeField] private SnakeSegment segmentPrefab;
-    [SerializeField] private float movingMaxDeltaTime;
+    [SerializeField] private float movingDeltaTime;
 
     public Player Player { get; set; }
     public SnakeSegment Head { get; set; }
@@ -14,6 +14,8 @@ public class Snake : MonoBehaviour
 
     private Vector3 intendedDirection = Vector3.up;
     private float movementDeltaTimer = 0;
+    private List<SpecialPower> specialPowers = new List<SpecialPower>();
+    public List<SpecialPower> SpecialPowers { get => specialPowers; }
 
     public Snake Snapshot(){
         bool wasActive = gameObject.activeSelf;
@@ -35,31 +37,63 @@ public class Snake : MonoBehaviour
         Head.CurrentDirection = Direction;
     }
 
-    public SnakeSegment AddSegment(SpecialPower specialPower = null) {
+    public SnakeSegment AddSegment(Type powerType = null) {
         Vector3 newHeadPosition = Head.transform.position + Direction;
         Quaternion newHeadRotation = Head.transform.rotation;
 	    SnakeSegment newHead = Instantiate<SnakeSegment>(
             segmentPrefab, newHeadPosition, newHeadRotation, transform
         );
-        newHead.SpecialPower = specialPower;
         newHead.NextSegment = Head;
         newHead.CurrentDirection = Head.CurrentDirection;
+        if(powerType != null) AddPower(powerType, newHead);
+
 	    return Head = newHead;
     }
-    
+
+    private void AddPower(Type powerType, SnakeSegment segment) {
+        SpecialPower specialPower = (SpecialPower) segment.gameObject.AddComponent(powerType);
+        specialPowers.Add(specialPower);
+    }
+
+    public void RemovePower(SpecialPower specialPower) {
+        specialPowers.Remove(specialPower);
+        Destroy(specialPower);
+    }
+
     private void FixedUpdate() {
         movementDeltaTimer += Time.deltaTime;
+        float movingDelta = EvaluateMovementDelta();
 
-        float maxMovingDelta = Head.EvaluateMovementDelta(movingMaxDeltaTime);
-
-        if(movementDeltaTimer >= maxMovingDelta) {
-            movementDeltaTimer -= maxMovingDelta;
-            Head.Move(Direction);
+        if(movementDeltaTimer >= movingDelta) {
+            movementDeltaTimer -= movingDelta;
+            Move();
         }
     }
 
     public void SetDirection(Vector3 direction) {
         if((direction + Head.CurrentDirection) == Vector3.zero) return;
         Direction = direction;
+    }
+
+    public void Move() {
+        Head.Move(Direction);
+    }
+
+    public float EvaluateMovementDelta(){
+        float movingDelta = Head.EvaluateMovementDelta(movingDeltaTime);
+        foreach (var power in SpecialPowers) {
+            movingDelta = power.SpecialMovement(movingDelta);
+        }
+        return movingDelta;
+    }
+
+    public void EvaluateCollision(SnakeSegment segment, Collider other) {
+        bool specialCollision = false;
+        SpecialPower[] powers = specialPowers.ToArray();
+        foreach (var power in powers) {
+            specialCollision |= power.SpecialCollision(segment, other);
+        }
+        if(specialCollision) return;
+        else GameplayController.Singleton.HandleCollision(segment, other);
     }
 }

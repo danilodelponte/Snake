@@ -2,9 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecialPower
+public class SpecialPower : MonoBehaviour
 {
-    public virtual float EvaluateMovementDelta(float maxDeltaTime){ return maxDeltaTime; }
-    public virtual void Activate(){ }
-    public virtual bool HandleCollision(SnakeSegment segment, Collider other) { return false; }
+    public SnakeSegment Segment {
+        get => gameObject.GetComponent<SnakeSegment>();
+    }
+
+    public virtual void Start() {
+        // gameObject.transform.Find(SpecialPower.ToString()).gameObject.SetActive(true);
+    }
+
+    public virtual float SpecialMovement(float maxDeltaTime){ return maxDeltaTime; }
+    public virtual bool SpecialCollision(SnakeSegment segment, Collider other) { return false; }
 }
