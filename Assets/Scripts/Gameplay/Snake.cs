@@ -9,51 +9,57 @@ public class Snake : MonoBehaviour
     [SerializeField] private float movingMaxDeltaTime;
 
     public Player Player { get; set; }
-    public SnakeSegment Head { get { return head; } }
-    public Vector3 Direction { get { return intendedDirection;} }
+    public SnakeSegment Head { get; set; }
+    public Vector3 Direction { get => intendedDirection; set => intendedDirection = value; }
 
-    private SnakeSegment head;
-    private float movementDeltaTimer = 0;
     private Vector3 intendedDirection = Vector3.up;
+    private float movementDeltaTimer = 0;
 
-    private void Awake() {
-        AddHead();
-        AddSegment();
-        AddSegment();
+    public Snake Snapshot(){
+        bool wasActive = gameObject.activeSelf;
+        gameObject.SetActive(false);
+        Snake copy = Instantiate(this, transform.parent);
+        SnakeSegment[] children = copy.transform.GetComponentsInChildren<SnakeSegment>();
+        foreach (var segment in children) { GameObject.Destroy(segment.gameObject); }
+        copy.Player = Player;
+        copy.Direction = Direction;
+        copy.Head = Head.Snapshot(copy, 0);
+        gameObject.SetActive(wasActive);
+        return copy;
     }
 
     public void AddHead() {
-        if(head !=null) return;
+        if(Head !=null) return;
 
-        head = Instantiate<SnakeSegment>(segmentPrefab, transform);
-        head.CurrentDirection = intendedDirection;
+        Head = Instantiate<SnakeSegment>(segmentPrefab, transform);
+        Head.CurrentDirection = Direction;
     }
 
     public SnakeSegment AddSegment(SpecialPower specialPower = null) {
-        Vector3 newHeadPosition = head.transform.position + intendedDirection;
-        Quaternion newHeadRotation = head.transform.rotation;
+        Vector3 newHeadPosition = Head.transform.position + Direction;
+        Quaternion newHeadRotation = Head.transform.rotation;
 	    SnakeSegment newHead = Instantiate<SnakeSegment>(
             segmentPrefab, newHeadPosition, newHeadRotation, transform
         );
         newHead.SpecialPower = specialPower;
-        newHead.NextSegment = head;
-        newHead.CurrentDirection = head.CurrentDirection;
-	    return head = newHead;
+        newHead.NextSegment = Head;
+        newHead.CurrentDirection = Head.CurrentDirection;
+	    return Head = newHead;
     }
     
     private void FixedUpdate() {
         movementDeltaTimer += Time.deltaTime;
 
-        float maxMovingDelta = head.EvaluateMovementDelta(movingMaxDeltaTime);
+        float maxMovingDelta = Head.EvaluateMovementDelta(movingMaxDeltaTime);
 
         if(movementDeltaTimer >= maxMovingDelta) {
             movementDeltaTimer -= maxMovingDelta;
-            head.Move(intendedDirection);
+            Head.Move(Direction);
         }
     }
 
     public void SetDirection(Vector3 direction) {
-        if((direction + head.CurrentDirection) == Vector3.zero) return;
-        intendedDirection = direction;
+        if((direction + Head.CurrentDirection) == Vector3.zero) return;
+        Direction = direction;
     }
 }

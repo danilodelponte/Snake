@@ -10,18 +10,31 @@ public class SnakeSegment : MonoBehaviour
     public SnakeSegment NextSegment { get; set; }
     public SpecialPower SpecialPower { get; set; }
     public Snake ParentSnake { get { return parentSnake; } }
+    public bool IsTail { get => NextSegment == null; }
+    public bool IsHead { get => ParentSnake.Head == this; }
 
     private Snake parentSnake;
 
-    private void Awake() {
-        parentSnake = transform.parent.gameObject.GetComponent<Snake>();
+    public SnakeSegment Snapshot(Snake parenSnakeCopy, int i) {
+        SnakeSegment nextSegmentCopy = !IsTail ? NextSegment.Snapshot(parenSnakeCopy, i+1) : null;
+        SnakeSegment copy = Instantiate(this, parenSnakeCopy.transform);
+        copy.gameObject.name = $"segment {i}";
+        copy.CurrentDirection = CurrentDirection;
+        copy.SpecialPower = SpecialPower;
+        copy.NextSegment = nextSegmentCopy;
+        return copy;
     }
 
     private void Start() {
-        if(SpecialPower != null) {
-            Debug.Log(SpecialPower.ToString());
-            transform.Find(SpecialPower.ToString()).gameObject.SetActive(true);
-        }
+        parentSnake = transform.parent.gameObject.GetComponent<Snake>();
+        DecorateWithPower();
+    }
+
+    private void DecorateWithPower() {
+        if(SpecialPower == null) return;
+
+        Debug.Log(SpecialPower.ToString());
+        // transform.Find(SpecialPower.ToString()).gameObject.SetActive(true);
     }
 
     public void Move(Vector3 direction) {
@@ -39,16 +52,8 @@ public class SnakeSegment : MonoBehaviour
     public float EvaluateMovementDelta(float movingDelta){
         movingDelta += movingDeltaIncrease;
         if(SpecialPower != null) movingDelta = SpecialPower.EvaluateMovementDelta(movingDelta);
-        if(!IsTail()) return NextSegment.EvaluateMovementDelta(movingDelta);
+        if(!IsTail) return NextSegment.EvaluateMovementDelta(movingDelta);
 
         return movingDelta;
-    }
-
-    public bool IsTail() {
-        return NextSegment == null;
-    }
-
-    public bool IsHead() {
-        return ParentSnake.Head == this;
     }
 }
