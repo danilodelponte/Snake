@@ -7,13 +7,13 @@ public class TimeTravel : SpecialPower
     private Snapshot snapshot;
 
     public override void Activate(){ 
-        this.snapshot = GameplayController.Singleton.SaveSnapshot();
+        this.snapshot = Snapshot.Create();
     }
 
     public override bool HandleCollision(SnakeSegment segment, Collider other) {
         if(other.gameObject.GetComponent<SnakeSegment>() == null) return false;
 
-        GameplayController.Singleton.LoadSnapshot(snapshot);
+        Snapshot.Load(snapshot);
         GameplayController.Singleton.SpawnCollectable();
         return true;
     }
