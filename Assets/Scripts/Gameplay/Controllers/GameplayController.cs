@@ -7,22 +7,31 @@ public class GameplayController : MonoBehaviour
     public static GameplayController Singleton;
 
     [SerializeField] private GUIController gUI;
-    [SerializeField] private Collectable collectablePrefab;
-    [SerializeField] private Snake snakePrefab;
     [SerializeField] private Arena arena;
 
     void Awake()
     {
         InitSingleton();
-        Player[] players = GameManager.Instance.Players;
-        if(players == null) {
-            Player player = new Player("dan", KeyCode.A, KeyCode.S);
-            players = new Player[1];
-            players[0] = player;
+
+        arena.GenerateGrid();
+        arena.GridDebug();
+
+        for(int i = 0; i < 4; i++) {
+            Snake enemySnake = arena.SpawnSnake();
+            enemySnake.name = $"snake {i}";
+            AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
+            arena.SpawnCollectable();
         }
-        foreach (Player player in players) {
-            InitPlayer(player);
-        }
+
+        // Player[] players = GameManager.Instance.Players;
+        // if(players == null) {
+        //     Player player = new Player("dan", KeyCode.A, KeyCode.S);
+        //     players = new Player[1];
+        //     players[0] = player;
+        // }
+        // foreach (Player player in players) {
+        //     InitPlayer(player);
+        // }
     }
 
     private void InitSingleton() {
@@ -34,32 +43,16 @@ public class GameplayController : MonoBehaviour
     }
 
     private void InitPlayer(Player player) {
-        SpawnSnake(player);
         gUI.AddPlayerLabel(player);
-    }
 
-    private void SpawnSnake(Player player) {
-        Vector3 position = arena.RandomPosition();
-        var snake = Instantiate(snakePrefab, position, Quaternion.Euler(Vector3.zero));
-        snake.AddHead();
-        snake.AddSegment();
-        snake.AddSegment();
+        var snake = arena.SpawnSnake();
         snake.Player = player;
         PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
         playerControl.SetKeys(snake.Player.LeftKey, snake.Player.RightKey);
-
-        SpawnCollectable();
-    }
-
-    public void SpawnCollectable() {
-        Vector3 position = arena.RandomPosition();
-        Quaternion rotation = Quaternion.Euler(Vector3.zero);
-        Collectable collectable = Instantiate(collectablePrefab, position, rotation);
-        int chance = UnityEngine.Random.Range(0,10);
-        if(chance > 4) {
-            collectable.PowerType = typeof(TimeTravel);
-            Debug.Log("spawned time travel!");
-        }
+        
+        Snake enemySnake = arena.SpawnSnake();
+        AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
+        arena.SpawnCollectable();
     }
 
     public void HandleCollision(SnakeSegment segment, Collider other) {
@@ -67,7 +60,7 @@ public class GameplayController : MonoBehaviour
             CollectablePickedUp(segment, other.gameObject.GetComponent<Collectable>());
         }
         if(other.gameObject.GetComponent<SnakeSegment>() != null) {
-            SnakeCrash(segment, other.gameObject.GetComponent<SnakeSegment>());
+            // SnakeCrash(segment, other.gameObject.GetComponent<SnakeSegment>());
         }
         if(other.gameObject.GetComponent<Portal>() != null) {
             Teleport(segment, other.gameObject.GetComponent<Portal>());
@@ -81,8 +74,8 @@ public class GameplayController : MonoBehaviour
         Snake snake = segment.ParentSnake;
         SnakeSegment newSegment = snake.AddSegment(collectable.PowerType);
 
-        SpawnCollectable();
-        IncrementPlayerScore(snake.Player, collectable.Score);
+        arena.SpawnCollectable();
+        if(snake.Player != null) IncrementPlayerScore(snake.Player, collectable.Score);
     }
 
     public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {
@@ -91,7 +84,7 @@ public class GameplayController : MonoBehaviour
     }
 
     public void Teleport(SnakeSegment segment, Portal portal) {
-        portal.Teleport(segment);
+        // portal.Teleport(segment);
     }
 
     private void KillSnake(Snake snake) {

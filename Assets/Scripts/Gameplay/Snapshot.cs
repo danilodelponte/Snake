@@ -65,8 +65,12 @@ public class Snapshot
 
         foreach (var snake in snapshot.Snakes) {
             snake.gameObject.SetActive(true);
-            PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
-            playerControl.SetKeys(snake.Player.LeftKey, snake.Player.RightKey);
+            if(snake.Player != null) {
+                PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
+                playerControl.SetKeys(snake.Player.LeftKey, snake.Player.RightKey);
+            } else {
+                AIControl aiControl = snake.gameObject.AddComponent<AIControl>();
+            }
         };
 
         foreach (var collectable in snapshot.Collectables) {

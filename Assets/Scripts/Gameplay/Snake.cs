@@ -76,7 +76,19 @@ public class Snake : MonoBehaviour
     }
 
     public void Move() {
+        AIControl aiControl = GetComponent<AIControl>();
+        if(aiControl != null) Direction = aiControl.GetDirection();
+        FreeNodePaths();
         Head.Move(Direction);
+        SetNodePaths();
+    }
+
+    public void SetNodePaths(){
+        Head.SetNodePath();
+    }
+
+    public void FreeNodePaths(){
+        Head.FreeNodePath();
     }
 
     public float EvaluateMovementDelta(){
@@ -84,6 +96,7 @@ public class Snake : MonoBehaviour
         foreach (var power in SpecialPowers) {
             movingDelta = power.SpecialMovement(movingDelta);
         }
+        if(movingDelta > .8f) movingDelta = .8f;
         return movingDelta;
     }
 
