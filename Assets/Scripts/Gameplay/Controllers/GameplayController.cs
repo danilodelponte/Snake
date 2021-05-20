@@ -16,24 +16,25 @@ public class GameplayController : MonoBehaviour
         InitSingleton();
 
         arena.GenerateGrid();
-        arena.GridDebug();
+        // arena.GridDebug();
 
-        // for(int i = 0; i < 4; i++) {
-        //     Snake enemySnake = arena.SpawnSnake();
-        //     enemySnake.name = $"snake {i}";
-        //     AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
-        //     arena.SpawnCollectable();
-        // }
+        for(int i = 0; i < 3; i++) {
+            Snake enemySnake = SpawnSnake();
+            enemySnake.gameObject.name = $"snake {i}";
+            enemySnake.Color = UnityEngine.Random.ColorHSV();
+            AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
+            SpawnCollectable();
+        }
 
         Player[] players = GameManager.Instance.Players;
-        if(players == null) {
-            Player player = new Player("dan", KeyCode.A, KeyCode.S);
-            players = new Player[1];
-            players[0] = player;
-        }
-        foreach (Player player in players) {
-            InitPlayer(player);
-        }
+        // if(players == null) {
+        //     Player player = new Player("dan", KeyCode.A, KeyCode.S);
+        //     players = new Player[1];
+        //     players[0] = player;
+        // }
+        // foreach (Player player in players) {
+        //     InitPlayer(player);
+        // }
     }
 
     private void InitSingleton() {
@@ -49,11 +50,12 @@ public class GameplayController : MonoBehaviour
 
         var snake = SpawnSnake();
         snake.Player = player;
+        snake.Color = player.Color;
         PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
         playerControl.SetKeys(snake.Player.LeftKey, snake.Player.RightKey);
         
-        // Snake enemySnake = arena.SpawnSnake();
-        // AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
+        Snake enemySnake = SpawnSnake();
+        AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
         SpawnCollectable();
     }
 

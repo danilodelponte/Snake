@@ -16,7 +16,7 @@ public class Arena : MonoBehaviour
     private void Awake() {
         GenerateGrid();
         GridDebug();
-        // SpawnWalls();
+        SpawnWalls();
     }
 
     public void GenerateGrid(){
@@ -52,11 +52,11 @@ public class Arena : MonoBehaviour
 
     public void SetNode(Vector3 position, PathNodeType type) {
         gridArray[(int)position.x, (int)position.y].type = type;
-        debugTextArray[(int)position.x ,(int)position.y].text = type.ToString().ToCharArray()[0] + "";
+        // debugTextArray[(int)position.x ,(int)position.y].text = type.ToString().ToCharArray()[0] + "";
         Color color = Color.white;
         if(type == PathNodeType.SNAKE) color = Color.green;
         if(type == PathNodeType.COLLECTABLE) color = Color.red;
-        debugTextArray[(int)position.x ,(int)position.y].color = color;
+        // debugTextArray[(int)position.x ,(int)position.y].color = color;
     }
 
     public PathNode GetNode(Vector3 position) {
@@ -70,7 +70,7 @@ public class Arena : MonoBehaviour
     private void SpawnWalls() {
         Portal leftWall = Instantiate(portalPrefab, transform);
         leftWall.transform.localScale = new Vector3(1, height, 1);
-        leftWall.transform.position = new Vector3(0, height/2, 0);
+        leftWall.transform.position = new Vector3(-1, height/2, 0);
         leftWall.TransportFilter = new Vector3(1, 0, 0);
         leftWall.OffSet = Vector3.left;
 
@@ -91,7 +91,7 @@ public class Arena : MonoBehaviour
 
         Portal bottomWall = Instantiate(portalPrefab, transform);
         bottomWall.transform.localScale = new Vector3(width, 1, 1);
-        bottomWall.transform.position = new Vector3(width/2, 0, 0);
+        bottomWall.transform.position = new Vector3(width/2, -1, 0);
         bottomWall.TransportFilter = new Vector3(0, 1, 0);
         bottomWall.OffSet = Vector3.down;
 
@@ -102,14 +102,6 @@ public class Arena : MonoBehaviour
     public Vector3 RandomPosition(){
         return new Vector3Int(Random.Range(0, width-1), Random.Range(0, height-1), 0);
     }
-
-
-
-
-
-
-
-
     
     public const int sortingOrderDefault = 5000;
     public static TextMesh CreateWorldText(string text, Transform parent = null, Vector3 localPosition = default(Vector3), int fontSize = 20, Color? color = null, TextAnchor textAnchor = TextAnchor.UpperLeft, TextAlignment textAlignment = TextAlignment.Left, int sortingOrder = sortingOrderDefault) {
@@ -133,13 +125,13 @@ public class Arena : MonoBehaviour
     }
 
     public void GridDebug() {
-        if(debugTextArray != null) return;
+        // if(debugTextArray != null) return;
 
-        debugTextArray = new TextMesh[width, height];
+        // debugTextArray = new TextMesh[width, height];
         for(int x = 0; x < gridArray.GetLength(0); x++) {
             for(int y = 0; y < gridArray.GetLength(1); y++) {
                 Vector3 position = GetWorldPosition(x, y);
-                debugTextArray[x,y] = CreateWorldText(gridArray[x,y].ToString(), null, position, 5, Color.white, TextAnchor.MiddleCenter);
+                // debugTextArray[x,y] = CreateWorldText(gridArray[x,y].ToString(), null, position, 5, Color.white, TextAnchor.MiddleCenter);
                 position -= new Vector3(.5f, .5f);
                 Debug.DrawLine(position, position + new Vector3(1, 0), Color.white, 100f);
                 Debug.DrawLine(position, position + new Vector3(0, 1), Color.white, 100f);

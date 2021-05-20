@@ -24,31 +24,23 @@ public class AIControl : MonoBehaviour
         PathNode startNode = arena.GetNode(snake.Head.transform.position);
         List<PathNode> collectableNodes = arena.GetNodes(PathNodeType.COLLECTABLE);
         collectableNodes.Sort(Comparer<PathNode>.Create((pn1, pn2) => pn1.DistanceTo(pn2)));
-        PathNode endNode;
-        try
-        {
-            endNode = collectableNodes[0];
-            var pathFinding = new PathFinding(arena);
 
-            List<PathNode> path = pathFinding.FindPath(startNode, endNode);
-            if(path == null) return snake.Direction;
+        if(collectableNodes.Count == 0) return snake.Direction;
 
-            PathNode nextMove = path[1];
-            int xDistance = nextMove.x - startNode.x;
-            int xLoopDistance = arena.Width - Mathf.Abs(xDistance);
-            if(xLoopDistance < Mathf.Abs(xDistance)) xDistance *= -1;
+        PathNode endNode = collectableNodes[0];
+        var pathFinding = new PathFinding(arena);
 
-            int yDistance = nextMove.y - startNode.y;
-            int yLoopDistance = arena.Height - Mathf.Abs(yDistance);
-            if(yLoopDistance < Mathf.Abs(yDistance)) yDistance *= -1;
-            return new Vector3(xDistance, yDistance).normalized;
-        }
-        catch (System.Exception error)
-        {
-            Debug.Log(error);
-            // throw;
-        }
+        List<PathNode> path = pathFinding.FindPath(startNode, endNode);
+        if(path == null) return snake.Direction;
 
-        return snake.Direction;
+        PathNode nextMove = path[1];
+        int xDistance = nextMove.x - startNode.x;
+        int xLoopDistance = arena.Width - Mathf.Abs(xDistance);
+        if(xLoopDistance < Mathf.Abs(xDistance)) xDistance *= -1;
+
+        int yDistance = nextMove.y - startNode.y;
+        int yLoopDistance = arena.Height - Mathf.Abs(yDistance);
+        if(yLoopDistance < Mathf.Abs(yDistance)) yDistance *= -1;
+        return new Vector3(xDistance, yDistance).normalized;
     }
 }

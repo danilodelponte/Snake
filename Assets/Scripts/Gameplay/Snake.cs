@@ -9,10 +9,12 @@ public class Snake : MonoBehaviour
     [SerializeField] private float movingDeltaTime;
 
     public Player Player { get; set; }
+    public Color Color { get => color; set => SetColor(value); }
     public SnakeSegment Head { get; set; }
     public Vector3 Direction { get => intendedDirection; set => intendedDirection = value; }
 
     private Vector3 intendedDirection = Vector3.up;
+    private Color color;
     private float movementDeltaTimer = 0;
 
     public void AddHead() {
@@ -20,6 +22,7 @@ public class Snake : MonoBehaviour
 
         Head = Instantiate<SnakeSegment>(segmentPrefab, transform);
         Head.CurrentDirection = Direction;
+        Head.Color = color;
     }
 
     public SnakeSegment AddSegment(SpecialPower specialPower = null) {
@@ -31,9 +34,15 @@ public class Snake : MonoBehaviour
 
         newHead.NextSegment = Head;
         newHead.CurrentDirection = Head.CurrentDirection;
-        if(specialPower != null) newHead.SpecialPower = specialPower;
+        newHead.Color = Color;
+        Head = newHead;
+        if(specialPower != null) Head.SpecialPower = specialPower;
 
-	    return Head = newHead;
+	    return Head;
+    }
+
+    private void SetColor(Color color) {
+        Head.Color = color;
     }
 
     public List<SpecialPower> SpecialPowers() {
@@ -79,6 +88,7 @@ public class Snake : MonoBehaviour
     }
 
     public void EvaluateCollision(SnakeSegment segmentCollided, Collider other){
+        Debug.Log($"EvaluateCollision de {segmentCollided} com {other.gameObject.GetComponent<SnakeSegment>()}");
         if(Head.EvaluateCollision(segmentCollided, other)) return;
         GameplayController.Singleton.HandleCollision(segmentCollided, other);
     }
@@ -87,5 +97,9 @@ public class Snake : MonoBehaviour
         float movingDelta = Head.EvaluateMovementDelta(movingDeltaTime);
         if(movingDelta > .8f) movingDelta = .8f;
         return movingDelta;
+    }
+
+    public override string ToString() {
+        return $"Snake {name}";
     }
 }

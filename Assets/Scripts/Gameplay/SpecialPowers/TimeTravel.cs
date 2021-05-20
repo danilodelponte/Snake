@@ -8,11 +8,13 @@ public class TimeTravel : SpecialPower
 
     public override void Activate() {
         DisablePrevious();
-        this.snapshot = GameplayController.Singleton.CreateSnapshot();
+        Debug.Log($"TimeTravel Activate on {SnakeSegment}");
+        if(snapshot == null) snapshot = GameplayController.Singleton.CreateSnapshot();
     }
 
     public override void Deactivate()
     {
+        Debug.Log($"TimeTravel Deactivate on {SnakeSegment}");
         snapshot = null;
         base.Deactivate();
     }
@@ -29,12 +31,15 @@ public class TimeTravel : SpecialPower
     }
 
     public override bool SpecialCollision(SnakeSegment segmentCollided, Collider other) {
+        if(snapshot == null) return false;
         if(!segmentCollided.IsHead) return false;
         if(other.gameObject.GetComponent<SnakeSegment>() == null) return false;
 
-        GameplayController.Singleton.LoadSnapshot(this.snapshot);
-        GameplayController.Singleton.SpawnCollectable();
+        Snapshot travelTo = this.snapshot;
         Deactivate();
+        Debug.Log($"TimeTravel SpecialCollision on {SnakeSegment}");
+        GameplayController.Singleton.LoadSnapshot(travelTo);
+        GameplayController.Singleton.SpawnCollectable();
         return true;
     }
 }

@@ -6,6 +6,9 @@ public class SnakeSegment : MonoBehaviour
 {
     [SerializeField] private float movingDeltaIncrease = .01f;
 
+    private SpecialComponent SpecialComponent { get => gameObject.GetComponent<SpecialComponent>(); }
+
+    public Color Color { set => SetColor(value); }
     public Arena arena;
     public Vector3 CurrentDirection { get; set; }
     public SnakeSegment NextSegment { get; set; }
@@ -13,7 +16,6 @@ public class SnakeSegment : MonoBehaviour
     public bool IsTail { get => NextSegment == null; }
     public bool IsHead { get => ParentSnake.Head == this; }
     public SpecialPower SpecialPower { get => GetSpecialPower(); set => SetSpecialPower(value); }
-    private SpecialComponent SpecialComponent { get => gameObject.GetComponent<SpecialComponent>(); }
 
     private void OnEnable() {
         arena = GameObject.Find("Arena").GetComponent<Arena>();
@@ -29,14 +31,12 @@ public class SnakeSegment : MonoBehaviour
         FreeNodePath();
     }
 
-    // public void DecorateWithPower(SpecialPower specialPower) {
-    //     if(specialPower == null) return;
-
-    //     transform.Find(specialPower.ToString()).gameObject.SetActive(true);
-    // }
-
     private void SetSpecialPower(SpecialPower specialPower) {
-        if(specialPower != null) specialPower.SnakeSegment = this;
+        if(specialPower != null) {
+            specialPower.SnakeSegment = this;
+            Transform powerObject = transform.Find(specialPower.ToString());
+            if(powerObject != null) { gameObject.SetActive(true); }
+        }
         SpecialComponent.SpecialPower = specialPower;
     }
 
@@ -90,5 +90,15 @@ public class SnakeSegment : MonoBehaviour
         if(!IsTail) return NextSegment.EvaluateMovementDelta(movingDelta);
 
         return movingDelta;
+    }
+
+    private void SetColor(Color color) {
+        var renderer = gameObject.GetComponent<Renderer>();
+        renderer.material.color = color;
+        if(!IsTail) NextSegment.Color = color;
+    }
+
+    public override string ToString() {
+        return $"SnakeSegment {ParentSnake.name}";
     }
 }

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Collectable : MonoBehaviour
-{
+public class Collectable : MonoBehaviour {
+
     public Arena arena;
     public SpecialPower SpecialPower { get; set; }
     public int Score { get => score; set => score = value; }
