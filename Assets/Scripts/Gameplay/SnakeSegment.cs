@@ -9,24 +9,11 @@ public class SnakeSegment : MonoBehaviour
     public Arena arena;
     public Vector3 CurrentDirection { get; set; }
     public SnakeSegment NextSegment { get; set; }
-    public Snake ParentSnake { get { return parentSnake; } }
+    public Snake ParentSnake { get => transform.parent.gameObject.GetComponent<Snake>(); }
     public bool IsTail { get => NextSegment == null; }
     public bool IsHead { get => ParentSnake.Head == this; }
-
-    private Snake parentSnake;
-
-    public SnakeSegment Snapshot(Snake parenSnakeCopy, int i) {
-        SnakeSegment nextSegmentCopy = !IsTail ? NextSegment.Snapshot(parenSnakeCopy, i+1) : null;
-        SnakeSegment copy = Instantiate(this, parenSnakeCopy.transform);
-        copy.gameObject.name = $"segment {i}";
-        copy.CurrentDirection = CurrentDirection;
-        copy.NextSegment = nextSegmentCopy;
-        return copy;
-    }
-
-    private void Start() {
-        parentSnake = transform.parent.gameObject.GetComponent<Snake>();
-    }
+    public SpecialPower SpecialPower { get => GetSpecialPower(); set => SetSpecialPower(value); }
+    private SpecialComponent SpecialComponent { get => gameObject.GetComponent<SpecialComponent>(); }
 
     private void OnEnable() {
         arena = GameObject.Find("Arena").GetComponent<Arena>();
@@ -47,6 +34,15 @@ public class SnakeSegment : MonoBehaviour
 
     //     transform.Find(specialPower.ToString()).gameObject.SetActive(true);
     // }
+
+    private void SetSpecialPower(SpecialPower specialPower) {
+        if(specialPower != null) specialPower.SnakeSegment = this;
+        SpecialComponent.SpecialPower = specialPower;
+    }
+
+    private SpecialPower GetSpecialPower() {
+        return SpecialComponent.SpecialPower;
+    }
 
     public void Move(Vector3 direction) {
         transform.position += direction;
@@ -81,8 +77,16 @@ public class SnakeSegment : MonoBehaviour
         ParentSnake.EvaluateCollision(this, other);
     }
 
+    public bool EvaluateCollision(SnakeSegment segmentCollided, Collider other) {
+        if(SpecialPower != null && SpecialPower.SpecialCollision(segmentCollided, other)) return true;
+        if(!IsTail) return NextSegment.EvaluateCollision(segmentCollided, other);
+
+        return false;
+    }
+
     public float EvaluateMovementDelta(float movingDelta){
         movingDelta += movingDeltaIncrease;
+        if(SpecialPower != null) movingDelta = SpecialPower.SpecialMovement(movingDelta);
         if(!IsTail) return NextSegment.EvaluateMovementDelta(movingDelta);
 
         return movingDelta;

@@ -5,34 +5,36 @@ using UnityEngine;
 public class TimeTravel : SpecialPower
 {
     private Snapshot snapshot;
-    private bool travelled = false;
 
-    public override void Start() {
-        base.Start();
+    public override void Activate() {
         DisablePrevious();
-        this.snapshot = Snapshot.Create();
+        this.snapshot = GameplayController.Singleton.CreateSnapshot();
+    }
+
+    public override void Deactivate()
+    {
+        snapshot = null;
+        base.Deactivate();
     }
 
     private void DisablePrevious(){
-        SpecialPower[] powers = Segment.ParentSnake.SpecialPowers.ToArray();
-        foreach (var power in powers) {
-            if(power == this) continue;
+        List<SpecialPower> specialPowers = SnakeSegment.ParentSnake.SpecialPowers();
+        foreach (var specialPower in specialPowers) {
+            if(specialPower == this) continue;
 
-            if(power is TimeTravel) {
-                Snapshot.Destroy(((TimeTravel) power).snapshot);
-                Segment.ParentSnake.RemovePower(power);
+            if(specialPower is TimeTravel) {
+                specialPower.Deactivate();
             }
         }
     }
 
-    public override bool SpecialCollision(SnakeSegment segment, Collider other) {
+    public override bool SpecialCollision(SnakeSegment segmentCollided, Collider other) {
+        if(!segmentCollided.IsHead) return false;
         if(other.gameObject.GetComponent<SnakeSegment>() == null) return false;
-        Segment.ParentSnake.RemovePower(this);
 
-        if(!travelled) {
-            Snapshot.Load(snapshot);
-            travelled = true;
-        }
+        GameplayController.Singleton.LoadSnapshot(this.snapshot);
+        GameplayController.Singleton.SpawnCollectable();
+        Deactivate();
         return true;
     }
 }

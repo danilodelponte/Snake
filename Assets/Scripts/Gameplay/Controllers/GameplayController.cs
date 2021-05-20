@@ -6,6 +6,8 @@ public class GameplayController : MonoBehaviour
 {
     public static GameplayController Singleton;
 
+    [SerializeField] private Collectable collectablePrefab;
+    [SerializeField] private Snake snakePrefab;
     [SerializeField] private GUIController gUI;
     [SerializeField] private Arena arena;
 
@@ -16,22 +18,22 @@ public class GameplayController : MonoBehaviour
         arena.GenerateGrid();
         arena.GridDebug();
 
-        for(int i = 0; i < 4; i++) {
-            Snake enemySnake = arena.SpawnSnake();
-            enemySnake.name = $"snake {i}";
-            AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
-            arena.SpawnCollectable();
-        }
+        // for(int i = 0; i < 4; i++) {
+        //     Snake enemySnake = arena.SpawnSnake();
+        //     enemySnake.name = $"snake {i}";
+        //     AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
+        //     arena.SpawnCollectable();
+        // }
 
-        // Player[] players = GameManager.Instance.Players;
-        // if(players == null) {
-        //     Player player = new Player("dan", KeyCode.A, KeyCode.S);
-        //     players = new Player[1];
-        //     players[0] = player;
-        // }
-        // foreach (Player player in players) {
-        //     InitPlayer(player);
-        // }
+        Player[] players = GameManager.Instance.Players;
+        if(players == null) {
+            Player player = new Player("dan", KeyCode.A, KeyCode.S);
+            players = new Player[1];
+            players[0] = player;
+        }
+        foreach (Player player in players) {
+            InitPlayer(player);
+        }
     }
 
     private void InitSingleton() {
@@ -45,14 +47,33 @@ public class GameplayController : MonoBehaviour
     private void InitPlayer(Player player) {
         gUI.AddPlayerLabel(player);
 
-        var snake = arena.SpawnSnake();
+        var snake = SpawnSnake();
         snake.Player = player;
         PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
         playerControl.SetKeys(snake.Player.LeftKey, snake.Player.RightKey);
         
-        Snake enemySnake = arena.SpawnSnake();
-        AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
-        arena.SpawnCollectable();
+        // Snake enemySnake = arena.SpawnSnake();
+        // AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
+        SpawnCollectable();
+    }
+
+    public Snake SpawnSnake() {
+        var snake = Instantiate(snakePrefab, arena.RandomPosition(), Quaternion.Euler(0,0,0));
+        snake.AddHead();
+        snake.AddSegment();
+        snake.AddSegment();
+        return snake;
+    }
+
+    public Collectable SpawnCollectable() {
+        Collectable collectable = Instantiate(collectablePrefab, arena.RandomPosition(), Quaternion.Euler(0, 0, 0));
+
+        int chance = UnityEngine.Random.Range(0,10);
+        if(chance > 2) {
+            collectable.SpecialPower = new TimeTravel();
+            Debug.Log("spawned time travel!");
+        }
+        return collectable;
     }
 
     public void HandleCollision(SnakeSegment segment, Collider other) {
@@ -60,10 +81,7 @@ public class GameplayController : MonoBehaviour
             CollectablePickedUp(segment, other.gameObject.GetComponent<Collectable>());
         }
         if(other.gameObject.GetComponent<SnakeSegment>() != null) {
-            // SnakeCrash(segment, other.gameObject.GetComponent<SnakeSegment>());
-        }
-        if(other.gameObject.GetComponent<Portal>() != null) {
-            Teleport(segment, other.gameObject.GetComponent<Portal>());
+            SnakeCrash(segment, other.gameObject.GetComponent<SnakeSegment>());
         }
     }
 
@@ -72,9 +90,9 @@ public class GameplayController : MonoBehaviour
         GameObject.Destroy(collectable.gameObject);
 
         Snake snake = segment.ParentSnake;
-        SnakeSegment newSegment = snake.AddSegment(collectable.PowerType);
+        SnakeSegment newSegment = snake.AddSegment(collectable.SpecialPower);
 
-        arena.SpawnCollectable();
+        SpawnCollectable();
         if(snake.Player != null) IncrementPlayerScore(snake.Player, collectable.Score);
     }
 
@@ -83,8 +101,25 @@ public class GameplayController : MonoBehaviour
         if(segment2.IsHead) KillSnake(segment2.ParentSnake);
     }
 
-    public void Teleport(SnakeSegment segment, Portal portal) {
-        // portal.Teleport(segment);
+    public Snapshot CreateSnapshot() {
+        return Snapshot.Create();
+    }
+
+    public void LoadSnapshot(Snapshot snapshot) {
+        DestroyAll();
+        snapshot.Load();
+    }
+
+    private void DestroyAll() {
+        Snake[] snakes = GameObject.FindObjectsOfType<Snake>();
+        foreach (var snake in snakes) {
+            GameObject.Destroy(snake.gameObject);
+        }
+
+        Collectable[] collectables = GameObject.FindObjectsOfType<Collectable>();
+        foreach (var collectable in collectables) {
+            GameObject.Destroy(collectable.gameObject);
+        }
     }
 
     private void KillSnake(Snake snake) {

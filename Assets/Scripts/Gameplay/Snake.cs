@@ -14,21 +14,6 @@ public class Snake : MonoBehaviour
 
     private Vector3 intendedDirection = Vector3.up;
     private float movementDeltaTimer = 0;
-    private List<SpecialPower> specialPowers = new List<SpecialPower>();
-    public List<SpecialPower> SpecialPowers { get => specialPowers; }
-
-    public Snake Snapshot(){
-        bool wasActive = gameObject.activeSelf;
-        gameObject.SetActive(false);
-        Snake copy = Instantiate(this, transform.parent);
-        SnakeSegment[] children = copy.transform.GetComponentsInChildren<SnakeSegment>();
-        foreach (var segment in children) { GameObject.Destroy(segment.gameObject); }
-        copy.Player = Player;
-        copy.Direction = Direction;
-        copy.Head = Head.Snapshot(copy, 0);
-        gameObject.SetActive(wasActive);
-        return copy;
-    }
 
     public void AddHead() {
         if(Head !=null) return;
@@ -37,27 +22,29 @@ public class Snake : MonoBehaviour
         Head.CurrentDirection = Direction;
     }
 
-    public SnakeSegment AddSegment(Type powerType = null) {
+    public SnakeSegment AddSegment(SpecialPower specialPower = null) {
         Vector3 newHeadPosition = Head.transform.position + Direction;
         Quaternion newHeadRotation = Head.transform.rotation;
 	    SnakeSegment newHead = Instantiate<SnakeSegment>(
             segmentPrefab, newHeadPosition, newHeadRotation, transform
         );
+
         newHead.NextSegment = Head;
         newHead.CurrentDirection = Head.CurrentDirection;
-        if(powerType != null) AddPower(powerType, newHead);
+        if(specialPower != null) newHead.SpecialPower = specialPower;
 
 	    return Head = newHead;
     }
 
-    private void AddPower(Type powerType, SnakeSegment segment) {
-        SpecialPower specialPower = (SpecialPower) segment.gameObject.AddComponent(powerType);
-        specialPowers.Add(specialPower);
-    }
-
-    public void RemovePower(SpecialPower specialPower) {
-        specialPowers.Remove(specialPower);
-        Destroy(specialPower);
+    public List<SpecialPower> SpecialPowers() {
+        SpecialComponent[] components = GetComponentsInChildren<SpecialComponent>();
+        List<SpecialPower> specialPowers = new List<SpecialPower>();
+        foreach (SpecialComponent component in components) {
+            if(component.SpecialPower != null) {
+                specialPowers.Add(component.SpecialPower);
+            }
+        }
+        return specialPowers;
     }
 
     private void FixedUpdate() {
@@ -91,22 +78,14 @@ public class Snake : MonoBehaviour
         Head.FreeNodePath();
     }
 
-    public float EvaluateMovementDelta(){
-        float movingDelta = Head.EvaluateMovementDelta(movingDeltaTime);
-        foreach (var power in SpecialPowers) {
-            movingDelta = power.SpecialMovement(movingDelta);
-        }
-        if(movingDelta > .8f) movingDelta = .8f;
-        return movingDelta;
+    public void EvaluateCollision(SnakeSegment segmentCollided, Collider other){
+        if(Head.EvaluateCollision(segmentCollided, other)) return;
+        GameplayController.Singleton.HandleCollision(segmentCollided, other);
     }
 
-    public void EvaluateCollision(SnakeSegment segment, Collider other) {
-        bool specialCollision = false;
-        SpecialPower[] powers = specialPowers.ToArray();
-        foreach (var power in powers) {
-            specialCollision |= power.SpecialCollision(segment, other);
-        }
-        if(specialCollision) return;
-        else GameplayController.Singleton.HandleCollision(segment, other);
+    public float EvaluateMovementDelta(){
+        float movingDelta = Head.EvaluateMovementDelta(movingDeltaTime);
+        if(movingDelta > .8f) movingDelta = .8f;
+        return movingDelta;
     }
 }

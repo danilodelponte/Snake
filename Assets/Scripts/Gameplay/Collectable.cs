@@ -4,22 +4,11 @@ using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
-
     public Arena arena;
-    public System.Type PowerType { get; set; }
-    public int Score { get => score; }
+    public SpecialPower SpecialPower { get; set; }
+    public int Score { get => score; set => score = value; }
 
     private int score = 1;
-
-    public Collectable Snapshot() {
-        bool wasActive = gameObject.activeSelf;
-        gameObject.SetActive(false);
-        Collectable copy = Instantiate(this, transform.parent);
-        copy.PowerType = PowerType;
-        copy.arena = arena;
-        gameObject.SetActive(wasActive);
-        return copy;
-    }
 
     private void SetNodePath(){
         arena.SetNode(transform.position, PathNodeType.COLLECTABLE);

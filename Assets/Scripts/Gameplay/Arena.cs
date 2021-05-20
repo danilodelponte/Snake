@@ -5,8 +5,6 @@ using UnityEngine;
 public class Arena : MonoBehaviour
 {
     [SerializeField] private Portal portalPrefab;
-    [SerializeField] private Collectable collectablePrefab;
-    [SerializeField] private Snake snakePrefab;
     [SerializeField] private int width = 40;
     [SerializeField] private int height = 20;
 
@@ -32,26 +30,6 @@ public class Arena : MonoBehaviour
         }
     }
 
-    public Snake SpawnSnake() {
-        var snake = Instantiate(snakePrefab, RandomPosition(), Quaternion.Euler(0,0,0));
-        snake.AddHead();
-        snake.AddSegment();
-        snake.AddSegment();
-        return snake;
-    }
-
-    public Collectable SpawnCollectable() {
-        var pos = RandomPosition();
-        Collectable collectable = Instantiate(collectablePrefab, pos, Quaternion.Euler(0, 0, 0));
-
-        int chance = UnityEngine.Random.Range(0,10);
-        if(chance > 4) {
-            collectable.PowerType = typeof(TimeTravel);
-            Debug.Log("spawned time travel!");
-        }
-        return collectable;
-    }
-
     public List<PathNode> GetNodes(PathNodeType type){
         List<PathNode> nodes = new List<PathNode>();
         PathNode node;
@@ -73,16 +51,7 @@ public class Arena : MonoBehaviour
     }
 
     public void SetNode(Vector3 position, PathNodeType type) {
-        try
-        {
-            gridArray[(int)position.x, (int)position.y].type = type;
-        }
-        catch (System.IndexOutOfRangeException error)
-        {
-            Debug.Log(error);
-            // throw;
-        }
-        
+        gridArray[(int)position.x, (int)position.y].type = type;
         debugTextArray[(int)position.x ,(int)position.y].text = type.ToString().ToCharArray()[0] + "";
         Color color = Color.white;
         if(type == PathNodeType.SNAKE) color = Color.green;
