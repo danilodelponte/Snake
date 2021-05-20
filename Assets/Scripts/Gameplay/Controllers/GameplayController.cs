@@ -91,9 +91,9 @@ public class GameplayController : MonoBehaviour
         Collectable collectable = Instantiate(collectablePrefab, arena.RandomPosition(), Quaternion.Euler(0, 0, 0));
 
         int chance = UnityEngine.Random.Range(0,10);
-        if(chance > 2) {
-            collectable.SpecialPower = new TimeTravel();
-        }
+        if(chance < 2) collectable.SpecialPower = new TimeTravel();
+        else if(chance < 6) collectable.SpecialPower = new EnginePower();
+
         return collectable;
     }
 

@@ -13,6 +13,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private PlayerSelectionController playerSelectionPrefab;
 
     [SerializeField] TextMeshProUGUI conflictedKeys;
+    [SerializeField] TextMeshProUGUI pressLeftToAdd;
 
     [SerializeField] Component addingPlayerOptions;
     [SerializeField] TextMeshProUGUI holdTwoToAdd;
@@ -32,6 +33,11 @@ public class MainMenuController : MonoBehaviour
 
     private List<Player> players = new List<Player>();
     private Dictionary<KeyCode, Player> keyPlayerMapping = new Dictionary<KeyCode, Player>();
+
+    private void Start() {
+        UpdateState();
+        UpdateGUI();
+    }
 
     private void OnGUI() {
         Event e = Event.current;
@@ -100,6 +106,7 @@ public class MainMenuController : MonoBehaviour
     }
 
     private void UpdateGUI() {
+        SetActive(pressLeftToAdd, state == State.Waiting);
         SetActive(conflictedKeys, state == State.Conflicted);
         UpdateAddingPlayerOptions();
         UpdateEditingPlayerOptions();
