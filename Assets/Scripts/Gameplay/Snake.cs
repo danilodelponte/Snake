@@ -6,7 +6,9 @@ using UnityEngine;
 public class Snake : MonoBehaviour
 {
     [SerializeField] private SnakeSegment segmentPrefab;
-    [SerializeField] private float movingDeltaTime;
+    [SerializeField] private float baseMovingDeltaTime;
+    [SerializeField] private float maxMovingDeltaTime;
+    [SerializeField] private float minMovingDeltaTime;
 
     public Player Player { get; set; }
     public Color Color { get => color; set => SetColor(value); }
@@ -36,12 +38,12 @@ public class Snake : MonoBehaviour
         newHead.CurrentDirection = Head.CurrentDirection;
         newHead.Color = Color;
         Head = newHead;
-        if(specialPower != null) Head.SpecialPower = specialPower;
 
 	    return Head;
     }
 
     private void SetColor(Color color) {
+        this.color = color;
         Head.Color = color;
     }
 
@@ -88,14 +90,13 @@ public class Snake : MonoBehaviour
     }
 
     public void EvaluateCollision(SnakeSegment segmentCollided, Collider other){
-        Debug.Log($"EvaluateCollision de {segmentCollided} com {other.gameObject.GetComponent<SnakeSegment>()}");
         if(Head.EvaluateCollision(segmentCollided, other)) return;
         GameplayController.Singleton.HandleCollision(segmentCollided, other);
     }
 
     public float EvaluateMovementDelta(){
-        float movingDelta = Head.EvaluateMovementDelta(movingDeltaTime);
-        if(movingDelta > .8f) movingDelta = .8f;
+        float movingDelta = Head.EvaluateMovementDelta(baseMovingDeltaTime);
+        movingDelta = Mathf.Clamp(movingDelta, minMovingDeltaTime, maxMovingDeltaTime);
         return movingDelta;
     }
 

@@ -43,7 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2b3ef181b3c256939d2cef434138612, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snakePrefab: {fileID: 3023000758315942140}
   segmentPrefab: {fileID: 1657520354136158151, guid: cd90998b4887440e184ffc5d452c2055,
     type: 3}
-  movingDeltaTime: 0.05
+  baseMovingDeltaTime: 0.8
+  maxMovingDeltaTime: 0.15
+  minMovingDeltaTime: 0.3

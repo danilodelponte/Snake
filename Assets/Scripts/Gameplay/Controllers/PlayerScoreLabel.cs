@@ -13,4 +13,8 @@ public class PlayerScoreLabel : MonoBehaviour
         string text = Player.Name + " " + Player.Score;
         label.SetText(text);
     }
+
+    public void SetColor(Color color) { 
+        label.color = color;
+    }
 }

@@ -4,7 +4,16 @@ using UnityEngine;
 
 public class GUIController : MonoBehaviour
 {
-    [SerializeField] private PlayerScoreLabel scoreLabelPrefab;   
+    [SerializeField] private PlayerScoreLabel scoreLabelPrefab;
+    private GameObject PausePanel { get => transform.Find("PausePanel").gameObject; }
+
+    public void ShowPausePanel() {
+        PausePanel.SetActive(true);
+    }
+
+    public void HidePausePanel() {
+        PausePanel.SetActive(false);
+    }
 
     public void AddPlayerLabel(Player player) {
         RectTransform lastTransform = lastLabelTransform();
@@ -12,6 +21,7 @@ public class GUIController : MonoBehaviour
         float offsetY = ((RectTransform) scoreLabel.transform).rect.height * ScoreLabels().Length;
         scoreLabel.transform.localPosition -= new Vector3(0, offsetY, 0);
         scoreLabel.Player = player;
+        scoreLabel.SetColor(player.Color);
         scoreLabel.UpdateScore();
     }
 

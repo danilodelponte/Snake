@@ -131,8 +131,9 @@ public class MainMenuController : MonoBehaviour
 
     private void AddPlayer(KeyCode[] playerKeys) {
         int playersCount = players.Count();
-        string name = $"Player { playersCount + 1 }";
-        Player player = new Player(name, playerKeys[0], playerKeys[1], UnityEngine.Random.ColorHSV());
+        string name = $"Player {playerKeys[0]}{playerKeys[1]}";
+        Color color = UnityEngine.Random.ColorHSV(0,1,.97f,1,.97f,1);
+        Player player = new Player(name, playerKeys[0], playerKeys[1], color);
         players.Add(player);
         keyPlayerMapping.Add(playerKeys[0], player);
         keyPlayerMapping.Add(playerKeys[1], player);

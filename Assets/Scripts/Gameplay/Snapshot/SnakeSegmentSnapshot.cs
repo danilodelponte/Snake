@@ -20,24 +20,12 @@ public class SnakeSegmentSnapshot {
         SpecialPower = segment.SpecialPower;
     }
 
-    public SnakeSegment LoadHead(Snake parent) {
-        SnakeSegment segment = Load(parent);
-        parent.Head = segment;
-        LoadPowers(segment);
-        return segment;
-    }
-
-    private SnakeSegment Load(Snake parent) { 
+    public SnakeSegment Load(Snake parent) { 
         GameObject go = (GameObject) GameObject.Instantiate(segmentPrefab, Position, Rotation, parent.transform);
         SnakeSegment segment = (SnakeSegment) go.GetComponent<SnakeSegment>();
         if(NextSegment != null) segment.NextSegment = NextSegment.Load(parent);
         segment.CurrentDirection = CurrentDirection;
+        segment.SpecialPower = SpecialPower;
         return segment;
     }
-
-    private void LoadPowers(SnakeSegment segment){
-        segment.SpecialPower = SpecialPower;
-        if(!segment.IsTail) segment.NextSegment.SpecialPower = NextSegment.SpecialPower;
-    }
-
 }

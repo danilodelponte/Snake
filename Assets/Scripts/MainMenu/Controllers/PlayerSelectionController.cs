@@ -13,5 +13,13 @@ public class PlayerSelectionController : MonoBehaviour
         playerNameLabel.text = player.Name;
         playerLeftKeyLabel.text = player.LeftKey.ToString();
         playerRightKeyLabel.text = player.RightKey.ToString();
+        SetColor(player.Color); 
+    }
+
+    private void SetColor(Color color) {
+        MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+        foreach (var renderer in renderers) {
+            renderer.material.color = color;
+        }
     }
 }

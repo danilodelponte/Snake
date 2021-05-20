@@ -14,7 +14,6 @@ public class Snapshot
     }
 
     public static Snapshot Create() {
-        Debug.Log("Snapshot Create");
         Snake[] snakes = GameObject.FindObjectsOfType<Snake>();
         SnakeSnapshot[] snappedSnakes = new SnakeSnapshot[snakes.Length];
         for (int i = 0; i < snakes.Length; i++) {
@@ -31,7 +30,6 @@ public class Snapshot
     }
 
     public void Load() {
-        Debug.Log("Snapshot Load");
         foreach (var snapSnake in SnappedSnakes) {
             var snake = snapSnake.Load();
             if(snake.Player != null) {

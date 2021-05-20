@@ -9,7 +9,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
     private static T CreateSingleton()
     {
-        var ownerObject = new GameObject($"{typeof(T).Name} (singleton)");
+        var ownerObject = new GameObject($"{typeof(T).Name} (Singleton)");
         Debug.Log($"{ownerObject.name} created");
         var instance = ownerObject.AddComponent<T>();
         DontDestroyOnLoad(ownerObject);

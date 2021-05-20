@@ -4,17 +4,16 @@ using UnityEngine;
 
 public class TimeTravel : SpecialPower
 {
-    private Snapshot snapshot;
+    public Snapshot snapshot;
 
     public override void Activate() {
         DisablePrevious();
-        Debug.Log($"TimeTravel Activate on {SnakeSegment}");
+        Debug.Log($"{SnakeSegment.ParentSnake} saved time!");
         if(snapshot == null) snapshot = GameplayController.Singleton.CreateSnapshot();
     }
 
     public override void Deactivate()
     {
-        Debug.Log($"TimeTravel Deactivate on {SnakeSegment}");
         snapshot = null;
         base.Deactivate();
     }
@@ -36,8 +35,8 @@ public class TimeTravel : SpecialPower
         if(other.gameObject.GetComponent<SnakeSegment>() == null) return false;
 
         Snapshot travelTo = this.snapshot;
+        Debug.Log($"{SnakeSegment.ParentSnake} is time travelling!");
         Deactivate();
-        Debug.Log($"TimeTravel SpecialCollision on {SnakeSegment}");
         GameplayController.Singleton.LoadSnapshot(travelTo);
         GameplayController.Singleton.SpawnCollectable();
         return true;

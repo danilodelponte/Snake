@@ -16,6 +16,7 @@ public class SnakeSnapshot {
     public SnakeSnapshot(Snake snake) {
         Player = snake.Player;
         Name = snake.gameObject.name;
+        Color = snake.Color;
         Direction = snake.Direction;
         Position = snake.transform.position;
         Head = new SnakeSegmentSnapshot(snake.Head);
@@ -27,7 +28,8 @@ public class SnakeSnapshot {
         snake.Player = Player;
         snake.gameObject.name = Name;
         snake.Direction = Direction;
-        Head.LoadHead(snake);
+        snake.Head = Head.Load(snake);
+        snake.Color = Color;
         return snake;
     }
 }
