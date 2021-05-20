@@ -18,13 +18,13 @@ public class GameplayController : MonoBehaviour
         arena.GenerateGrid();
         // arena.GridDebug();
 
-        for(int i = 0; i < 3; i++) {
-            Snake enemySnake = SpawnSnake();
-            enemySnake.gameObject.name = $"snake {i}";
-            enemySnake.Color = UnityEngine.Random.ColorHSV();
-            AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
-            SpawnCollectable();
-        }
+        // for(int i = 0; i < 3; i++) {
+        //     Snake enemySnake = SpawnSnake();
+        //     enemySnake.gameObject.name = $"snake {i}";
+        //     enemySnake.Color = UnityEngine.Random.ColorHSV();
+        //     AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
+        //     SpawnCollectable();
+        // }
 
         Player[] players = GameManager.Instance.Players;
         // if(players == null) {
@@ -32,9 +32,9 @@ public class GameplayController : MonoBehaviour
         //     players = new Player[1];
         //     players[0] = player;
         // }
-        // foreach (Player player in players) {
-        //     InitPlayer(player);
-        // }
+        foreach (Player player in players) {
+            InitPlayer(player);
+        }
     }
 
     private void InitSingleton() {
