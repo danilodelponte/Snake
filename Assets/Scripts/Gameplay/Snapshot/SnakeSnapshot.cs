@@ -12,12 +12,14 @@ public class SnakeSnapshot {
     public Vector3 Direction { get; }
     public Vector3 Position { get; }
     public Color Color { get; }
+    public SnakeControl Control { get; }
 
     public SnakeSnapshot(Snake snake) {
         Player = snake.Player;
         Name = snake.gameObject.name;
         Color = snake.Color;
         Position = snake.transform.position;
+        Control = snake.GetComponent<SnakeControl>();
         Head = new SnakeSegmentSnapshot(snake.Head);
     }
 
@@ -28,6 +30,7 @@ public class SnakeSnapshot {
         snake.gameObject.name = Name;
         snake.Head = Head.Load(snake);
         snake.Color = Color;
+        if(Control) snake.gameObject.AddComponent(Control.GetType());
         return snake;
     }
 }

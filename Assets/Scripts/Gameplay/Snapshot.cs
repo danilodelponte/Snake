@@ -33,10 +33,8 @@ public class Snapshot
         foreach (var snapSnake in SnappedSnakes) {
             var snake = snapSnake.Load();
             if(snake.Player != null) {
-                PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
+                PlayerControl playerControl = snake.gameObject.GetComponent<PlayerControl>();
                 playerControl.SetKeys(snake.Player.LeftKey, snake.Player.RightKey);
-            } else {
-                AIControl aiControl = snake.gameObject.AddComponent<AIControl>();
             }
         };
 

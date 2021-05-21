@@ -18,8 +18,8 @@ public class GameplayController : MonoBehaviour
         arena.GenerateGrid();
         // arena.GridDebug();
 
-        // InitSpecialPowerTesting();
-        InitWithPlayers();
+        InitSpecialPowerTesting();
+        // InitWithPlayers();
     }
 
     private void Update() {
@@ -48,7 +48,7 @@ public class GameplayController : MonoBehaviour
         Player player = new Player("Tester", KeyCode.A, KeyCode.S, Color.blue);
         SpawnPlayerSnake(player);
         SpawnDummySnake(8);
-        SpawnCollectable();
+        SpawnCollectable(new BatteringRam());
     }
 
     private void InitWithPlayers() {
@@ -97,6 +97,7 @@ public class GameplayController : MonoBehaviour
         for(int i = 3; i < numberOfSegments; i++) {
             snake.AddSegment();
         }
+        snake.Head.CurrentDirection = Vector3.zero;
         return snake;
     }
 
@@ -148,7 +149,6 @@ public class GameplayController : MonoBehaviour
 
     public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {
         if(segment1.IsHead) KillSnake(segment1.ParentSnake);
-        if(segment2.IsHead) KillSnake(segment2.ParentSnake);
     }
 
     public Snapshot CreateSnapshot() {
