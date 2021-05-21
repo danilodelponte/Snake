@@ -48,7 +48,7 @@ public class GameplayController : MonoBehaviour
         Player player = new Player("Tester", KeyCode.A, KeyCode.S, Color.blue);
         SpawnPlayerSnake(player);
         SpawnDummySnake(8);
-        SpawnCollectable(new Confused());
+        SpawnCollectable(new TimeTravel());
     }
 
     private void InitWithPlayers() {
@@ -110,10 +110,13 @@ public class GameplayController : MonoBehaviour
     }
 
     public Collectable SpawnCollectable() {
-        int chance = UnityEngine.Random.Range(0,10);
+        int chance = UnityEngine.Random.Range(0,100);
         SpecialPower specialPower = null;
-        if(chance < 2) specialPower = new TimeTravel();
-        else if(chance < 6) specialPower = new EnginePower();
+        if(chance < 10) specialPower = new TimeTravel();
+        else if(chance < 25) specialPower = new EnginePower();
+        else if(chance < 30) specialPower = new HeadBomb();
+        else if(chance < 40) specialPower = new BatteringRam();
+        else if(chance < 10) specialPower = new Confused();
         return SpawnCollectable(specialPower);
     }
     
@@ -172,7 +175,7 @@ public class GameplayController : MonoBehaviour
         }
     }
 
-    private void KillSnake(Snake snake) {
+    public void KillSnake(Snake snake) {
         Debug.Log($"{snake} has died!");
         snake.gameObject.SetActive(false);
         GameObject.Destroy(snake.gameObject);
