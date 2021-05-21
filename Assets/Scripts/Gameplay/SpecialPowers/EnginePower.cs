@@ -8,7 +8,7 @@ public class EnginePower : SpecialPower
 
     public override void Activate()
     {
-        Debug.Log($"{SnakeSegment.ParentSnake} got engine power!");
+        Debug.Log($"{SnakeSegment.Snake} got engine power!");
         base.Activate();
     }
 

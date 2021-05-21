@@ -48,7 +48,7 @@ public class GameplayController : MonoBehaviour
         Player player = new Player("Tester", KeyCode.A, KeyCode.S, Color.blue);
         SpawnPlayerSnake(player);
         SpawnDummySnake(8);
-        SpawnCollectable(new BatteringRam());
+        SpawnCollectable(new Confused());
     }
 
     private void InitWithPlayers() {
@@ -136,7 +136,7 @@ public class GameplayController : MonoBehaviour
         collectable.gameObject.SetActive(false);
         GameObject.Destroy(collectable.gameObject);
 
-        Snake snake = segment.ParentSnake;
+        Snake snake = segment.Snake;
         SnakeSegment newSegment = snake.AddSegment();
         if(collectable.SpecialPower != null) {
             newSegment.SpecialPower = collectable.SpecialPower;
@@ -148,7 +148,7 @@ public class GameplayController : MonoBehaviour
     }
 
     public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {
-        if(segment1.IsHead) KillSnake(segment1.ParentSnake);
+        if(segment1.IsHead) KillSnake(segment1.Snake);
     }
 
     public Snapshot CreateSnapshot() {

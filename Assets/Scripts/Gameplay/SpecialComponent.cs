@@ -17,4 +17,8 @@ public class SpecialComponent : MonoBehaviour
     public void SetSpecialPower(SpecialPower specialPower) {
         this.specialPower = specialPower;
     }
+
+    private void FixedUpdate() {
+        if(SpecialPower!= null) SpecialPower.FixedUpdate();
+    }
 }

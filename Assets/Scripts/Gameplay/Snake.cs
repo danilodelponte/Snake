@@ -67,13 +67,7 @@ public class Snake : MonoBehaviour
         }
     }
 
-    public void SetDirection(Vector3 direction) {
-        if((direction + Head.CurrentDirection) == Vector3.zero) return;
-        Head.CurrentDirection = direction;
-    }
-
     public void Move(Vector3 direction) {
-        if(direction == Vector3.zero) return;
         FreeNodePaths();
         Head.Move(direction);
         SetNodePaths();

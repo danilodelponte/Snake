@@ -14,4 +14,5 @@ public class SpecialPower
     public virtual Vector3 SpecialDirection(Vector3 direction){ return direction; }
     public virtual float SpecialMovement(float maxDeltaTime){ return maxDeltaTime; }
     public virtual bool SpecialCollision(SnakeSegment segmentCollided, Collider other) { return false; }
+    public virtual void FixedUpdate() {}
 }

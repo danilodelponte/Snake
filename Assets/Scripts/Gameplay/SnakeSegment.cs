@@ -12,9 +12,9 @@ public class SnakeSegment : MonoBehaviour
     public Arena arena;
     public Vector3 CurrentDirection { get; set; }
     public SnakeSegment NextSegment { get; set; }
-    public Snake ParentSnake { get => transform.parent.gameObject.GetComponent<Snake>(); }
+    public Snake Snake { get => transform.parent.gameObject.GetComponent<Snake>(); }
     public bool IsTail { get => NextSegment == null; }
-    public bool IsHead { get => ParentSnake.Head == this; }
+    public bool IsHead { get => Snake.Head == this; }
     public SpecialPower SpecialPower { get => GetSpecialPower(); set => SetSpecialPower(value); }
 
     private void OnEnable() {
@@ -45,6 +45,9 @@ public class SnakeSegment : MonoBehaviour
     }
 
     public void Move(Vector3 direction) {
+        if(direction == Vector3.zero) return;
+
+        if((direction + CurrentDirection) == Vector3.zero) direction = CurrentDirection;
         transform.position += direction;
         KeepInsideArena();
         transform.rotation = Quaternion.Euler(direction * 90);
@@ -74,7 +77,7 @@ public class SnakeSegment : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        ParentSnake.EvaluateCollision(this, other);
+        Snake.EvaluateCollision(this, other);
     }
 
     public bool EvaluateCollision(SnakeSegment segmentCollided, Collider other) {
@@ -106,6 +109,6 @@ public class SnakeSegment : MonoBehaviour
     }
 
     public override string ToString() {
-        return $"SnakeSegment {ParentSnake.name}";
+        return $"SnakeSegment {Snake.name}";
     }
 }

@@ -8,13 +8,13 @@ public class BatteringRam : SpecialPower
     private bool crossingActive = false;
 
     public override void Activate() {
-        Debug.Log($"{SnakeSegment.ParentSnake} got a battering ram!");
+        Debug.Log($"{SnakeSegment.Snake} got a battering ram!");
     }
 
     public override void Deactivate()
     {
         base.Deactivate();
-        Debug.Log($"{SnakeSegment.ParentSnake} battering ram used.");
+        Debug.Log($"{SnakeSegment.Snake} battering ram used.");
     }
 
     public override bool SpecialCollision(SnakeSegment segmentCollided, Collider other) {
@@ -25,7 +25,7 @@ public class BatteringRam : SpecialPower
             safePosition = otherSegment.transform.position;
             crossingActive = true;
         }
-        Debug.Log($"{SnakeSegment.ParentSnake} is crossing!");
+        Debug.Log($"{SnakeSegment.Snake} is crossing!");
         if(segmentCollided.IsTail || otherSegment.IsTail || otherSegment.IsHead) Deactivate();
         if(otherSegment.transform.position == safePosition) return true;
         

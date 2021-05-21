@@ -8,7 +8,7 @@ public class TimeTravel : SpecialPower
 
     public override void Activate() {
         DisablePrevious();
-        Debug.Log($"{SnakeSegment.ParentSnake} saved time!");
+        Debug.Log($"{SnakeSegment.Snake} saved time!");
         if(snapshot == null) snapshot = GameplayController.Singleton.CreateSnapshot();
     }
 
@@ -19,7 +19,7 @@ public class TimeTravel : SpecialPower
     }
 
     private void DisablePrevious(){
-        List<SpecialPower> specialPowers = SnakeSegment.ParentSnake.SpecialPowers();
+        List<SpecialPower> specialPowers = SnakeSegment.Snake.SpecialPowers();
         foreach (var specialPower in specialPowers) {
             if(specialPower == this) continue;
 
@@ -35,7 +35,7 @@ public class TimeTravel : SpecialPower
         if(other.gameObject.GetComponent<SnakeSegment>() == null) return false;
 
         Snapshot travelTo = this.snapshot;
-        Debug.Log($"{SnakeSegment.ParentSnake} is time travelling!");
+        Debug.Log($"{SnakeSegment.Snake} is time travelling!");
         Deactivate();
         GameplayController.Singleton.LoadSnapshot(travelTo);
         GameplayController.Singleton.SpawnCollectable();
