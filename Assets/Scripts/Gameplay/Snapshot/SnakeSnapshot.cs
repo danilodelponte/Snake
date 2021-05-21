@@ -17,7 +17,6 @@ public class SnakeSnapshot {
         Player = snake.Player;
         Name = snake.gameObject.name;
         Color = snake.Color;
-        Direction = snake.Direction;
         Position = snake.transform.position;
         Head = new SnakeSegmentSnapshot(snake.Head);
     }
@@ -27,7 +26,6 @@ public class SnakeSnapshot {
         Snake snake = (Snake) go.GetComponent<Snake>();
         snake.Player = Player;
         snake.gameObject.name = Name;
-        snake.Direction = Direction;
         snake.Head = Head.Load(snake);
         snake.Color = Color;
         return snake;

@@ -18,10 +18,8 @@ public class GameplayController : MonoBehaviour
         arena.GenerateGrid();
         // arena.GridDebug();
 
-        Player[] players = GameManager.Instance.Players;
-        foreach (Player player in players) {
-            InitPlayer(player);
-        }
+        // InitSpecialPowerTesting();
+        InitWithPlayers();
     }
 
     private void Update() {
@@ -46,12 +44,26 @@ public class GameplayController : MonoBehaviour
         GameManager.Instance.LoadMainMenu();
     }
 
-    private void AiOnly(int numberOfSnakes) {
+    private void InitSpecialPowerTesting() {
+        Player player = new Player("Tester", KeyCode.A, KeyCode.S, Color.blue);
+        SpawnPlayerSnake(player);
+        SpawnDummySnake(8);
+        SpawnCollectable();
+    }
+
+    private void InitWithPlayers() {
+        Player[] players = GameManager.Instance.Players;
+        foreach (Player player in players) {
+            gUI.AddPlayerLabel(player);
+            SpawnPlayerSnake(player);
+            SpawnEnemySnake();
+            SpawnCollectable();
+        }
+    }
+
+    private void InitWithAiOnly(int numberOfSnakes) {
         for(int i = 0; i < numberOfSnakes; i++) {
-            Snake enemySnake = SpawnSnake();
-            enemySnake.gameObject.name = $"snake {i}";
-            enemySnake.Color = UnityEngine.Random.ColorHSV(0,1,0,1,.5f,.7f);
-            AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
+            SpawnEnemySnake();
             SpawnCollectable();
         }
     }
@@ -64,19 +76,28 @@ public class GameplayController : MonoBehaviour
         Singleton = this;
     }
 
-    private void InitPlayer(Player player) {
-        gUI.AddPlayerLabel(player);
-
+    private void SpawnPlayerSnake(Player player) {
         var snake = SpawnSnake();
         snake.Player = player;
         snake.Color = player.Color;
         PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
         playerControl.SetKeys(snake.Player.LeftKey, snake.Player.RightKey);
-        
+    }
+
+    private Snake SpawnEnemySnake() {
         Snake enemySnake = SpawnSnake();
         enemySnake.Color = UnityEngine.Random.ColorHSV(0,1,.3f,.5f,.3f,.5f);
         AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
-        SpawnCollectable();
+        return enemySnake;
+    }
+
+    private Snake SpawnDummySnake(int numberOfSegments) {
+        Snake snake = SpawnSnake();
+        snake.Color = Color.gray;
+        for(int i = 3; i < numberOfSegments; i++) {
+            snake.AddSegment();
+        }
+        return snake;
     }
 
     public Snake SpawnSnake() {
@@ -88,12 +109,16 @@ public class GameplayController : MonoBehaviour
     }
 
     public Collectable SpawnCollectable() {
-        Collectable collectable = Instantiate(collectablePrefab, arena.RandomPosition(), Quaternion.Euler(0, 0, 0));
-
         int chance = UnityEngine.Random.Range(0,10);
-        if(chance < 2) collectable.SpecialPower = new TimeTravel();
-        else if(chance < 6) collectable.SpecialPower = new EnginePower();
-
+        SpecialPower specialPower = null;
+        if(chance < 2) specialPower = new TimeTravel();
+        else if(chance < 6) specialPower = new EnginePower();
+        return SpawnCollectable(specialPower);
+    }
+    
+    public Collectable SpawnCollectable(SpecialPower power) {
+        Collectable collectable = Instantiate(collectablePrefab, arena.RandomPosition(), Quaternion.Euler(0, 0, 0));
+        collectable.SpecialPower = power;
         return collectable;
     }
 

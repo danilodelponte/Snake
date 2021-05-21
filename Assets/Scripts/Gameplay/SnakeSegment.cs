@@ -84,6 +84,13 @@ public class SnakeSegment : MonoBehaviour
         return false;
     }
 
+    public Vector3 EvaluateDirection(Vector3 direction) {
+        if(SpecialPower != null) direction = SpecialPower.SpecialDirection(direction);
+        if(!IsTail) return NextSegment.EvaluateDirection(direction);
+
+        return direction;
+    }
+
     public float EvaluateMovementDelta(float movingDelta){
         movingDelta += movingDeltaIncrease;
         if(SpecialPower != null) movingDelta = SpecialPower.SpecialMovement(movingDelta);

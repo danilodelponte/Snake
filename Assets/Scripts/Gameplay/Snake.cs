@@ -13,9 +13,7 @@ public class Snake : MonoBehaviour
     public Player Player { get; set; }
     public Color Color { get => color; set => SetColor(value); }
     public SnakeSegment Head { get; set; }
-    public Vector3 Direction { get => intendedDirection; set => intendedDirection = value; }
 
-    private Vector3 intendedDirection = Vector3.up;
     private Color color;
     private float movementDeltaTimer = 0;
 
@@ -23,12 +21,12 @@ public class Snake : MonoBehaviour
         if(Head !=null) return;
 
         Head = Instantiate<SnakeSegment>(segmentPrefab, transform);
-        Head.CurrentDirection = Direction;
+        Head.CurrentDirection = Vector3.up;
         Head.Color = color;
     }
 
     public SnakeSegment AddSegment(SpecialPower specialPower = null) {
-        Vector3 newHeadPosition = Head.transform.position + Direction;
+        Vector3 newHeadPosition = Head.transform.position + Head.CurrentDirection;
         Quaternion newHeadRotation = Head.transform.rotation;
 	    SnakeSegment newHead = Instantiate<SnakeSegment>(
             segmentPrefab, newHeadPosition, newHeadRotation, transform
@@ -64,21 +62,34 @@ public class Snake : MonoBehaviour
 
         if(movementDeltaTimer >= movingDelta) {
             movementDeltaTimer -= movingDelta;
-            Move();
+            Vector3 direction = EvaluateDirection();
+            Move(direction);
         }
     }
 
     public void SetDirection(Vector3 direction) {
         if((direction + Head.CurrentDirection) == Vector3.zero) return;
-        Direction = direction;
+        Head.CurrentDirection = direction;
     }
 
-    public void Move() {
-        AIControl aiControl = GetComponent<AIControl>();
-        if(aiControl != null) Direction = aiControl.GetDirection();
+    public void Move(Vector3 direction) {
+        if(direction == Vector3.zero) return;
         FreeNodePaths();
-        Head.Move(Direction);
+        Head.Move(direction);
         SetNodePaths();
+    }
+
+    public Vector3 EvaluateDirection() {
+        Vector3 direction = ControlDirection();
+        direction = Head.EvaluateDirection(direction);
+        return direction;
+    }
+
+    public Vector3 ControlDirection() {
+        SnakeControl control = GetComponent<SnakeControl>();
+        if(control == null) return Head.CurrentDirection;
+
+        return control.GetDirection();
     }
 
     public void SetNodePaths(){
