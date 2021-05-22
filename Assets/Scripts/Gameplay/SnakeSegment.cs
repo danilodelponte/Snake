@@ -76,6 +76,13 @@ public class SnakeSegment : MonoBehaviour
         if(!IsTail) NextSegment.SetNodePath();
     }
 
+    public int EvaluateScoreGain(int gain) {
+        if(Modifier != null) gain = Modifier.ScoreGainModifier(gain);
+        if(!IsTail) return NextSegment.EvaluateScoreGain(gain);
+
+        return gain;
+    }
+
     public bool EvaluateDeath() {
         if(Modifier != null && Modifier.DeathModifier()) return true;
         if(!IsTail) return NextSegment.EvaluateDeath();

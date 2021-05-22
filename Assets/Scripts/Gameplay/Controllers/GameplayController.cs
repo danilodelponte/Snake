@@ -48,7 +48,8 @@ public class GameplayController : MonoBehaviour
         Player player = new Player("Tester", KeyCode.A, KeyCode.S, Color.blue);
         SpawnPlayerSnake(player);
         SpawnDummySnake(8);
-        SpawnCollectable(new TimeTravel());
+        SpawnCollectable(new DoubleScore());
+        gUI.AddPlayerLabel(player);
     }
 
     private void InitWithPlayers() {
@@ -143,7 +144,7 @@ public class GameplayController : MonoBehaviour
         SnakeSegment newSegment = snake.AddSegment(collectable.Modifier);
 
         SpawnCollectable();
-        if(snake.Player != null) IncrementPlayerScore(snake.Player, collectable.Score);
+        IncrementPlayerScore(snake, collectable.Score);
     }
 
     public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {
@@ -175,8 +176,12 @@ public class GameplayController : MonoBehaviour
         snake.Die();
     }
 
-    public void IncrementPlayerScore(Player player, int score) {
-        player.Score += score;
+    public void IncrementPlayerScore(Snake snake, int increment) {
+        Player player = snake.Player;
+        if(player == null) return;
+        
+        increment = snake.EvaluateScoreGain(increment);
+        player.Score += increment;
         gUI.UpdatePlayerScore(player);
     }
 }

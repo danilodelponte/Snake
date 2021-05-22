@@ -11,6 +11,7 @@ public class SpecialModifier
         SnakeSegment.Modifier = null;
     }
 
+    public virtual int ScoreGainModifier(int gain){ return gain; }
     public virtual bool DeathModifier(){ return false; }
     public virtual Vector3 DirectionModifier(Vector3 direction){ return direction; }
     public virtual float MovementModifier(float maxDeltaTime){ return maxDeltaTime; }

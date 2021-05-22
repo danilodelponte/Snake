@@ -101,6 +101,10 @@ public class Snake : MonoBehaviour
         GameObject.Destroy(gameObject);
     }
 
+    public int EvaluateScoreGain(int gain) {
+        return Head.EvaluateScoreGain(gain);
+    }
+
     public bool EvaluateDeath() {
         if(Head.EvaluateDeath()) return true;
 
