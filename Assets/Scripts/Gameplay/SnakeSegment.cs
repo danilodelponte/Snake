@@ -15,7 +15,7 @@ public class SnakeSegment : MonoBehaviour
     public Snake Snake { get => transform.parent.gameObject.GetComponent<Snake>(); }
     public bool IsTail { get => NextSegment == null; }
     public bool IsHead { get => Snake.Head == this; }
-    public SpecialPower SpecialPower { get => GetSpecialPower(); set => SetSpecialPower(value); }
+    public SpecialModifier Modifier { get => GetModifier(); set => SetModifier(value); }
 
     private void OnEnable() {
         arena = GameObject.Find("Arena").GetComponent<Arena>();
@@ -31,17 +31,17 @@ public class SnakeSegment : MonoBehaviour
         FreeNodePath();
     }
 
-    private void SetSpecialPower(SpecialPower specialPower) {
-        if(specialPower != null) {
-            specialPower.SnakeSegment = this;
-            Transform powerObject = transform.Find(specialPower.ToString());
+    private void SetModifier(SpecialModifier modifier) {
+        if(modifier != null) {
+            modifier.SnakeSegment = this;
+            Transform powerObject = transform.Find(modifier.ToString());
             if(powerObject != null) { gameObject.SetActive(true); }
         }
-        SpecialComponent.SpecialPower = specialPower;
+        SpecialComponent.Modifier = modifier;
     }
 
-    private SpecialPower GetSpecialPower() {
-        return SpecialComponent.SpecialPower;
+    private SpecialModifier GetModifier() {
+        return SpecialComponent.Modifier;
     }
 
     public void Move(Vector3 direction) {
@@ -77,7 +77,7 @@ public class SnakeSegment : MonoBehaviour
     }
 
     public bool EvaluateDeath() {
-        if(SpecialPower != null && SpecialPower.SpecialDeath()) return true;
+        if(Modifier != null && Modifier.DeathModifier()) return true;
         if(!IsTail) return NextSegment.EvaluateDeath();
 
         return false;
@@ -88,14 +88,14 @@ public class SnakeSegment : MonoBehaviour
     }
 
     public bool EvaluateCollision(SnakeSegment segmentCollided, Collider other) {
-        if(SpecialPower != null && SpecialPower.SpecialCollision(segmentCollided, other)) return true;
+        if(Modifier != null && Modifier.CollisionModifier(segmentCollided, other)) return true;
         if(!IsTail) return NextSegment.EvaluateCollision(segmentCollided, other);
 
         return false;
     }
 
     public Vector3 EvaluateDirection(Vector3 direction) {
-        if(SpecialPower != null) direction = SpecialPower.SpecialDirection(direction);
+        if(Modifier != null) direction = Modifier.DirectionModifier(direction);
         if(!IsTail) return NextSegment.EvaluateDirection(direction);
 
         return direction;
@@ -103,7 +103,7 @@ public class SnakeSegment : MonoBehaviour
 
     public float EvaluateMovementDelta(float movingDelta){
         movingDelta += movingDeltaIncrease;
-        if(SpecialPower != null) movingDelta = SpecialPower.SpecialMovement(movingDelta);
+        if(Modifier != null) movingDelta = Modifier.MovementModifier(movingDelta);
         if(!IsTail) return NextSegment.EvaluateMovementDelta(movingDelta);
 
         return movingDelta;

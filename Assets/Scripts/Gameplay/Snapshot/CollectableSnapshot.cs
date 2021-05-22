@@ -6,19 +6,19 @@ public class CollectableSnapshot {
 
     private static GameObject collectablePrefab = Resources.Load("Prefabs/Collectable") as GameObject;
 
-    public SpecialPower SpecialPower { get; set; }
+    public SpecialModifier Modifier { get; set; }
     public int Score { get; set; }
     public Vector3 Position { get; set; }
 
     public CollectableSnapshot(Collectable collectable) {
-        SpecialPower = collectable.SpecialPower;
+        Modifier = collectable.Modifier;
         Score = collectable.Score;
     }
 
     public Collectable Load() {
         GameObject go = (GameObject) GameObject.Instantiate(collectablePrefab, Position, Quaternion.Euler(0,0,0));
         Collectable collectable = (Collectable) go.GetComponent<Collectable>();
-        collectable.SpecialPower = SpecialPower;
+        collectable.Modifier = Modifier;
         collectable.Score = Score;
         return collectable;
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Confused : SpecialPower
+public class Confused : SpecialModifier
 {
     private float timer;
     private float maxTime = 5f;
@@ -22,7 +22,7 @@ public class Confused : SpecialPower
         if(timer > maxTime) Deactivate();
     }
 
-    public override Vector3 SpecialDirection(Vector3 direction)
+    public override Vector3 DirectionModifier(Vector3 direction)
     {
         return direction * -1;
     }

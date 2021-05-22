@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HeadBomb : SpecialPower
+public class HeadBomb : SpecialModifier
 {
     private static Bomb prefab;
 
@@ -27,12 +27,12 @@ public class HeadBomb : SpecialPower
         if(timer > maxTime) Explode();
     }
 
-    public override bool SpecialCollision(SnakeSegment segmentCollided, Collider other)
+    public override bool CollisionModifier(SnakeSegment segmentCollided, Collider other)
     {
-        // when another collectable is picked up they do not activate special powers
+        // when another collectable is picked up they do not activate special Modifiers
         if(other.gameObject.GetComponent<Collectable>() != null) {
             Collectable collectable = other.gameObject.GetComponent<Collectable>();
-            collectable.SpecialPower = null;
+            collectable.Modifier = null;
             GameplayController.Singleton.CollectablePickedUp(segmentCollided, collectable);
             Debug.Log("Got Bomb!");
             return true;

@@ -111,18 +111,18 @@ public class GameplayController : MonoBehaviour
 
     public Collectable SpawnCollectable() {
         int chance = UnityEngine.Random.Range(0,100);
-        SpecialPower specialPower = null;
-        if(chance < 10) specialPower = new TimeTravel();
-        else if(chance < 25) specialPower = new EnginePower();
-        else if(chance < 30) specialPower = new HeadBomb();
-        else if(chance < 40) specialPower = new BatteringRam();
-        else if(chance < 10) specialPower = new Confused();
-        return SpawnCollectable(specialPower);
+        SpecialModifier modifier = null;
+        if(chance < 10) modifier = new TimeTravel();
+        else if(chance < 25) modifier = new EnginePower();
+        else if(chance < 30) modifier = new HeadBomb();
+        else if(chance < 40) modifier = new BatteringRam();
+        else if(chance < 10) modifier = new Confused();
+        return SpawnCollectable(modifier);
     }
     
-    public Collectable SpawnCollectable(SpecialPower power) {
+    public Collectable SpawnCollectable(SpecialModifier modifier) {
         Collectable collectable = Instantiate(collectablePrefab, arena.RandomPosition(), Quaternion.Euler(0, 0, 0));
-        collectable.SpecialPower = power;
+        collectable.Modifier = modifier;
         return collectable;
     }
 
@@ -140,11 +140,7 @@ public class GameplayController : MonoBehaviour
         GameObject.Destroy(collectable.gameObject);
 
         Snake snake = segment.Snake;
-        SnakeSegment newSegment = snake.AddSegment();
-        if(collectable.SpecialPower != null) {
-            newSegment.SpecialPower = collectable.SpecialPower;
-            newSegment.SpecialPower.Activate();
-        }
+        SnakeSegment newSegment = snake.AddSegment(collectable.Modifier);
 
         SpawnCollectable();
         if(snake.Player != null) IncrementPlayerScore(snake.Player, collectable.Score);

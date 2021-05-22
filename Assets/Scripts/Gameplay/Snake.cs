@@ -25,7 +25,7 @@ public class Snake : MonoBehaviour
         Head.Color = color;
     }
 
-    public SnakeSegment AddSegment(SpecialPower specialPower = null) {
+    public SnakeSegment AddSegment(SpecialModifier modifier = null) {
         Vector3 newHeadPosition = Head.transform.position + Head.CurrentDirection;
         Quaternion newHeadRotation = Head.transform.rotation;
 	    SnakeSegment newHead = Instantiate<SnakeSegment>(
@@ -37,6 +37,11 @@ public class Snake : MonoBehaviour
         newHead.Color = Color;
         Head = newHead;
 
+        if(modifier != null) {
+            Head.Modifier = modifier;
+            Head.Modifier.Activate();
+        }
+
 	    return Head;
     }
 
@@ -45,15 +50,15 @@ public class Snake : MonoBehaviour
         Head.Color = color;
     }
 
-    public List<SpecialPower> SpecialPowers() {
+    public List<SpecialModifier> Modifiers() {
         SpecialComponent[] components = GetComponentsInChildren<SpecialComponent>();
-        List<SpecialPower> specialPowers = new List<SpecialPower>();
+        List<SpecialModifier> modifiers = new List<SpecialModifier>();
         foreach (SpecialComponent component in components) {
-            if(component.SpecialPower != null) {
-                specialPowers.Add(component.SpecialPower);
+            if(component.Modifier != null) {
+                modifiers.Add(component.Modifier);
             }
         }
-        return specialPowers;
+        return modifiers;
     }
 
     private void FixedUpdate() {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TimeTravel : SpecialPower
+public class TimeTravel : SpecialModifier
 {
     public Snapshot snapshot;
 
@@ -19,17 +19,17 @@ public class TimeTravel : SpecialPower
     }
 
     private void DisablePrevious(){
-        List<SpecialPower> specialPowers = SnakeSegment.Snake.SpecialPowers();
-        foreach (var specialPower in specialPowers) {
-            if(specialPower == this) continue;
+        List<SpecialModifier> specialModifiers = SnakeSegment.Snake.Modifiers();
+        foreach (var specialModifier in specialModifiers) {
+            if(specialModifier == this) continue;
 
-            if(specialPower is TimeTravel) {
-                specialPower.Deactivate();
+            if(specialModifier is TimeTravel) {
+                specialModifier.Deactivate();
             }
         }
     }
 
-    public override bool SpecialDeath() {
+    public override bool DeathModifier() {
         if(snapshot == null) return false;
 
         Snapshot travelTo = this.snapshot;

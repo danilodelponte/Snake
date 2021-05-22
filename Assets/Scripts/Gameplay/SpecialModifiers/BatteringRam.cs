@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BatteringRam : SpecialPower
+public class BatteringRam : SpecialModifier
 {
     private Vector3 safePosition;
     private bool crossingActive = false;
@@ -17,7 +17,7 @@ public class BatteringRam : SpecialPower
         Debug.Log($"{SnakeSegment.Snake} battering ram used.");
     }
 
-    public override bool SpecialCollision(SnakeSegment segmentCollided, Collider other) {
+    public override bool CollisionModifier(SnakeSegment segmentCollided, Collider other) {
         SnakeSegment otherSegment = other.gameObject.GetComponent<SnakeSegment>();
         if(otherSegment == null) return false;
 

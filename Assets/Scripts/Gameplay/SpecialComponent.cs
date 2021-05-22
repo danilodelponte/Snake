@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class SpecialComponent : MonoBehaviour
 {
-    private SpecialPower specialPower;
-    public SpecialPower SpecialPower { get => specialPower; set => SetSpecialPower(value); }
+    private SpecialModifier modifier;
+    public SpecialModifier Modifier { get => modifier; set => SetModifier(value); }
     public SnakeSegment Segment {
         get => gameObject.GetComponent<SnakeSegment>();
     }
@@ -14,11 +14,11 @@ public class SpecialComponent : MonoBehaviour
         // gameObject.transform.Find(Power.ToString()).gameObject.SetActive(true);
     }
 
-    public void SetSpecialPower(SpecialPower specialPower) {
-        this.specialPower = specialPower;
+    public void SetModifier(SpecialModifier modifier) {
+        this.modifier = modifier;
     }
 
     private void FixedUpdate() {
-        if(SpecialPower!= null) SpecialPower.FixedUpdate();
+        if(Modifier!= null) Modifier.FixedUpdate();
     }
 }
