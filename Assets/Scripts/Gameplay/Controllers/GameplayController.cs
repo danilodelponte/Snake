@@ -18,8 +18,9 @@ public class GameplayController : MonoBehaviour
         arena.GenerateGrid();
         // arena.GridDebug();
 
-        InitSpecialPowerTesting();
+        // InitSpecialPowerTesting();
         // InitWithPlayers();
+        InitWithAiOnly(5);
     }
 
     private void Update() {
@@ -141,6 +142,7 @@ public class GameplayController : MonoBehaviour
         GameObject.Destroy(collectable.gameObject);
 
         Snake snake = segment.Snake;
+        if(snake.isAI) collectable.Modifier = null;
         SnakeSegment newSegment = snake.AddSegment(collectable.Modifier);
 
         SpawnCollectable();
@@ -174,12 +176,13 @@ public class GameplayController : MonoBehaviour
 
     public void KillSnake(Snake snake) {
         snake.Die();
+        if(snake.isAI) SpawnEnemySnake();
     }
 
     public void IncrementPlayerScore(Snake snake, int increment) {
+        if(!snake.IsPlayer) return;
+
         Player player = snake.Player;
-        if(player == null) return;
-        
         increment = snake.EvaluateScoreGain(increment);
         player.Score += increment;
         gUI.UpdatePlayerScore(player);
