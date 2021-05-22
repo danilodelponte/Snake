@@ -76,6 +76,13 @@ public class SnakeSegment : MonoBehaviour
         if(!IsTail) NextSegment.SetNodePath();
     }
 
+    public bool EvaluateDeath() {
+        if(SpecialPower != null && SpecialPower.SpecialDeath()) return true;
+        if(!IsTail) return NextSegment.EvaluateDeath();
+
+        return false;
+    }
+
     private void OnTriggerEnter(Collider other) {
         Snake.EvaluateCollision(this, other);
     }

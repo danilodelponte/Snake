@@ -22,13 +22,14 @@ public class HeadBomb : SpecialPower
     }
 
     public override void FixedUpdate() {
+        // explode after some time
         timer += Time.deltaTime;
         if(timer > maxTime) Explode();
     }
 
     public override bool SpecialCollision(SnakeSegment segmentCollided, Collider other)
     {
-        // when collectable is picked up they do not activate other powers
+        // when another collectable is picked up they do not activate special powers
         if(other.gameObject.GetComponent<Collectable>() != null) {
             Collectable collectable = other.gameObject.GetComponent<Collectable>();
             collectable.SpecialPower = null;
@@ -57,12 +58,12 @@ public class HeadBomb : SpecialPower
             snake.Head = snake.Head.NextSegment;
         }
 
-        // current head is removed
+        // head bomb is also removed
         snake.Head = SnakeSegment.NextSegment;
         SnakeSegment.gameObject.SetActive(false);
         GameObject.Destroy(SnakeSegment.gameObject);
 
-        // segments accumulated in front of the head are shot like bombs following their current direction
+        // segments accumulated in front of the head are shot like bullets following their current direction
         foreach (var segment in segments) {
             Vector3 direction = segment.CurrentDirection;
             Vector3 position = segment.gameObject.transform.position + direction;

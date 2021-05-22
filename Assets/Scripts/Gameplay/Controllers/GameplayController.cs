@@ -176,9 +176,7 @@ public class GameplayController : MonoBehaviour
     }
 
     public void KillSnake(Snake snake) {
-        Debug.Log($"{snake} has died!");
-        snake.gameObject.SetActive(false);
-        GameObject.Destroy(snake.gameObject);
+        snake.Die();
     }
 
     public void IncrementPlayerScore(Player player, int score) {

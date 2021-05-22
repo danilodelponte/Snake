@@ -73,12 +73,6 @@ public class Snake : MonoBehaviour
         SetNodePaths();
     }
 
-    public Vector3 EvaluateDirection() {
-        Vector3 direction = ControlDirection();
-        direction = Head.EvaluateDirection(direction);
-        return direction;
-    }
-
     public Vector3 ControlDirection() {
         SnakeControl control = GetComponent<SnakeControl>();
         if(control == null) return Head.CurrentDirection;
@@ -92,6 +86,26 @@ public class Snake : MonoBehaviour
 
     public void FreeNodePaths(){
         Head.FreeNodePath();
+    }
+
+    public void Die() {
+        if(EvaluateDeath()) return; 
+
+        Debug.Log($"{this} has died!");
+        gameObject.SetActive(false);
+        GameObject.Destroy(gameObject);
+    }
+
+    public bool EvaluateDeath() {
+        if(Head.EvaluateDeath()) return true;
+
+        return false;
+    }
+    
+    public Vector3 EvaluateDirection() {
+        Vector3 direction = ControlDirection();
+        direction = Head.EvaluateDirection(direction);
+        return direction;
     }
 
     public void EvaluateCollision(SnakeSegment segmentCollided, Collider other){

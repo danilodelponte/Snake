@@ -29,10 +29,8 @@ public class TimeTravel : SpecialPower
         }
     }
 
-    public override bool SpecialCollision(SnakeSegment segmentCollided, Collider other) {
+    public override bool SpecialDeath() {
         if(snapshot == null) return false;
-        if(!segmentCollided.IsHead) return false;
-        if(other.gameObject.GetComponent<SnakeSegment>() == null) return false;
 
         Snapshot travelTo = this.snapshot;
         Debug.Log($"{SnakeSegment.Snake} is time travelling!");
