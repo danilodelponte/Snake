@@ -13,7 +13,7 @@ public class Snake : MonoBehaviour
 
     public Player Player { get; set; }
     public bool IsPlayer { get => Player != null; }
-    public bool isAI { get => GetComponent<SnakeControl>() != null; }
+    public bool isAI { get => GetComponent<AIControl>() != null; }
     public Color Color { get => color; set => SetColor(value); }
     public SnakeSegment Head { get; set; }
 
