@@ -19,7 +19,9 @@ public class AIControl : SnakeControl
     {
         PathNode startNode = Arena.GetNode(Snake.Head.transform.position);
         List<PathNode> collectableNodes = Arena.GetNodes(PathNodeType.COLLECTABLE);
-        collectableNodes.Sort(Comparer<PathNode>.Create((pn1, pn2) => pn1.DistanceTo(pn2)));
+        collectableNodes.Sort(Comparer<PathNode>.Create(
+            (pn1, pn2) => startNode.DistanceTo(pn1) - startNode.DistanceTo(pn2)
+        ));
 
         if(collectableNodes.Count == 0) return Snake.Head.CurrentDirection;
 
