@@ -18,9 +18,9 @@ public class GameplayController : MonoBehaviour
         arena.GenerateGrid();
         // arena.GridDebug();
 
-        // InitSpecialPowerTesting();
+        InitSpecialPowerTesting();
         // InitWithPlayers();
-        InitWithAiOnly(5);
+        // InitWithAiOnly(5);
     }
 
     private void Update() {

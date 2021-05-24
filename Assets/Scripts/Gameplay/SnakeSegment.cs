@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 public class SnakeSegment : MonoBehaviour
 {
@@ -9,18 +10,29 @@ public class SnakeSegment : MonoBehaviour
     private SpecialComponent SpecialComponent { get => gameObject.GetComponent<SpecialComponent>(); }
 
     public Color Color { set => SetColor(value); }
-    public Arena arena;
+    private Arena arena;
+    public Arena Arena { get => GetArena(); }
     public Vector3 CurrentDirection { get; set; }
     public SnakeSegment NextSegment { get; set; }
     public Snake Snake { get => transform.parent.gameObject.GetComponent<Snake>(); }
+    public BezierShape Body { get => GetComponentInChildren<BezierShape>(); }
     public bool IsTail { get => NextSegment == null; }
     public bool IsHead { get => Snake.Head == this; }
     public SpecialModifier Modifier { get => GetModifier(); set => SetModifier(value); }
 
     private void OnEnable() {
-        arena = GameObject.Find("Arena").GetComponent<Arena>();
         KeepInsideArena();
         SetNodePath();
+    }
+
+    private void Start() {
+        UpdateBody();
+    }
+
+    private Arena GetArena() {
+        if(arena == null) arena = GameObject.Find("Arena").GetComponent<Arena>();
+        
+        return arena;
     }
 
     private void OnDisable() {
@@ -49,30 +61,59 @@ public class SnakeSegment : MonoBehaviour
 
         if((direction + CurrentDirection) == Vector3.zero) direction = CurrentDirection;
         transform.position += direction;
+        transform.rotation = GetRotation(direction);
         KeepInsideArena();
-        transform.rotation = Quaternion.Euler(direction * 90);
-        if(NextSegment != null) NextSegment.Move(CurrentDirection);
+        if(NextSegment != null) {
+            NextSegment.Move(CurrentDirection);
+        }
         CurrentDirection = direction;
+    }
+
+    private Quaternion GetRotation(Vector3 direction) {
+        Quaternion rotation = Quaternion.identity;
+        if(direction.x == -1) rotation = Quaternion.Euler(0,0,90);
+        else if(direction.y == -1) rotation = Quaternion.Euler(0,0,180);
+        else if(direction.x == 1) rotation = Quaternion.Euler(0,0,270);
+        return rotation;
+    }
+
+    public void UpdateBody() {
+        if(IsTail) return;
+        
+        List<BezierPoint> points = new List<BezierPoint>();
+        BezierPoint thisPoint = new BezierPoint();
+        thisPoint.rotation = transform.localRotation;
+        points.Add(thisPoint);
+
+        BezierPoint nextPoint = new BezierPoint();
+        nextPoint.SetPosition(new Vector3(0,-1,0));
+        nextPoint.rotation = transform.localRotation;
+        points.Add(nextPoint);
+
+        Body.points = points;
+        MeshRenderer rendered = Body.gameObject.GetComponent<MeshRenderer>();
+        rendered.material.color = Snake.Color;
+        Body.Refresh();
     }
 
     public void KeepInsideArena() {
         Vector3 position = transform.position;
-        if(position.x >= arena.Width) position.x = 0;
-        if(position.x < 0) position.x = arena.Width - 1;
+        if(position.x >= Arena.Width) position.x = 0;
+        if(position.x < 0) position.x = Arena.Width - 1;
 
-        if(position.y >= arena.Height) position.y = 0;
-        if(position.y < 0) position.y = arena.Height - 1;
+        if(position.y >= Arena.Height) position.y = 0;
+        if(position.y < 0) position.y = Arena.Height - 1;
 
         transform.position = position;
     }
 
     public void FreeNodePath() {
-        arena.SetNode(transform.position, PathNodeType.FREE);
+        Arena.SetNode(transform.position, PathNodeType.FREE);
         if(!IsTail) NextSegment.FreeNodePath();
     }
 
     public void SetNodePath(){
-        arena.SetNode(transform.position, PathNodeType.SNAKE);
+        Arena.SetNode(transform.position, PathNodeType.SNAKE);
         if(!IsTail) NextSegment.SetNodePath();
     }
 
