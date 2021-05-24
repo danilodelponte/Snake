@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Arena : MonoBehaviour
 {
-    [SerializeField] private Portal portalPrefab;
     [SerializeField] private int width = 40;
     [SerializeField] private int height = 20;
 
@@ -13,14 +12,11 @@ public class Arena : MonoBehaviour
     private PathNode[,] gridArray;
     private TextMesh[,] debugTextArray;
 
-    private void Awake() {
-        GenerateGrid();
-        GridDebug();
-        SpawnWalls();
-    }
-
-    public void GenerateGrid(){
+    public void Generate(int width, int height){
         if(gridArray != null) return;
+
+        this.width = width;
+        this.height = height;
 
         gridArray = new PathNode[width, height];
         for(int x = 0; x < gridArray.GetLength(0); x++) {
@@ -28,6 +24,8 @@ public class Arena : MonoBehaviour
                 gridArray[x, y] = new PathNode(this, x, y);
             }
         }
+
+        SpawnWalls();
     }
 
     public List<PathNode> GetNodes(PathNodeType type){
@@ -68,32 +66,32 @@ public class Arena : MonoBehaviour
     }
 
     private void SpawnWalls() {
-        Portal leftWall = Instantiate(portalPrefab, transform);
+        Portal leftWall = Instantiate(Portal.Prefab, transform);
         leftWall.transform.localScale = new Vector3(1, height, 1);
-        leftWall.transform.position = new Vector3(-1, height/2, 0);
-        leftWall.TransportFilter = new Vector3(1, 0, 0);
-        leftWall.OffSet = Vector3.left;
+        leftWall.transform.position = new Vector3(-1, height/2 - .5f, 0);
+        leftWall.TeleportFilter = new Vector3(1, 0, 0);
+        leftWall.TeleportOffset = Vector3.left;
 
-        Portal rightWall = Instantiate(portalPrefab, transform);
+        Portal rightWall = Instantiate(Portal.Prefab, transform);
         rightWall.transform.localScale = new Vector3(1, height, 1);
-        rightWall.transform.position = new Vector3(width, height/2, 0);
-        rightWall.TransportFilter = new Vector3(1, 0, 0);
-        rightWall.OffSet = Vector3.right;
+        rightWall.transform.position = new Vector3(width, height/2 - .5f, 0);
+        rightWall.TeleportFilter = new Vector3(1, 0, 0);
+        rightWall.TeleportOffset = Vector3.right;
 
         leftWall.OtherEnd = rightWall;
         rightWall.OtherEnd = leftWall;
 
-        Portal upperWall = Instantiate(portalPrefab, transform);
+        Portal upperWall = Instantiate(Portal.Prefab, transform);
         upperWall.transform.localScale = new Vector3(width, 1, 1);
-        upperWall.transform.position = new Vector3(width/2, height, 0);
-        upperWall.TransportFilter = new Vector3(0, 1, 0);
-        upperWall.OffSet = Vector3.up;
+        upperWall.transform.position = new Vector3(width/2 - .5f, height, 0);
+        upperWall.TeleportFilter = new Vector3(0, 1, 0);
+        upperWall.TeleportOffset = Vector3.up;
 
-        Portal bottomWall = Instantiate(portalPrefab, transform);
+        Portal bottomWall = Instantiate(Portal.Prefab, transform);
         bottomWall.transform.localScale = new Vector3(width, 1, 1);
-        bottomWall.transform.position = new Vector3(width/2, -1, 0);
-        bottomWall.TransportFilter = new Vector3(0, 1, 0);
-        bottomWall.OffSet = Vector3.down;
+        bottomWall.transform.position = new Vector3(width/2 - .5f, -1, 0);
+        bottomWall.TeleportFilter = new Vector3(0, 1, 0);
+        bottomWall.TeleportOffset = Vector3.down;
 
         upperWall.OtherEnd = bottomWall;
         bottomWall.OtherEnd = upperWall;

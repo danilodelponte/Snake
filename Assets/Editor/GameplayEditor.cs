@@ -7,9 +7,14 @@ public class GameplayEditor : Editor {
 
      public override void OnInspectorGUI() {
         base.OnInspectorGUI();
+        GameplayController gameplay = (GameplayController) target;
+
         if(GUILayout.Button("Spawn Snake")){
-            GameplayController controller = (GameplayController) target;
-            controller.SpawnSnake();
+            gameplay.SpawnSnake();
+        };
+
+        if(GUILayout.Button("Generate Arena")){
+            gameplay.CreateArena();
         };
     }
 }

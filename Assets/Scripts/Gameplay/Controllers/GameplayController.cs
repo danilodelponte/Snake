@@ -15,12 +15,13 @@ public class GameplayController : MonoBehaviour
     {
         InitSingleton();
 
-        arena.GenerateGrid();
+        // arena.GenerateGrid();
         // arena.GridDebug();
+        CreateArena();
 
-        InitSpecialPowerTesting();
+        // InitSpecialPowerTesting();
         // InitWithPlayers();
-        // InitWithAiOnly(5);
+        InitWithAiOnly(3);
     }
 
     private void Update() {
@@ -76,6 +77,15 @@ public class GameplayController : MonoBehaviour
             return;
         }
         Singleton = this;
+    }
+
+    public void CreateArena() {
+        arena = GameObject.FindObjectOfType<Arena>();
+        if(arena != null) return;
+
+        arena = new GameObject("Arena").AddComponent<Arena>();
+        arena.Generate(40, 20);
+        arena.GridDebug();
     }
 
     private void SpawnPlayerSnake(Player player) {
