@@ -7,8 +7,8 @@ public class Arena : MonoBehaviour
     [SerializeField] private int width = 40;
     [SerializeField] private int height = 20;
 
-    public int Width { get { return width; } }
-    public int Height { get { return height; } }
+    public int Width { get => width; set => width = value;}
+    public int Height { get => height; set => height = value;}
     private PathNode[,] gridArray;
     private TextMesh[,] debugTextArray;
     public PathNode[] SnakeSegmentNodes { get; private set; }
@@ -32,24 +32,43 @@ public class Arena : MonoBehaviour
 
     public void UpdateGrid() {
         gridArray = new PathNode[width, height];
+        UpdateSnakeNodes();
+        UpdateCollectableNodes();
+    }
 
+    private void UpdateSnakeNodes() {
         GameObject[] snakeSegments = GameObject.FindGameObjectsWithTag("SnakeSegment");
         SnakeSegmentNodes = new PathNode[snakeSegments.Length];
         for (int i = 0; i < snakeSegments.Length; i++) {
-            Vector3 position = snakeSegments[i].transform.position;
+            Transform segmentTransform = snakeSegments[i].transform;
+            KeepWithinBounds(ref segmentTransform);
+            Vector3 position = segmentTransform.position;
             PathNode node = new PathNode(this, position, PathNodeType.SNAKE);
             gridArray[(int) position.x, (int) position.y] = node;
             SnakeSegmentNodes[i] = node;
         }
+    }
 
+    private void UpdateCollectableNodes() {
         GameObject[] collectables = GameObject.FindGameObjectsWithTag("Collectable");
         CollectableNodes = new PathNode[collectables.Length];
         for (int i = 0; i < collectables.Length; i++) {
-            Vector3 position = collectables[i].transform.position;
+            Transform collectableTransform = collectables[i].transform;
+            KeepWithinBounds(ref collectableTransform);
+            Vector3 position = collectableTransform.position;
             PathNode node = new PathNode(this, position, PathNodeType.COLLECTABLE);
             gridArray[(int) position.x, (int) position.y] = node;
             CollectableNodes[i] = node;
         }
+    }
+
+    public void KeepWithinBounds(ref Transform transform){
+        Vector3 position = transform.position;
+        position.x = position.x%width;
+        if(position.x < 0) position.x = position.x + width;
+        position.y = position.y%height;
+        if(position.y < 0) position.y = position.y + height;
+        transform.position = position;
     }
 
     private Quaternion DefaultRotation(){

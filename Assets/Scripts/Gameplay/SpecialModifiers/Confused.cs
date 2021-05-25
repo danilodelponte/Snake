@@ -5,16 +5,16 @@ using UnityEngine;
 public class Confused : SpecialModifier
 {
     private float timer;
-    private float maxTime = 5f;
+    public float maxTime = 5f;
 
     public override void Activate() {
-        Debug.Log($"{SnakeSegment.Snake} is confused!");
+        Debug.Log($"{SnakeSegment} is confused!");
     }
 
     public override void Deactivate()
     {
         base.Deactivate();
-        Debug.Log($"{SnakeSegment.Snake} is back to normal!");
+        Debug.Log($"{SnakeSegment} is back to normal!");
     }
 
     public override void FixedUpdate() {

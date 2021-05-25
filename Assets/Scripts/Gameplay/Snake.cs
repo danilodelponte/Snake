@@ -7,9 +7,9 @@ using UnityEngine.ProBuilder;
 public class Snake : MonoBehaviour
 {
     [SerializeField] private SnakeSegment segmentPrefab;
-    [SerializeField] private float baseMovingDeltaTime;
-    [SerializeField] private float maxMovingDeltaTime;
-    [SerializeField] private float minMovingDeltaTime;
+    [SerializeField] public float baseMovingDeltaTime;
+    [SerializeField] public float maxMovingDeltaTime;
+    [SerializeField] public float minMovingDeltaTime;
 
     public Player Player { get; set; }
     public bool IsPlayer { get => Player != null; }
@@ -65,7 +65,7 @@ public class Snake : MonoBehaviour
         return modifiers;
     }
 
-    private void FixedUpdate() {
+    public void UpdateMovement() {
         movementDeltaTimer += Time.deltaTime;
         float movingDelta = EvaluateMovementDelta();
 

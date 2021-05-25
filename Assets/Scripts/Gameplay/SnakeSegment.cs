@@ -10,8 +10,6 @@ public class SnakeSegment : MonoBehaviour
     private SpecialComponent SpecialComponent { get => gameObject.GetComponent<SpecialComponent>(); }
 
     public Color Color { set => SetColor(value); }
-    private Arena arena;
-    public Arena Arena { get => GetArena(); }
     public Vector3 CurrentDirection { get; set; }
     public SnakeSegment NextSegment { get; set; }
     public Snake Snake { get => transform.parent.gameObject.GetComponent<Snake>(); }
@@ -20,25 +18,15 @@ public class SnakeSegment : MonoBehaviour
     public bool IsHead { get => Snake.Head == this; }
     public SpecialModifier Modifier { get => GetModifier(); set => SetModifier(value); }
 
-    private void OnEnable() {
-        KeepInsideArena();
-    }
-
     private void Start() {
         UpdateBody();
-    }
-
-    private Arena GetArena() {
-        if(arena == null) arena = GameObject.Find("Arena").GetComponent<Arena>();
-        
-        return arena;
     }
 
     private void SetModifier(SpecialModifier modifier) {
         if(modifier != null) {
             modifier.SnakeSegment = this;
-            Transform powerObject = transform.Find(modifier.ToString());
-            if(powerObject != null) { gameObject.SetActive(true); }
+            Transform modifierDecoration = transform.Find(modifier.ToString());
+            if(modifierDecoration != null) { gameObject.SetActive(true); }
         }
         SpecialComponent.Modifier = modifier;
     }
@@ -53,7 +41,6 @@ public class SnakeSegment : MonoBehaviour
         if((direction + CurrentDirection) == Vector3.zero) direction = CurrentDirection;
         transform.position += direction;
         transform.rotation = GetRotation(direction);
-        KeepInsideArena();
         if(NextSegment != null) {
             NextSegment.Move(CurrentDirection);
         }
@@ -85,17 +72,6 @@ public class SnakeSegment : MonoBehaviour
         MeshRenderer rendered = Body.gameObject.GetComponent<MeshRenderer>();
         rendered.material.color = Snake.Color;
         Body.Refresh();
-    }
-
-    public void KeepInsideArena() {
-        Vector3 position = transform.position;
-        if(position.x >= Arena.Width) position.x = 0;
-        if(position.x < 0) position.x = Arena.Width - 1;
-
-        if(position.y >= Arena.Height) position.y = 0;
-        if(position.y < 0) position.y = Arena.Height - 1;
-
-        transform.position = position;
     }
 
     public int EvaluateScoreGain(int gain) {
@@ -142,9 +118,5 @@ public class SnakeSegment : MonoBehaviour
         var renderer = gameObject.GetComponent<Renderer>();
         renderer.material.color = color;
         if(!IsTail) NextSegment.Color = color;
-    }
-
-    public override string ToString() {
-        return $"SnakeSegment {Snake.name}";
     }
 }

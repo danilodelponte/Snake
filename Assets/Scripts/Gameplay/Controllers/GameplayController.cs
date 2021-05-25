@@ -24,6 +24,13 @@ public class GameplayController : MonoBehaviour
         // InitWithAiOnly(5);
     }
 
+    private void FixedUpdate() {
+        GameObject[] snakes = GameObject.FindGameObjectsWithTag("Snake");
+        foreach (var snake in snakes) {
+            snake.GetComponent<Snake>().UpdateMovement();
+        }
+    }
+
     private void Update() {
         if(Input.GetKeyDown(KeyCode.Escape)) {
             if(Time.timeScale == 0) ResumeGame();
