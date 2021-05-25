@@ -133,7 +133,7 @@ public class MainMenuController : MonoBehaviour
     }
 
     private void ChangePlayerType(Player player) {
-
+        // player.types.
     }
 
     private void AddPlayer(KeyCode[] playerKeys) {
