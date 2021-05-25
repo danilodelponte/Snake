@@ -18,12 +18,12 @@ public class AIControl : SnakeControl
     public override Vector3 GetDirection()
     {
         PathNode startNode = Arena.GetNode(Snake.Head.transform.position);
-        List<PathNode> collectableNodes = Arena.GetNodes(PathNodeType.COLLECTABLE);
-        collectableNodes.Sort(Comparer<PathNode>.Create(
+        PathNode[] collectableNodes = Arena.CollectableNodes;
+        Array.Sort(collectableNodes, Comparer<PathNode>.Create(
             (pn1, pn2) => startNode.DistanceTo(pn1) - startNode.DistanceTo(pn2)
         ));
 
-        if(collectableNodes.Count == 0) return Snake.Head.CurrentDirection;
+        if(collectableNodes.Length == 0) return Snake.Head.CurrentDirection;
 
         PathNode endNode = collectableNodes[0];
         var pathFinding = new PathFinding(Arena);

@@ -11,6 +11,8 @@ public class Arena : MonoBehaviour
     public int Height { get { return height; } }
     private PathNode[,] gridArray;
     private TextMesh[,] debugTextArray;
+    public PathNode[] SnakeSegmentNodes { get; private set; }
+    public PathNode[] CollectableNodes { get; private set; }
 
     public void Generate(int width, int height){
         if(gridArray != null) return;
@@ -28,17 +30,27 @@ public class Arena : MonoBehaviour
         SpawnWalls();
     }
 
-    public List<PathNode> GetNodes(PathNodeType type){
-        List<PathNode> nodes = new List<PathNode>();
-        PathNode node;
-        for(int x = 0; x < gridArray.GetLength(0); x++) {
-            for(int y = 0; y < gridArray.GetLength(1); y++) {
-                node = gridArray[x, y];
-                if(node.type == type) nodes.Add(node);
-            }
+    public void UpdateGrid() {
+        gridArray = new PathNode[width, height];
+
+        GameObject[] snakeSegments = GameObject.FindGameObjectsWithTag("SnakeSegment");
+        SnakeSegmentNodes = new PathNode[snakeSegments.Length];
+        for (int i = 0; i < snakeSegments.Length; i++) {
+            Vector3 position = snakeSegments[i].transform.position;
+            PathNode node = new PathNode(this, position, PathNodeType.SNAKE);
+            gridArray[(int) position.x, (int) position.y] = node;
+            SnakeSegmentNodes[i] = node;
         }
-        return nodes;
-    } 
+
+        GameObject[] collectables = GameObject.FindGameObjectsWithTag("Collectable");
+        CollectableNodes = new PathNode[collectables.Length];
+        for (int i = 0; i < collectables.Length; i++) {
+            Vector3 position = collectables[i].transform.position;
+            PathNode node = new PathNode(this, position, PathNodeType.COLLECTABLE);
+            gridArray[(int) position.x, (int) position.y] = node;
+            CollectableNodes[i] = node;
+        }
+    }
 
     private Quaternion DefaultRotation(){
         return Quaternion.Euler(Vector3.zero);
@@ -48,20 +60,13 @@ public class Arena : MonoBehaviour
         return new Vector3(x, y);
     }
 
-    public void SetNode(Vector3 position, PathNodeType type) {
-        gridArray[(int)position.x, (int)position.y].type = type;
-        // debugTextArray[(int)position.x ,(int)position.y].text = type.ToString().ToCharArray()[0] + "";
-        Color color = Color.white;
-        if(type == PathNodeType.SNAKE) color = Color.green;
-        if(type == PathNodeType.COLLECTABLE) color = Color.red;
-        // debugTextArray[(int)position.x ,(int)position.y].color = color;
-    }
-
     public PathNode GetNode(Vector3 position) {
         return GetNode((int)position.x, (int)position.y);
     }
 
     public PathNode GetNode(int x, int y) {
+        if(gridArray[x, y] == null) gridArray[x, y] = new PathNode(this, x, y);
+
         return gridArray[x, y];
     }
 

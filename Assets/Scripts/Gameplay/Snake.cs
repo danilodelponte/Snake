@@ -19,6 +19,7 @@ public class Snake : MonoBehaviour
 
     private Color color;
     private float movementDeltaTimer = 0;
+    private Vector3 intendedDirection = Vector3.up;
 
     public void AddHead() {
         if(Head !=null) return;
@@ -70,15 +71,16 @@ public class Snake : MonoBehaviour
 
         if(movementDeltaTimer >= movingDelta) {
             movementDeltaTimer -= movingDelta;
-            Vector3 direction = EvaluateDirection();
-            Move(direction);
+            Move(intendedDirection);
         }
     }
 
+    public void UpdateDirection() {
+        intendedDirection = EvaluateDirection();
+    }
+
     public void Move(Vector3 direction) {
-        FreeNodePaths();
         Head.Move(direction);
-        SetNodePaths();
     }
 
     public Vector3 ControlDirection() {
@@ -86,14 +88,6 @@ public class Snake : MonoBehaviour
         if(control == null) return Head.CurrentDirection;
 
         return control.GetDirection();
-    }
-
-    public void SetNodePaths(){
-        Head.SetNodePath();
-    }
-
-    public void FreeNodePaths(){
-        Head.FreeNodePath();
     }
 
     public void Die() {

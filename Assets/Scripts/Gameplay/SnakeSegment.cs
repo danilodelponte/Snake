@@ -22,7 +22,6 @@ public class SnakeSegment : MonoBehaviour
 
     private void OnEnable() {
         KeepInsideArena();
-        SetNodePath();
     }
 
     private void Start() {
@@ -33,14 +32,6 @@ public class SnakeSegment : MonoBehaviour
         if(arena == null) arena = GameObject.Find("Arena").GetComponent<Arena>();
         
         return arena;
-    }
-
-    private void OnDisable() {
-        FreeNodePath();
-    }
-
-    private void OnDestroy() {
-        FreeNodePath();
     }
 
     private void SetModifier(SpecialModifier modifier) {
@@ -105,16 +96,6 @@ public class SnakeSegment : MonoBehaviour
         if(position.y < 0) position.y = Arena.Height - 1;
 
         transform.position = position;
-    }
-
-    public void FreeNodePath() {
-        Arena.SetNode(transform.position, PathNodeType.FREE);
-        if(!IsTail) NextSegment.FreeNodePath();
-    }
-
-    public void SetNodePath(){
-        Arena.SetNode(transform.position, PathNodeType.SNAKE);
-        if(!IsTail) NextSegment.SetNodePath();
     }
 
     public int EvaluateScoreGain(int gain) {

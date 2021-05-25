@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 7999598781234892037}
   - component: {fileID: 7999598781234892042}
   m_Layer: 0
-  m_Name: Fruit
-  m_TagString: Untagged
+  m_Name: Collectable
+  m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107,6 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 810216180e8b18a9a92ac5fcf32ba9c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  arena: {fileID: 0}
 --- !u!54 &7999598781234892042
 Rigidbody:
   m_ObjectHideFlags: 0

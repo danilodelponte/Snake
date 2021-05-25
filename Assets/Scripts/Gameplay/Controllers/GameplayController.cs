@@ -19,8 +19,8 @@ public class GameplayController : MonoBehaviour
         // arena.GridDebug();
         CreateArena();
 
-        InitSpecialPowerTesting();
-        // InitWithPlayers();
+        // InitSpecialPowerTesting();
+        InitWithPlayers();
         // InitWithAiOnly(5);
     }
 
@@ -28,6 +28,12 @@ public class GameplayController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Escape)) {
             if(Time.timeScale == 0) ResumeGame();
             else PauseGame();
+        }
+
+        arena.UpdateGrid();
+        GameObject[] snakes = GameObject.FindGameObjectsWithTag("Snake");
+        foreach (var snake in snakes) {
+            snake.GetComponent<Snake>().UpdateDirection();
         }
     }
 
