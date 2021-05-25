@@ -97,8 +97,62 @@ public class Arena : MonoBehaviour
         bottomWall.OtherEnd = upperWall;
     }
 
-    public Vector3 RandomPosition(){
+    public Vector3Int RandomPosition() {
         return new Vector3Int(Random.Range(0, width-1), Random.Range(0, height-1), 0);
+    }
+
+    public Vector3 EquallyDistributedPosition() {
+        PathNode[] targetNodes = GetTargetNodes().ToArray();
+        PathNode maxMinDistanceNode = null;
+        PathNode currentNode;
+        int minDistance = int.MaxValue;
+        int maxMinDistance = 0;
+        Vector3Int start = RandomPosition();
+        int xx, yy;
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+
+                xx = start.x + x;
+                if(xx > width -1) xx -= width;
+                yy = start.y + y;
+                if(yy > height -1) yy -= height;
+
+                currentNode = GetNode(xx, yy);
+                if(currentNode.type != PathNodeType.FREE) continue;
+
+                minDistance = int.MaxValue;
+                foreach (var node in targetNodes) {
+                    int distance = currentNode.DistanceTo(node);
+                    if(distance < minDistance) minDistance = distance;
+                }
+
+                if(minDistance > maxMinDistance) {
+                    maxMinDistance = minDistance;
+                    maxMinDistanceNode = currentNode;
+                }
+            }
+        }
+
+        if(maxMinDistanceNode == null) return start;
+        return new Vector3(maxMinDistanceNode.x, maxMinDistanceNode.y);
+    }
+
+    public List<PathNode> GetTargetNodes() {
+        List<PathNode> targetNodes = new List<PathNode>();
+        Snake[] snakes = GameObject.FindObjectsOfType<Snake>();
+
+        foreach(var snake in snakes) {
+            PathNode headNode = GetNode(snake.Head.transform.position);
+            targetNodes.Add(headNode);
+        }
+
+        Collectable[] collectables = GameObject.FindObjectsOfType<Collectable>();
+        foreach (var collectable in collectables) {
+            PathNode node = GetNode(collectable.transform.position);
+            targetNodes.Add(node);
+        }
+        return targetNodes;
     }
     
     public const int sortingOrderDefault = 5000;

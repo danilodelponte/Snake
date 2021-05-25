@@ -19,9 +19,9 @@ public class GameplayController : MonoBehaviour
         // arena.GridDebug();
         CreateArena();
 
-        // InitSpecialPowerTesting();
+        InitSpecialPowerTesting();
         // InitWithPlayers();
-        InitWithAiOnly(3);
+        // InitWithAiOnly(5);
     }
 
     private void Update() {
@@ -114,7 +114,7 @@ public class GameplayController : MonoBehaviour
     }
 
     public Snake SpawnSnake() {
-        var snake = Instantiate(snakePrefab, arena.RandomPosition(), Quaternion.Euler(0,0,0));
+        var snake = Instantiate(snakePrefab, arena.EquallyDistributedPosition(), Quaternion.identity);
         snake.AddHead();
         snake.AddSegment();
         snake.AddSegment();
@@ -133,7 +133,7 @@ public class GameplayController : MonoBehaviour
     }
     
     public Collectable SpawnCollectable(SpecialModifier modifier) {
-        Collectable collectable = Instantiate(collectablePrefab, arena.RandomPosition(), Quaternion.Euler(0, 0, 0));
+        Collectable collectable = Instantiate(collectablePrefab, arena.EquallyDistributedPosition(), Quaternion.identity);
         collectable.Modifier = modifier;
         return collectable;
     }
