@@ -8,6 +8,7 @@ TagManager:
   - SnakeSegment
   - Collectable
   - PlayerSelection
+  - GameplayController
   layers:
   - Default
   - TransparentFX

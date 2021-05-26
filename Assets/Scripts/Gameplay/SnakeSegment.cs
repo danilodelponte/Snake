@@ -5,8 +5,7 @@ using UnityEngine.ProBuilder;
 
 public class SnakeSegment : MonoBehaviour
 {
-    private static SnakeSegment prefab;
-    public static SnakeSegment Prefab { get => LoadPrefab(); }
+    public static SnakeSegment Prefab { get => PrefabCache.Load<SnakeSegment>("SnakeSegment"); }
 
     [SerializeField] private float movingDeltaIncrease = .01f;
 
@@ -21,17 +20,11 @@ public class SnakeSegment : MonoBehaviour
     public bool IsHead { get => Snake.Head == this; }
     public SpecialModifier Modifier { get => GetModifier(); set => SetModifier(value); }
 
-    private static SnakeSegment LoadPrefab() {
-        if(prefab == null) prefab = Resources.Load<SnakeSegment>("Prefabs/SnakeSegment");
-        return prefab;
-    }
-
     private void Start() {
         UpdateBody();
     }
 
     private void SetModifier(SpecialModifier modifier) {
-        if(modifier != null) modifier.SnakeSegment = this;
         SpecialComponent.Modifier = modifier;
     }
 

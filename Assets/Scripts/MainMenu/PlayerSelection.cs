@@ -5,8 +5,7 @@ using TMPro;
 
 public class PlayerSelection : MonoBehaviour
 {
-    private static PlayerSelection prefab;
-    public static PlayerSelection Prefab { get => LoadPrefab(); }
+    public static PlayerSelection Prefab { get => PrefabCache.Load<PlayerSelection>("PlayerSelection"); }
 
     [SerializeField] private TextMeshProUGUI playerNameLabel;
     [SerializeField] private TextMeshProUGUI playerLeftKeyLabel;
@@ -14,11 +13,6 @@ public class PlayerSelection : MonoBehaviour
 
     private Player player;
     public Player Player { get => player; set => SetPlayer(value);}
-
-    private static PlayerSelection LoadPrefab() {
-        if(prefab == null) prefab = Resources.Load<PlayerSelection>("Prefabs/PlayerSelection");
-        return prefab;
-    }
 
     public void SetPlayer(Player player) {
         this.player = player;

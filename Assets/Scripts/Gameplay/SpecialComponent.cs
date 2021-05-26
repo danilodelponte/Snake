@@ -10,14 +10,10 @@ public class SpecialComponent : MonoBehaviour
         get => gameObject.GetComponent<SnakeSegment>();
     }
 
-    public void Start() {
-        if(modifier != null) modifier.Activate();
-        // gameObject.transform.Find(Power.ToString()).gameObject.SetActive(true);
-    }
-
     public void SetModifier(SpecialModifier modifier) {
         this.modifier = modifier;
         if(modifier != null) {
+            modifier.SnakeSegment = Segment;
             Transform modifierDecoration = transform.Find(modifier.ToString());
             if(modifierDecoration != null) { modifierDecoration.gameObject.SetActive(true); }
         }

@@ -5,9 +5,6 @@ using UnityEngine;
 public class GameplayController : MonoBehaviour
 {
     public static GameplayController Singleton;
-
-    [SerializeField] private Collectable collectablePrefab;
-    [SerializeField] private Snake snakePrefab;
     [SerializeField] private GUIController gUI;
     [SerializeField] private Arena arena;
 
@@ -20,8 +17,8 @@ public class GameplayController : MonoBehaviour
         CreateArena();
 
         // InitSpecialPowerTesting();
-        InitWithPlayers();
-        // InitWithAiOnly(5);
+        // InitWithPlayers();
+        InitWithAiOnly(5);
     }
 
     private void FixedUpdate() {
@@ -127,7 +124,7 @@ public class GameplayController : MonoBehaviour
     }
 
     public Snake SpawnSnake(SpecialModifier[] modifiers = null) {
-        var snake = Instantiate(snakePrefab, arena.EquallyDistributedPosition(), Quaternion.identity);
+        var snake = Instantiate(Snake.Prefab, arena.EquallyDistributedPosition(), Quaternion.identity);
         snake.Init(modifiers);
         return snake;
     }
@@ -144,7 +141,7 @@ public class GameplayController : MonoBehaviour
     }
     
     public Collectable SpawnCollectable(SpecialModifier modifier) {
-        Collectable collectable = Instantiate(collectablePrefab, arena.EquallyDistributedPosition(), Quaternion.identity);
+        Collectable collectable = Instantiate(Collectable.Prefab, arena.EquallyDistributedPosition(), Quaternion.identity);
         collectable.Modifier = modifier;
         return collectable;
     }

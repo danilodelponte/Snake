@@ -6,6 +6,8 @@ using UnityEngine.ProBuilder;
 
 public class Snake : MonoBehaviour
 {
+    public static Snake Prefab { get => PrefabCache.Load<Snake>("Snake"); }
+
     [SerializeField] public float baseMovingDeltaTime;
     [SerializeField] public float maxMovingDeltaTime;
     [SerializeField] public float minMovingDeltaTime;
@@ -28,6 +30,9 @@ public class Snake : MonoBehaviour
         Head.CurrentDirection = Vector3.up;
         Head.Color = color;
         Head.Modifier = modifiers[0];
+        if(Head.Modifier!=null) {
+            Head.Modifier.Activate();
+        }
         AddSegment(modifiers[1]);
         AddSegment(modifiers[2]);
     }
@@ -43,7 +48,10 @@ public class Snake : MonoBehaviour
         newHead.CurrentDirection = Head.CurrentDirection;
         newHead.Color = Color;
         Head = newHead;
-        if(modifier != null) Head.Modifier = modifier;
+        if(modifier != null) {
+            Head.Modifier = modifier;
+            Head.Modifier.Activate();
+        }
 
 	    return Head;
     }

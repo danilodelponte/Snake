@@ -4,21 +4,15 @@ using UnityEngine;
 
 public class HeadBomb : SpecialModifier
 {
-    private static Bomb prefab;
+    public static Bomb Prefab { get => PrefabCache.Load<Bomb>("Bomb"); }
 
     private float timer;
     private float maxTime = 10f;
-    private static Bomb Prefab { get => LoadPrefab(); }
 
     public override void Activate()
     {
         Debug.Log("Got Bomb!");
         base.Activate();
-    }
-    
-    private static Bomb LoadPrefab() {
-        if(prefab == null) prefab = Resources.Load<Bomb>("Prefabs/Bomb");
-        return prefab;
     }
 
     public override void FixedUpdate() {

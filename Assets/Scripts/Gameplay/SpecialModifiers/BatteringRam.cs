@@ -19,13 +19,14 @@ public class BatteringRam : SpecialModifier
 
     public override bool CollisionModifier(SnakeSegment segmentCollided, Collider other) {
         SnakeSegment otherSegment = other.gameObject.GetComponent<SnakeSegment>();
-        if(otherSegment == null) return false;
+        if(otherSegment == null || segmentCollided == null) return false;
+        if(segmentCollided.Snake == otherSegment.Snake) return false;
 
         if(!crossingActive && segmentCollided.IsHead) {
             safePosition = otherSegment.transform.position;
             crossingActive = true;
         }
-        Debug.Log($"{SnakeSegment.Snake} is crossing!");
+        // If current segment is a tail, the crossing is finished
         if(segmentCollided.IsTail || otherSegment.IsTail || otherSegment.IsHead) Deactivate();
         if(otherSegment.transform.position == safePosition) return true;
         

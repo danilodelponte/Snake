@@ -6,7 +6,6 @@ using TMPro;
 
 public class MainMenuController : MonoBehaviour
 {
-
     [SerializeField] private Transform backgroundPanel;
 
     [SerializeField] TextMeshProUGUI conflictedKeys;

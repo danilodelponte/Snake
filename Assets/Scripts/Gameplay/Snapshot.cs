@@ -14,16 +14,16 @@ public class Snapshot
     }
 
     public static Snapshot Create() {
-        Snake[] snakes = GameObject.FindObjectsOfType<Snake>();
+        GameObject[] snakes = GameObject.FindGameObjectsWithTag("Snake");
         SnakeSnapshot[] snappedSnakes = new SnakeSnapshot[snakes.Length];
         for (int i = 0; i < snakes.Length; i++) {
-            snappedSnakes[i] = new SnakeSnapshot(snakes[i]);
+            snappedSnakes[i] = new SnakeSnapshot(snakes[i].GetComponent<Snake>());
         }
 
-        Collectable[] collectables = GameObject.FindObjectsOfType<Collectable>();
+        GameObject[] collectables = GameObject.FindGameObjectsWithTag("Collectable");
         CollectableSnapshot[] snapedCollectables = new CollectableSnapshot[collectables.Length];
         for (int i = 0; i < collectables.Length; i++) {
-            snapedCollectables[i] = new CollectableSnapshot(collectables[i]);
+            snapedCollectables[i] = new CollectableSnapshot(collectables[i].GetComponent<Collectable>());
         }
 
         return new Snapshot(snappedSnakes, snapedCollectables);
