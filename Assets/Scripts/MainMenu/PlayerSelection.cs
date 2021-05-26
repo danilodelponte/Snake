@@ -5,12 +5,20 @@ using TMPro;
 
 public class PlayerSelection : MonoBehaviour
 {
+    private static PlayerSelection prefab;
+    public static PlayerSelection Prefab { get => LoadPrefab(); }
+
     [SerializeField] private TextMeshProUGUI playerNameLabel;
     [SerializeField] private TextMeshProUGUI playerLeftKeyLabel;
     [SerializeField] private TextMeshProUGUI playerRightKeyLabel;
 
     private Player player;
     public Player Player { get => player; set => SetPlayer(value);}
+
+    private static PlayerSelection LoadPrefab() {
+        if(prefab == null) prefab = Resources.Load<PlayerSelection>("Prefabs/PlayerSelection");
+        return prefab;
+    }
 
     public void SetPlayer(Player player) {
         this.player = player;
@@ -29,21 +37,20 @@ public class PlayerSelection : MonoBehaviour
     }
 
     public void UpdateSnakeTemplate() {
-        Transform snakeTransform = transform.Find("SelectionSnake");
-        foreach (Transform child in snakeTransform) {
+        Transform selectionSnake = transform.Find("SelectionSnake");
+        foreach (Transform child in selectionSnake) {
             GameObject.Destroy(child.gameObject);
         }
 
-        SpecialModifier[] modifiers = player.SnakeTemplate;
-        if(modifiers == null || modifiers.Length != 3) modifiers = new SpecialModifier[3];
+        SpecialModifier[] modifiers = player.SnakeTemplate.Modifiers;
         int yOffset = -30;
+
         foreach (var modifier in modifiers) {
-            SnakeSegment segment = Instantiate<SnakeSegment>(SnakeSegment.Prefab, snakeTransform);
-            GameObject.Destroy(segment.GetComponent<SphereCollider>());
-            GameObject.Destroy(segment.GetComponent<Rigidbody>());
+            SnakeSegment segment = Instantiate<SnakeSegment>(SnakeSegment.Prefab, selectionSnake);
+            segment.GetComponent<Rigidbody>().detectCollisions = false;
             segment.GetComponent<SpecialComponent>().enabled = false;
             segment.transform.localScale = Vector3.one * 30;
-            segment.transform.localPosition += new Vector3(0,yOffset, 0);
+            segment.transform.localPosition += new Vector3(0, yOffset, 0);
             segment.Modifier = modifier;
             yOffset += 30;
         }

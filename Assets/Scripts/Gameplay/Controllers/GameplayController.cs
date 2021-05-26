@@ -60,7 +60,7 @@ public class GameplayController : MonoBehaviour
     }
 
     private void InitSpecialPowerTesting() {
-        Player player = new Player("Tester", KeyCode.A, KeyCode.S, Color.blue);
+        Player player = new Player(KeyCode.A, KeyCode.S);
         SpawnPlayerSnake(player);
         SpawnDummySnake(8);
         SpawnCollectable(new DoubleScore());
@@ -102,7 +102,7 @@ public class GameplayController : MonoBehaviour
     }
 
     private void SpawnPlayerSnake(Player player) {
-        var snake = SpawnSnake(player.SnakeTemplate);
+        var snake = SpawnSnake(player.SnakeTemplate.Modifiers);
         snake.Player = player;
         snake.Color = player.Color;
         PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();

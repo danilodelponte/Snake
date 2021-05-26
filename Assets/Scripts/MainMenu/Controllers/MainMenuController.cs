@@ -1,16 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
 using TMPro;
-using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
 
     [SerializeField] private Transform backgroundPanel;
-    [SerializeField] private PlayerSelection playerSelectionPrefab;
 
     [SerializeField] TextMeshProUGUI conflictedKeys;
     [SerializeField] TextMeshProUGUI pressLeftToAdd;
@@ -32,7 +29,15 @@ public class MainMenuController : MonoBehaviour
     private List<Player> players = new List<Player>();
     private Dictionary<KeyCode, Player> keyPlayerMapping = new Dictionary<KeyCode, Player>();
 
-    private SpecialModifier[][] templates;
+    private SnakeTemplate[] templates;
+
+    public void StartGame() {
+        GameManager.Instance.LoadGameplay(players.ToArray());
+    }
+
+    private void SetActive(Component component, bool active) {
+        component.gameObject.SetActive(active);
+    }
 
     private void Start() {
         GenerateTemplates();
@@ -41,7 +46,7 @@ public class MainMenuController : MonoBehaviour
     }
 
     private void GenerateTemplates() {
-        templates = SnakeTemplates.GenerateTemplates();
+        templates = SnakeTemplate.GetTemplates();
     }
 
     private void OnGUI() {
@@ -62,13 +67,39 @@ public class MainMenuController : MonoBehaviour
         UpdateGUI();
     }
 
+    private void KeyUp(KeyCode keyCode) {
+        pressedKeys.Remove(keyCode);
+        UpdateState();
+        UpdateGUI();
+    }
+
+
+    private KeyCode FirstKey() {
+        return pressedKeys.ToArray()[0];
+    }
+
+    private KeyCode SecondKey() {
+        return pressedKeys.ToArray()[1];
+    }
+
+    private Player FirstKeyPlayer() {
+        if(!keyPlayerMapping.ContainsKey(FirstKey())) return null;
+
+        return keyPlayerMapping[FirstKey()];
+    }
+
+    private Player SecondKeyPlayer() {
+        if(!keyPlayerMapping.ContainsKey(SecondKey())) return null;
+
+        return keyPlayerMapping[SecondKey()];
+    }
+
     private void Update() {
         if(pressedKeys.Count == 2) twoKeysHeldTimer += Time.deltaTime;
         if(state == State.Adding && twoKeysHeldTimer > 1) {
             AddPlayer(pressedKeys.ToArray());
             UpdateState();
             UpdateGUI();
-            
         }
         else if(state == State.Editing && twoKeysHeldTimer > 1) {
             twoKeysHeldTimer = 0;
@@ -92,26 +123,6 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    private KeyCode FirstKey() {
-        return pressedKeys.ToArray()[0];
-    }
-
-    private KeyCode SecondKey() {
-        return pressedKeys.ToArray()[1];
-    }
-
-    private Player FirstKeyPlayer() {
-        if(!keyPlayerMapping.ContainsKey(FirstKey())) return null;
-
-        return keyPlayerMapping[FirstKey()];
-    }
-
-    private Player SecondKeyPlayer() {
-        if(!keyPlayerMapping.ContainsKey(SecondKey())) return null;
-
-        return keyPlayerMapping[SecondKey()];
-    }
-
     private void UpdateGUI() {
         SetActive(pressLeftToAdd, state == State.Waiting);
         SetActive(conflictedKeys, state == State.Conflicted);
@@ -131,17 +142,11 @@ public class MainMenuController : MonoBehaviour
         SetActive(holdToChange,         pressedKeys.Count == 2);
     }
 
-    private void KeyUp(KeyCode keyCode) {
-        pressedKeys.Remove(keyCode);
-        UpdateState();
-        UpdateGUI();
-    }
-
     private void ChangePlayerType(Player player) {
-        int currentSelection = Array.IndexOf(templates, player.SnakeTemplate);
-        currentSelection += 1;
-        currentSelection %= templates.Length;
-        player.SnakeTemplate = templates[currentSelection];
+        int playerTemplateIndex = Array.IndexOf(templates, player.SnakeTemplate);
+        playerTemplateIndex += 1;
+        playerTemplateIndex %= templates.Length;
+        player.SnakeTemplate = templates[playerTemplateIndex];
 
         GetSelectionFor(player).UpdateSnakeTemplate();
     }
@@ -156,27 +161,18 @@ public class MainMenuController : MonoBehaviour
     }
 
     private void AddPlayer(KeyCode[] playerKeys) {
-        int playersCount = players.Count();
-        string name = $"Player {playerKeys[0]}{playerKeys[1]}";
-
-        Color color = UnityEngine.Random.ColorHSV(0,1,.97f,1,.97f,1);
-        Player player = new Player(name, playerKeys[0], playerKeys[1], color);
-
+        KeyCode leftKey = playerKeys[0];
+        KeyCode rightKey = playerKeys[1];
+        Player player = new Player(leftKey, rightKey);
+        player.SnakeTemplate = templates[0];
         players.Add(player);
-        keyPlayerMapping.Add(playerKeys[0], player);
-        keyPlayerMapping.Add(playerKeys[1], player);
 
-        var playerSelection = Instantiate(playerSelectionPrefab, backgroundPanel);
+        keyPlayerMapping.Add(leftKey, player);
+        keyPlayerMapping.Add(rightKey, player);
+
+        var playerSelection = Instantiate(PlayerSelection.Prefab, backgroundPanel);
         playerSelection.SetPlayer(player);
-        float offsetX = ((RectTransform) playerSelection.transform).rect.width * playersCount;
+        float offsetX = ((RectTransform) playerSelection.transform).rect.width * (players.Count()-1);
         playerSelection.transform.localPosition += new Vector3(offsetX, 0, 0);
-    }
-
-    private void SetActive(Component component, bool active) {
-        component.gameObject.SetActive(active);
-    }
-
-    public void StartGame() {
-        GameManager.Instance.LoadGameplay(players.ToArray());
     }
 }

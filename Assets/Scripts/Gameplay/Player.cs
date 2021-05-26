@@ -10,15 +10,13 @@ public class Player {
     public int SnakeType { get; set; }
     public int Score { get; set; }
     public Color Color { get; set; }
-    public SpecialModifier[] SnakeTemplate { get; set; }
+    public SnakeTemplate SnakeTemplate { get; set; }
 
-    public Player(string name, KeyCode leftKey, KeyCode rightKey, Color color){
-        Name = name;
+    public Player(KeyCode leftKey, KeyCode rightKey){
+        Name = $"Player {leftKey}{rightKey}";
         LeftKey = leftKey;
         RightKey = rightKey;
-        Color = color;
+        Color = UnityEngine.Random.ColorHSV(0,1,.97f,1,.97f,1);
         Score = 0;
     }
-
-    // snake type..
 }
