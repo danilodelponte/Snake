@@ -6,7 +6,6 @@ using UnityEngine.ProBuilder;
 
 public class Snake : MonoBehaviour
 {
-    [SerializeField] private SnakeSegment segmentPrefab;
     [SerializeField] public float baseMovingDeltaTime;
     [SerializeField] public float maxMovingDeltaTime;
     [SerializeField] public float minMovingDeltaTime;
@@ -21,30 +20,30 @@ public class Snake : MonoBehaviour
     private float movementDeltaTimer = 0;
     private Vector3 intendedDirection = Vector3.up;
 
-    public void AddHead() {
+    public void Init(SpecialModifier[] modifiers = null) {
         if(Head !=null) return;
+        if(modifiers == null || modifiers.Length != 3) modifiers = new SpecialModifier[3];
 
-        Head = Instantiate<SnakeSegment>(segmentPrefab, transform);
+        Head = Instantiate<SnakeSegment>(SnakeSegment.Prefab, transform);
         Head.CurrentDirection = Vector3.up;
         Head.Color = color;
+        Head.Modifier = modifiers[0];
+        AddSegment(modifiers[1]);
+        AddSegment(modifiers[2]);
     }
 
     public SnakeSegment AddSegment(SpecialModifier modifier = null) {
         Vector3 newHeadPosition = Head.transform.position + Head.CurrentDirection;
         Quaternion newHeadRotation = Head.transform.rotation;
 	    SnakeSegment newHead = Instantiate<SnakeSegment>(
-            segmentPrefab, newHeadPosition, newHeadRotation, transform
+            SnakeSegment.Prefab, newHeadPosition, newHeadRotation, transform
         );
 
         newHead.NextSegment = Head;
         newHead.CurrentDirection = Head.CurrentDirection;
         newHead.Color = Color;
         Head = newHead;
-
-        if(modifier != null) {
-            Head.Modifier = modifier;
-            Head.Modifier.Activate();
-        }
+        if(modifier != null) Head.Modifier = modifier;
 
 	    return Head;
     }

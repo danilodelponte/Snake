@@ -10,6 +10,7 @@ public class Player {
     public int SnakeType { get; set; }
     public int Score { get; set; }
     public Color Color { get; set; }
+    public SpecialModifier[] SnakeTemplate { get; set; }
 
     public Player(string name, KeyCode leftKey, KeyCode rightKey, Color color){
         Name = name;

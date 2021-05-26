@@ -15,9 +15,7 @@ namespace Tests
         [SetUp]
         public void SetUp() {
             modifier = new Confused();
-            // Snake snake = new GameObject().AddComponent<Snake>();
             segment = new GameObject().AddComponent<SnakeSegment>();
-            // segment.gameObject.transform.parent = snake.transform;
             segment.gameObject.AddComponent<SpecialComponent>();
             segment.Modifier = modifier;
         }

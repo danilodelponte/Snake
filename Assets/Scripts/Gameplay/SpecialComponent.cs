@@ -11,11 +11,16 @@ public class SpecialComponent : MonoBehaviour
     }
 
     public void Start() {
+        if(modifier != null) modifier.Activate();
         // gameObject.transform.Find(Power.ToString()).gameObject.SetActive(true);
     }
 
     public void SetModifier(SpecialModifier modifier) {
         this.modifier = modifier;
+        if(modifier != null) {
+            Transform modifierDecoration = transform.Find(modifier.ToString());
+            if(modifierDecoration != null) { modifierDecoration.gameObject.SetActive(true); }
+        }
     }
 
     private void FixedUpdate() {

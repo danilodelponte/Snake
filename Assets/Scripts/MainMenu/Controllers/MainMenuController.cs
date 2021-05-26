@@ -10,7 +10,7 @@ public class MainMenuController : MonoBehaviour
 {
 
     [SerializeField] private Transform backgroundPanel;
-    [SerializeField] private PlayerSelectionController playerSelectionPrefab;
+    [SerializeField] private PlayerSelection playerSelectionPrefab;
 
     [SerializeField] TextMeshProUGUI conflictedKeys;
     [SerializeField] TextMeshProUGUI pressLeftToAdd;
@@ -18,12 +18,10 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] Component addingPlayerOptions;
     [SerializeField] TextMeshProUGUI holdTwoToAdd;
     [SerializeField] TextMeshProUGUI holdToAdd;
-    [SerializeField] TextMeshProUGUI releaseToAddPlayer;
 
     [SerializeField] Component editingPlayerOptions;
     [SerializeField] TextMeshProUGUI holdBothToChange;
     [SerializeField] TextMeshProUGUI holdToChange;
-    [SerializeField] TextMeshProUGUI releaseToSelectType;
 
     private enum State { Conflicted, Editing, Adding, Waiting, Ready }
     private State state = State.Waiting;    
@@ -34,9 +32,16 @@ public class MainMenuController : MonoBehaviour
     private List<Player> players = new List<Player>();
     private Dictionary<KeyCode, Player> keyPlayerMapping = new Dictionary<KeyCode, Player>();
 
+    private SpecialModifier[][] templates;
+
     private void Start() {
+        GenerateTemplates();
         UpdateState();
         UpdateGUI();
+    }
+
+    private void GenerateTemplates() {
+        templates = SnakeTemplates.GenerateTemplates();
     }
 
     private void OnGUI() {
@@ -57,14 +62,16 @@ public class MainMenuController : MonoBehaviour
         UpdateGUI();
     }
 
-    private void FixedUpdate() {
+    private void Update() {
         if(pressedKeys.Count == 2) twoKeysHeldTimer += Time.deltaTime;
         if(state == State.Adding && twoKeysHeldTimer > 1) {
             AddPlayer(pressedKeys.ToArray());
             UpdateState();
             UpdateGUI();
+            
         }
-        else if(state == State.Editing && twoKeysHeldTimer % 3 == 0) {
+        else if(state == State.Editing && twoKeysHeldTimer > 1) {
+            twoKeysHeldTimer = 0;
             ChangePlayerType(FirstKeyPlayer());
             UpdateState();
             UpdateGUI();
@@ -115,15 +122,13 @@ public class MainMenuController : MonoBehaviour
     private void UpdateAddingPlayerOptions() {
         SetActive(addingPlayerOptions,  state == State.Adding);
         SetActive(holdTwoToAdd,         pressedKeys.Count == 1);
-        SetActive(holdToAdd,            pressedKeys.Count == 2 && twoKeysHeldTimer < 1);
-        SetActive(releaseToAddPlayer,   twoKeysHeldTimer > 1);
+        SetActive(holdToAdd,            pressedKeys.Count == 2);
     }
 
     private void UpdateEditingPlayerOptions() {
         SetActive(editingPlayerOptions, state == State.Editing);
         SetActive(holdBothToChange,     pressedKeys.Count == 1);
-        SetActive(holdToChange,         pressedKeys.Count == 2 && twoKeysHeldTimer < 3);
-        SetActive(releaseToSelectType,  twoKeysHeldTimer > 3);
+        SetActive(holdToChange,         pressedKeys.Count == 2);
     }
 
     private void KeyUp(KeyCode keyCode) {
@@ -133,22 +138,38 @@ public class MainMenuController : MonoBehaviour
     }
 
     private void ChangePlayerType(Player player) {
-        // player.types.
+        int currentSelection = Array.IndexOf(templates, player.SnakeTemplate);
+        currentSelection += 1;
+        currentSelection %= templates.Length;
+        player.SnakeTemplate = templates[currentSelection];
+
+        GetSelectionFor(player).UpdateSnakeTemplate();
+    }
+
+    private PlayerSelection GetSelectionFor(Player player) {
+        GameObject[] selectionObjects = GameObject.FindGameObjectsWithTag("PlayerSelection");
+        foreach (var selectionObject in selectionObjects) {
+            PlayerSelection selection = selectionObject.GetComponent<PlayerSelection>();
+            if(selection.Player == player) return selection;
+        }
+        return null;
     }
 
     private void AddPlayer(KeyCode[] playerKeys) {
         int playersCount = players.Count();
         string name = $"Player {playerKeys[0]}{playerKeys[1]}";
+
         Color color = UnityEngine.Random.ColorHSV(0,1,.97f,1,.97f,1);
         Player player = new Player(name, playerKeys[0], playerKeys[1], color);
+
         players.Add(player);
         keyPlayerMapping.Add(playerKeys[0], player);
         keyPlayerMapping.Add(playerKeys[1], player);
 
         var playerSelection = Instantiate(playerSelectionPrefab, backgroundPanel);
+        playerSelection.SetPlayer(player);
         float offsetX = ((RectTransform) playerSelection.transform).rect.width * playersCount;
         playerSelection.transform.localPosition += new Vector3(offsetX, 0, 0);
-        playerSelection.SetPlayer(player);
     }
 
     private void SetActive(Component component, bool active) {

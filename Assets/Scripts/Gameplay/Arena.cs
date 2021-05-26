@@ -11,8 +11,8 @@ public class Arena : MonoBehaviour
     public int Height { get => height; set => height = value;}
     private PathNode[,] gridArray;
     private TextMesh[,] debugTextArray;
-    public PathNode[] SnakeSegmentNodes { get; private set; }
-    public PathNode[] CollectableNodes { get; private set; }
+    public List<PathNode> SnakeHeadNodes { get; private set; }
+    public List<PathNode> CollectableNodes { get; private set; }
 
     public void Generate(int width, int height){
         if(gridArray != null) return;
@@ -38,27 +38,28 @@ public class Arena : MonoBehaviour
 
     private void UpdateSnakeNodes() {
         GameObject[] snakeSegments = GameObject.FindGameObjectsWithTag("SnakeSegment");
-        SnakeSegmentNodes = new PathNode[snakeSegments.Length];
+        SnakeHeadNodes = new List<PathNode>();
         for (int i = 0; i < snakeSegments.Length; i++) {
-            Transform segmentTransform = snakeSegments[i].transform;
+            SnakeSegment segment = snakeSegments[i].GetComponent<SnakeSegment>();
+            Transform segmentTransform = segment.transform;
             KeepWithinBounds(ref segmentTransform);
             Vector3 position = segmentTransform.position;
             PathNode node = new PathNode(this, position, PathNodeType.SNAKE);
             gridArray[(int) position.x, (int) position.y] = node;
-            SnakeSegmentNodes[i] = node;
+            if(segment.IsHead) SnakeHeadNodes.Add(node);
         }
     }
 
     private void UpdateCollectableNodes() {
         GameObject[] collectables = GameObject.FindGameObjectsWithTag("Collectable");
-        CollectableNodes = new PathNode[collectables.Length];
+        CollectableNodes = new List<PathNode>();
         for (int i = 0; i < collectables.Length; i++) {
             Transform collectableTransform = collectables[i].transform;
             KeepWithinBounds(ref collectableTransform);
             Vector3 position = collectableTransform.position;
             PathNode node = new PathNode(this, position, PathNodeType.COLLECTABLE);
             gridArray[(int) position.x, (int) position.y] = node;
-            CollectableNodes[i] = node;
+            CollectableNodes.Add(node);
         }
     }
 
@@ -163,20 +164,11 @@ public class Arena : MonoBehaviour
     }
 
     public List<PathNode> GetTargetNodes() {
-        List<PathNode> targetNodes = new List<PathNode>();
-        Snake[] snakes = GameObject.FindObjectsOfType<Snake>();
-
-        foreach(var snake in snakes) {
-            PathNode headNode = GetNode(snake.Head.transform.position);
-            targetNodes.Add(headNode);
-        }
-
-        Collectable[] collectables = GameObject.FindObjectsOfType<Collectable>();
-        foreach (var collectable in collectables) {
-            PathNode node = GetNode(collectable.transform.position);
-            targetNodes.Add(node);
-        }
-        return targetNodes;
+        UpdateGrid();
+        List<PathNode> targetList = new List<PathNode>();
+        targetList.AddRange(SnakeHeadNodes);
+        targetList.AddRange(CollectableNodes);
+        return targetList;
     }
     
     public const int sortingOrderDefault = 5000;

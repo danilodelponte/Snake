@@ -360,7 +360,7 @@ GameObject:
   - component: {fileID: 457441186652646832}
   m_Layer: 5
   m_Name: PlayerSelection
-  m_TagString: Untagged
+  m_TagString: PlayerSelection
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

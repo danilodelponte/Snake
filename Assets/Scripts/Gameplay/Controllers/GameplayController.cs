@@ -102,7 +102,7 @@ public class GameplayController : MonoBehaviour
     }
 
     private void SpawnPlayerSnake(Player player) {
-        var snake = SpawnSnake();
+        var snake = SpawnSnake(player.SnakeTemplate);
         snake.Player = player;
         snake.Color = player.Color;
         PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
@@ -126,11 +126,9 @@ public class GameplayController : MonoBehaviour
         return snake;
     }
 
-    public Snake SpawnSnake() {
+    public Snake SpawnSnake(SpecialModifier[] modifiers = null) {
         var snake = Instantiate(snakePrefab, arena.EquallyDistributedPosition(), Quaternion.identity);
-        snake.AddHead();
-        snake.AddSegment();
-        snake.AddSegment();
+        snake.Init(modifiers);
         return snake;
     }
 
@@ -163,12 +161,12 @@ public class GameplayController : MonoBehaviour
     public void CollectablePickedUp(SnakeSegment segment, Collectable collectable) {
         collectable.gameObject.SetActive(false);
         GameObject.Destroy(collectable.gameObject);
+        SpawnCollectable();
 
         Snake snake = segment.Snake;
         if(snake.isAI) collectable.Modifier = null;
         SnakeSegment newSegment = snake.AddSegment(collectable.Modifier);
-
-        SpawnCollectable();
+        
         IncrementPlayerScore(snake, collectable.Score);
     }
 
