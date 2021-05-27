@@ -97,12 +97,13 @@ public class Snake : MonoBehaviour
         return control.GetDirection();
     }
 
-    public void Die() {
-        if(EvaluateDeath()) return; 
+    public bool Die() {
+        if(EvaluateDeath()) return false; 
 
         Debug.Log($"{this} has died!");
         gameObject.SetActive(false);
         GameObject.Destroy(gameObject);
+        return true;
     }
 
     public int EvaluateScoreGain(int gain) {

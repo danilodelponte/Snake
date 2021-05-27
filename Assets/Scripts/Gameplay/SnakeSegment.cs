@@ -104,7 +104,9 @@ public class SnakeSegment : MonoBehaviour
     }
 
     public float EvaluateMovementDelta(float movingDelta){
+        // slows down the snake a bit
         movingDelta += movingDeltaIncrease;
+
         if(Modifier != null) Modifier.MovementModifier(ref movingDelta);
         if(!IsTail) return NextSegment.EvaluateMovementDelta(movingDelta);
 

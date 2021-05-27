@@ -8,6 +8,14 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private GUIController gUI;
     [SerializeField] private Arena arena;
 
+    enum GameState
+    {
+        RUNNING,
+        PAUSED,
+        GAMEOVER
+    }
+    private GameState state = GameState.RUNNING;
+
     void Awake()
     {
         CreateSingleton();
@@ -47,13 +55,30 @@ public class GameplayController : MonoBehaviour
     }
 
     public void ResumeGame() {
+        if(state != GameState.PAUSED) return;
+        state = GameState.RUNNING;
         gUI.HidePausePanel();
         Time.timeScale = 1;
     }
 
+    public void Restart() {
+        if(state != GameState.GAMEOVER) return;
+        gUI.RemovePlayerLabels();
+        gUI.HideGameOverPanel();
+        DestroyAll();
+        InitWithPlayers();
+    }
+
     public void PauseGame() {
+        if(state != GameState.RUNNING) return;
+        state = GameState.PAUSED;
         Time.timeScale = 0;
         gUI.ShowPausePanel();
+    }
+
+    public void GameOver() {
+        state = GameState.GAMEOVER;
+        gUI.ShowGameOverPanel();
     }
 
     public void LoadSelectionMenu() {
@@ -180,7 +205,16 @@ public class GameplayController : MonoBehaviour
 
     public void KillSnake(Snake snake) {
         if(snake.isAI) SpawnEnemySnake();
-        snake.Die();
+        if(snake.Die()) CheckGameOver();
+    }
+
+    public void CheckGameOver(){
+        GameObject[] activeSnakes = GameObject.FindGameObjectsWithTag("Snake");
+        foreach (var activeSnake in activeSnakes) { 
+            if(activeSnake.GetComponent<PlayerControl>() != null) return;
+        }
+
+        GameOver();
     }
 
     public Snapshot CreateSnapshot() {
