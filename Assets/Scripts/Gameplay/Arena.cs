@@ -78,32 +78,18 @@ public class Arena : MonoBehaviour
         Portal leftWall = Instantiate(Portal.Prefab, transform);
         leftWall.transform.localScale = new Vector3(1, height, 1);
         leftWall.transform.position = new Vector3(-1, height/2 - .5f, 0);
-        leftWall.TeleportFilter = new Vector3(1, 0, 0);
-        leftWall.TeleportOffset = Vector3.left;
 
         Portal rightWall = Instantiate(Portal.Prefab, transform);
         rightWall.transform.localScale = new Vector3(1, height, 1);
         rightWall.transform.position = new Vector3(width, height/2 - .5f, 0);
-        rightWall.TeleportFilter = new Vector3(1, 0, 0);
-        rightWall.TeleportOffset = Vector3.right;
-
-        leftWall.OtherEnd = rightWall;
-        rightWall.OtherEnd = leftWall;
 
         Portal upperWall = Instantiate(Portal.Prefab, transform);
         upperWall.transform.localScale = new Vector3(width, 1, 1);
         upperWall.transform.position = new Vector3(width/2 - .5f, height, 0);
-        upperWall.TeleportFilter = new Vector3(0, 1, 0);
-        upperWall.TeleportOffset = Vector3.up;
 
         Portal bottomWall = Instantiate(Portal.Prefab, transform);
         bottomWall.transform.localScale = new Vector3(width, 1, 1);
         bottomWall.transform.position = new Vector3(width/2 - .5f, -1, 0);
-        bottomWall.TeleportFilter = new Vector3(0, 1, 0);
-        bottomWall.TeleportOffset = Vector3.down;
-
-        upperWall.OtherEnd = bottomWall;
-        bottomWall.OtherEnd = upperWall;
     }
 
     public Vector3Int RandomPosition() {
