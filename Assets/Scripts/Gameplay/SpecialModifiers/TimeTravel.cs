@@ -35,8 +35,8 @@ public class TimeTravel : SpecialModifier
 
         Snapshot travelTo = this.snapshot;
         Debug.Log($"{SnakeSegment.Snake.name} is time travelling!");
-        Deactivate();
         GameplayController.Singleton.LoadSnapshot(travelTo);
+        Deactivate();
         return true;
     }
 }

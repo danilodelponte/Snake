@@ -5,7 +5,7 @@ using TMPro;
 
 public class PlayerSelection : MonoBehaviour
 {
-    public static PlayerSelection Prefab { get => PrefabCache.Load<PlayerSelection>("PlayerSelection"); }
+    public static PlayerSelection Prefab { get => PrefabCache.Load<PlayerSelection>("UI/PlayerSelection"); }
 
     [SerializeField] private TextMeshProUGUI playerNameLabel;
     [SerializeField] private TextMeshProUGUI playerLeftKeyLabel;
@@ -24,9 +24,9 @@ public class PlayerSelection : MonoBehaviour
     }
 
     private void SetColor(Color color) {
-        MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-        foreach (var renderer in renderers) {
-            renderer.material.color = color;
+        SnakeSegment[] segments = gameObject.GetComponentsInChildren<SnakeSegment>();
+        foreach (var segment in segments) {
+            segment.GetComponent<MeshRenderer>().material.color = color;
         }
     }
 

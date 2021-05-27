@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GUIController : MonoBehaviour
-{
-    [SerializeField] private PlayerScoreLabel scoreLabelPrefab;
+public class GUIController : MonoBehaviour {
     private GameObject PausePanel { get => transform.Find("PausePanel").gameObject; }
 
     public void ShowPausePanel() {
@@ -17,7 +15,7 @@ public class GUIController : MonoBehaviour
 
     public void AddPlayerLabel(Player player) {
         RectTransform lastTransform = lastLabelTransform();
-        PlayerScoreLabel scoreLabel = Instantiate(scoreLabelPrefab, transform);
+        PlayerScoreLabel scoreLabel = Instantiate(PlayerScoreLabel.Prefab, transform);
         float offsetY = ((RectTransform) scoreLabel.transform).rect.height * ScoreLabels().Length;
         scoreLabel.transform.localPosition -= new Vector3(0, offsetY, 0);
         scoreLabel.Player = player;

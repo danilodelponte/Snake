@@ -21,8 +21,9 @@ public class HeadBomb : SpecialModifier
         if(timer > maxTime) Explode();
     }
 
-    public override bool CollisionModifier(SnakeSegment segmentCollided, Collider other)
-    {
+    public override bool CollisionModifier(SnakeSegment segmentCollided, Collider other) {
+        if(!segmentCollided.IsHead) return false;
+
         // when another collectable is picked up they do not activate special Modifiers
         if(other.gameObject.GetComponent<Collectable>() != null) {
             Collectable collectable = other.gameObject.GetComponent<Collectable>();

@@ -86,7 +86,7 @@ public class SnakeSegment : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        if(IsHead) Snake.EvaluateCollision(this, other);
+        Snake.EvaluateCollision(this, other);
     }
 
     public bool EvaluateCollision(SnakeSegment segmentCollided, Collider other) {
@@ -105,7 +105,7 @@ public class SnakeSegment : MonoBehaviour
 
     public float EvaluateMovementDelta(float movingDelta){
         movingDelta += movingDeltaIncrease;
-        if(Modifier != null) movingDelta = Modifier.MovementModifier(movingDelta);
+        if(Modifier != null) Modifier.MovementModifier(ref movingDelta);
         if(!IsTail) return NextSegment.EvaluateMovementDelta(movingDelta);
 
         return movingDelta;

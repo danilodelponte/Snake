@@ -11,8 +11,7 @@ public class SnakeTemplate {
         SnakeTemplate[] templates = {
             new SnakeTemplate(new EnginePower(), new EnginePower(), new EnginePower()),
             new SnakeTemplate(new BatteringRam(), new BatteringRam(), new BatteringRam()),
-            new SnakeTemplate(new EnginePower(), new EnginePower(), new BatteringRam()),
-            new SnakeTemplate(new EnginePower(), new EnginePower(), new BatteringRam()),
+            new SnakeTemplate(new EnginePower(), new EnginePower(), new BatteringRam())
         };
         return templates;
     }

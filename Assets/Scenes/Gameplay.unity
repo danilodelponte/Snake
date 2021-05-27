@@ -445,7 +445,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
+  orthographic: 0
   orthographic size: 12
   m_Depth: -1
   m_CullingMask:
@@ -505,10 +505,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f485127845e28e2484a91a2d643d44f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectablePrefab: {fileID: 7999598781234892037, guid: 7a06f454abfa053968799d6f1f27c10c,
-    type: 3}
-  snakePrefab: {fileID: 3023000758315942140, guid: 2e9268fc063781c13a6a378c812ad58d,
-    type: 3}
   gUI: {fileID: 1658263416}
   arena: {fileID: 0}
 --- !u!4 &1167248884

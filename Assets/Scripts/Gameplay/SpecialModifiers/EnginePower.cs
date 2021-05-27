@@ -11,7 +11,7 @@ public class EnginePower : SpecialModifier
     }
 
     // decreases time to move
-    public override float MovementModifier(float maxDeltaTime){
-        return maxDeltaTime - movementDeltaDecrease;
+    public override void MovementModifier(ref float maxDeltaTime){
+        maxDeltaTime -= movementDeltaDecrease;
     }
 }

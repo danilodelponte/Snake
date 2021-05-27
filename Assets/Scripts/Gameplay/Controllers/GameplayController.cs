@@ -14,8 +14,8 @@ public class GameplayController : MonoBehaviour
         CreateArena();
 
         // InitSpecialPowerTesting();
-        // InitWithPlayers();
-        InitWithAiOnly(5);
+        InitWithPlayers();
+        // InitWithAiOnly(5);
     }
 
     private void CreateSingleton() {
@@ -130,9 +130,9 @@ public class GameplayController : MonoBehaviour
         int chance = UnityEngine.Random.Range(0,100);
         SpecialModifier modifier = null;
         
-        if(chance < 25) modifier = new EnginePower();
+        if(chance < 10) modifier = new EnginePower();
         else if(chance < 30) modifier = new HeadBomb();
-        else if(chance < 40) modifier = new BatteringRam();
+        else if(chance < 80) modifier = new BatteringRam();
         else if(chance < 60) modifier = new Confused();
         else if(chance < 100) modifier = new TimeTravel();
         return SpawnCollectable(modifier);
