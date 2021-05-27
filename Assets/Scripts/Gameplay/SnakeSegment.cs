@@ -86,7 +86,7 @@ public class SnakeSegment : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        Snake.EvaluateCollision(this, other);
+        if(IsHead) Snake.EvaluateCollision(this, other);
     }
 
     public bool EvaluateCollision(SnakeSegment segmentCollided, Collider other) {

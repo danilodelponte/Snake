@@ -22,19 +22,19 @@ public class Snake : MonoBehaviour
     private float movementDeltaTimer = 0;
     private Vector3 intendedDirection = Vector3.up;
 
-    public void Init(SpecialModifier[] modifiers = null) {
+    public void Init(SnakeTemplate template = null) {
         if(Head !=null) return;
-        if(modifiers == null || modifiers.Length != 3) modifiers = new SpecialModifier[3];
+        if(template == null) template = new SnakeTemplate();
 
         Head = Instantiate<SnakeSegment>(SnakeSegment.Prefab, transform);
         Head.CurrentDirection = Vector3.up;
         Head.Color = color;
-        Head.Modifier = modifiers[0];
+        Head.Modifier = template.Modifier(0);
         if(Head.Modifier!=null) {
             Head.Modifier.Activate();
         }
-        AddSegment(modifiers[1]);
-        AddSegment(modifiers[2]);
+        AddSegment(template.Modifier(1));
+        AddSegment(template.Modifier(2));
     }
 
     public SnakeSegment AddSegment(SpecialModifier modifier = null) {

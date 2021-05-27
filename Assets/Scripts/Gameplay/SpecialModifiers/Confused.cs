@@ -13,8 +13,8 @@ public class Confused : SpecialModifier
 
     public override void Deactivate()
     {
-        base.Deactivate();
         Debug.Log($"{SnakeSegment} is back to normal!");
+        base.Deactivate();
     }
 
     public override void FixedUpdate() {
@@ -22,6 +22,7 @@ public class Confused : SpecialModifier
         if(timer > maxTime) Deactivate();
     }
 
+    // Invert keys direction
     public override Vector3 DirectionModifier(Vector3 direction)
     {
         return direction * -1;

@@ -10,15 +10,20 @@ public class GameplayController : MonoBehaviour
 
     void Awake()
     {
-        InitSingleton();
-
-        // arena.GenerateGrid();
-        // arena.GridDebug();
+        CreateSingleton();
         CreateArena();
 
         // InitSpecialPowerTesting();
         // InitWithPlayers();
         InitWithAiOnly(5);
+    }
+
+    private void CreateSingleton() {
+        if (Singleton != null) {
+            Destroy(gameObject);
+            return;
+        }
+        Singleton = this;
     }
 
     private void FixedUpdate() {
@@ -81,14 +86,6 @@ public class GameplayController : MonoBehaviour
         }
     }
 
-    private void InitSingleton() {
-        if (Singleton != null) {
-            Destroy(gameObject);
-            return;
-        }
-        Singleton = this;
-    }
-
     public void CreateArena() {
         arena = GameObject.FindObjectOfType<Arena>();
         if(arena != null) return;
@@ -99,7 +96,7 @@ public class GameplayController : MonoBehaviour
     }
 
     private void SpawnPlayerSnake(Player player) {
-        var snake = SpawnSnake(player.SnakeTemplate.Modifiers);
+        var snake = SpawnSnake(player.SnakeTemplate);
         snake.Player = player;
         snake.Color = player.Color;
         PlayerControl playerControl = snake.gameObject.AddComponent<PlayerControl>();
@@ -123,20 +120,21 @@ public class GameplayController : MonoBehaviour
         return snake;
     }
 
-    public Snake SpawnSnake(SpecialModifier[] modifiers = null) {
+    public Snake SpawnSnake(SnakeTemplate template = null) {
         var snake = Instantiate(Snake.Prefab, arena.EquallyDistributedPosition(), Quaternion.identity);
-        snake.Init(modifiers);
+        snake.Init(template);
         return snake;
     }
 
     public Collectable SpawnCollectable() {
         int chance = UnityEngine.Random.Range(0,100);
         SpecialModifier modifier = null;
-        if(chance < 10) modifier = new TimeTravel();
-        else if(chance < 25) modifier = new EnginePower();
+        
+        if(chance < 25) modifier = new EnginePower();
         else if(chance < 30) modifier = new HeadBomb();
         else if(chance < 40) modifier = new BatteringRam();
-        else if(chance < 10) modifier = new Confused();
+        else if(chance < 60) modifier = new Confused();
+        else if(chance < 100) modifier = new TimeTravel();
         return SpawnCollectable(modifier);
     }
     
@@ -150,7 +148,7 @@ public class GameplayController : MonoBehaviour
         if(other.gameObject.GetComponent<Collectable>() != null) {
             CollectablePickedUp(segment, other.gameObject.GetComponent<Collectable>());
         }
-        if(other.gameObject.GetComponent<SnakeSegment>() != null) {
+        else if(other.gameObject.GetComponent<SnakeSegment>() != null) {
             SnakeCrash(segment, other.gameObject.GetComponent<SnakeSegment>());
         }
     }
@@ -167,8 +165,22 @@ public class GameplayController : MonoBehaviour
         IncrementPlayerScore(snake, collectable.Score);
     }
 
+    public void IncrementPlayerScore(Snake snake, int increment) {
+        if(!snake.IsPlayer) return;
+
+        Player player = snake.Player;
+        increment = snake.EvaluateScoreGain(increment);
+        player.Score += increment;
+        gUI.UpdatePlayerScore(player);
+    }
+
     public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {
         if(segment1.IsHead) KillSnake(segment1.Snake);
+    }
+
+    public void KillSnake(Snake snake) {
+        if(snake.isAI) SpawnEnemySnake();
+        snake.Die();
     }
 
     public Snapshot CreateSnapshot() {
@@ -181,28 +193,16 @@ public class GameplayController : MonoBehaviour
     }
 
     private void DestroyAll() {
-        Snake[] snakes = GameObject.FindObjectsOfType<Snake>();
+        GameObject[] snakes = GameObject.FindGameObjectsWithTag("Snake");
         foreach (var snake in snakes) {
-            GameObject.Destroy(snake.gameObject);
+            snake.SetActive(false);
+            GameObject.Destroy(snake);
         }
 
-        Collectable[] collectables = GameObject.FindObjectsOfType<Collectable>();
+        GameObject[] collectables = GameObject.FindGameObjectsWithTag("Collectable");
         foreach (var collectable in collectables) {
-            GameObject.Destroy(collectable.gameObject);
+            collectable.SetActive(false);
+            GameObject.Destroy(collectable);
         }
-    }
-
-    public void KillSnake(Snake snake) {
-        snake.Die();
-        if(snake.isAI) SpawnEnemySnake();
-    }
-
-    public void IncrementPlayerScore(Snake snake, int increment) {
-        if(!snake.IsPlayer) return;
-
-        Player player = snake.Player;
-        increment = snake.EvaluateScoreGain(increment);
-        player.Score += increment;
-        gUI.UpdatePlayerScore(player);
     }
 }

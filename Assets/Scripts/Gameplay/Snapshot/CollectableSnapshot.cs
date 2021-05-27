@@ -13,6 +13,7 @@ public class CollectableSnapshot {
     public CollectableSnapshot(Collectable collectable) {
         Modifier = collectable.Modifier;
         Score = collectable.Score;
+        Position = collectable.transform.position;
     }
 
     public Collectable Load() {

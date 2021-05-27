@@ -11,10 +11,8 @@ public class BatteringRam : SpecialModifier
         Debug.Log($"{SnakeSegment.Snake} got a battering ram!");
     }
 
-    public override void Deactivate()
-    {
+    public override void Deactivate() {
         base.Deactivate();
-        Debug.Log($"{SnakeSegment.Snake} battering ram used.");
     }
 
     public override bool CollisionModifier(SnakeSegment segmentCollided, Collider other) {

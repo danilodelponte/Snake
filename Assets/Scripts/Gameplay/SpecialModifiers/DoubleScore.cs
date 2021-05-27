@@ -14,11 +14,11 @@ public class DoubleScore : SpecialModifier {
     }
 
     public override void FixedUpdate() {
-        // explode after some time
         timer += Time.deltaTime;
         if(timer > maxTime) Deactivate();
     }
 
+    // multiplies score by 2
     public override int ScoreGainModifier(int gain) {
         return gain * 2;
     }

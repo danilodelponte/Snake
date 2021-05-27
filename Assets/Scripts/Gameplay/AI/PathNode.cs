@@ -27,12 +27,14 @@ public class PathNode {
         this.arena = arena;
         this.x = (int) position.x;
         this.y = (int) position.y;
+        this.type = type;
     }
 
     public PathNode(Arena arena, int x, int y, PathNodeType type = PathNodeType.FREE) {
         this.arena = arena;
         this.x = x;
         this.y = y;
+        this.type = type;
     }
 
     public List<PathNode> Neighbours() {

@@ -14,9 +14,7 @@ public class AIControl : SnakeControl
         return _arena = GameObject.Find("Arena").GetComponent<Arena>();
     }
 
-    // Update is called once per frame
-    public override Vector3 GetDirection()
-    {
+    public override Vector3 GetDirection() {
         PathNode startNode = Arena.GetNode(Snake.Head.transform.position);
         List<PathNode> collectableNodes = Arena.CollectableNodes;
         collectableNodes.Sort(Comparer<PathNode>.Create(

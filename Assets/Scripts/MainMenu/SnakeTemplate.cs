@@ -17,8 +17,16 @@ public class SnakeTemplate {
         return templates;
     }
 
+    public SnakeTemplate() {
+        Modifiers = new SpecialModifier[3];
+    }
+
     public SnakeTemplate(SpecialModifier mod1, SpecialModifier mod2, SpecialModifier mod3) {
         Modifiers = new SpecialModifier[] { mod1, mod2, mod3 };
+    }
+
+    public SpecialModifier Modifier(int index) {
+        return Modifiers[index];
     }
 
     private SpecialModifier[] GetModifiers() {

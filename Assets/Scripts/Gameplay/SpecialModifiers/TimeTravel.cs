@@ -8,8 +8,8 @@ public class TimeTravel : SpecialModifier
 
     public override void Activate() {
         DisablePrevious();
-        Debug.Log($"{SnakeSegment.Snake.name} saved time!");
         if(snapshot == null) snapshot = GameplayController.Singleton.CreateSnapshot();
+        Debug.Log($"{SnakeSegment.Snake.name} saved time!");
     }
 
     public override void Deactivate()
