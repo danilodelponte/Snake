@@ -39,7 +39,10 @@ public class BatteringRam : SpecialModifier
             safePosition = otherSegment.transform.position;
             crossing = true;
         }
-        
+
+        // if object collided is not at safe position, must collide
+        if(crossing && otherSegment.transform.position != safePosition) return false;
+
         return crossing;
     }
 }

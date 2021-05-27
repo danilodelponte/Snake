@@ -37,6 +37,7 @@ public class HeadBomb : SpecialModifier
         else if(other.gameObject.GetComponent<SnakeSegment>() != null) {
             SnakeSegment otherSegment = other.gameObject.GetComponent<SnakeSegment>();
             GameplayController.Singleton.KillSnake(otherSegment.Snake);
+            Explode();
         }
         return false;
     }
