@@ -11,14 +11,14 @@ public class SnakeSegment : MonoBehaviour
 
     private SpecialComponent SpecialComponent { get => gameObject.GetComponent<SpecialComponent>(); }
 
-    public Color Color { set => SetColor(value); }
-    public Vector3 CurrentDirection { get; set; }
-    public SnakeSegment NextSegment { get; set; }
     public Snake Snake { get => transform.parent.gameObject.GetComponent<Snake>(); }
+    public SnakeSegment NextSegment { get; set; }
+    public Vector3 CurrentDirection { get; set; }
+    public Color Color { set => SetColor(value); }
     public BezierShape Body { get => GetComponentInChildren<BezierShape>(); }
+    public SpecialModifier Modifier { get => GetModifier(); set => SetModifier(value); }
     public bool IsTail { get => NextSegment == null; }
     public bool IsHead { get => Snake.Head == this; }
-    public SpecialModifier Modifier { get => GetModifier(); set => SetModifier(value); }
 
     private void Start() {
         UpdateBody();
@@ -34,13 +34,13 @@ public class SnakeSegment : MonoBehaviour
 
     public void Move(Vector3 direction) {
         if(direction == Vector3.zero) return;
-
         if((direction + CurrentDirection) == Vector3.zero) direction = CurrentDirection;
+
         transform.position += direction;
         transform.rotation = GetRotation(direction);
-        if(NextSegment != null) {
-            NextSegment.Move(CurrentDirection);
-        }
+
+        if(NextSegment != null) NextSegment.Move(CurrentDirection);
+
         CurrentDirection = direction;
     }
 

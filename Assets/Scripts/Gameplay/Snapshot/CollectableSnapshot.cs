@@ -17,7 +17,7 @@ public class CollectableSnapshot {
     }
 
     public Collectable Load() {
-        GameObject go = (GameObject) GameObject.Instantiate(collectablePrefab, Position, Quaternion.Euler(0,0,0));
+        GameObject go = (GameObject) GameObject.Instantiate(collectablePrefab, Position, Quaternion.identity);
         Collectable collectable = (Collectable) go.GetComponent<Collectable>();
         collectable.Modifier = Modifier;
         collectable.Score = Score;

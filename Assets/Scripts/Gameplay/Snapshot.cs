@@ -14,19 +14,28 @@ public class Snapshot
     }
 
     public static Snapshot Create() {
+        SnakeSnapshot[] snappedSnakes = SnapshotSnakes();
+        CollectableSnapshot[] snapedCollectables = SnapshotCollectable();
+
+        return new Snapshot(snappedSnakes, snapedCollectables);
+    }
+
+    private static SnakeSnapshot[] SnapshotSnakes() {
         GameObject[] snakes = GameObject.FindGameObjectsWithTag("Snake");
         SnakeSnapshot[] snappedSnakes = new SnakeSnapshot[snakes.Length];
         for (int i = 0; i < snakes.Length; i++) {
             snappedSnakes[i] = new SnakeSnapshot(snakes[i].GetComponent<Snake>());
         }
+        return snappedSnakes;
+    }
 
+    private static CollectableSnapshot[] SnapshotCollectable() {
         GameObject[] collectables = GameObject.FindGameObjectsWithTag("Collectable");
         CollectableSnapshot[] snapedCollectables = new CollectableSnapshot[collectables.Length];
         for (int i = 0; i < collectables.Length; i++) {
             snapedCollectables[i] = new CollectableSnapshot(collectables[i].GetComponent<Collectable>());
         }
-
-        return new Snapshot(snappedSnakes, snapedCollectables);
+        return snapedCollectables;
     }
 
     public void Load() {
