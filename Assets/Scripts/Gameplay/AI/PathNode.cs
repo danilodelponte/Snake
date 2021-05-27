@@ -64,6 +64,17 @@ public class PathNode {
         return xDistance + yDistance;
     }
 
+    public Vector3 DirectionTo(PathNode other) {
+        int xDirection = other.x - this.x;
+        int xReverseDirection = arena.Width - Mathf.Abs(xDirection);
+        if(xReverseDirection < Mathf.Abs(xDirection)) xDirection *= -1;
+
+        int yDirection = other.y - this.y;
+        int yReverseDirection = arena.Height - Mathf.Abs(yDirection);
+        if(yReverseDirection < Mathf.Abs(yDirection)) yDirection *= -1;
+        return new Vector3(xDirection, yDirection).normalized;
+    }
+
     public override string ToString() {
         return type.ToString().ToCharArray()[0] + "";
     }
