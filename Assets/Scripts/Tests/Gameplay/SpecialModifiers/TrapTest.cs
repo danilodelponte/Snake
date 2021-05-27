@@ -6,25 +6,26 @@ using UnityEngine.TestTools;
 
 namespace Tests
 {
-    public class ConfusedTest
+    public class TrapTest
     {
-        Confused modifier;
+        // A Test behaves as an ordinary method
+        Trap modifier;
         SnakeSegment segment;
 
         [SetUp]
         public void SetUp() {
-            modifier = new Confused();
+            modifier = new Trap();
             segment = new GameObject().AddComponent<SnakeSegment>();
             segment.gameObject.AddComponent<SpecialComponent>();
             segment.Modifier = modifier;
         }
 
         [Test]
-        public void InvertsDirection()
+        public void SetsDirectionToZero()
         {
             Vector3 direction = new Vector3(1, 2, 3);
             modifier.DirectionModifier(ref direction);
-            Assert.That(direction, Is.EqualTo(new Vector3(-1,-2,-3)));
+            Assert.That(direction, Is.EqualTo(Vector3.zero));
         }
 
         [UnityTest]
@@ -32,7 +33,7 @@ namespace Tests
         {
             modifier.maxTime = .01f;
             Assert.That(segment.Modifier, Is.EqualTo(modifier));
-            yield return new WaitForSeconds(.01f);
+            yield return new WaitForSeconds(.02f);
             Assert.That(segment.Modifier, Is.Null);
         }
     }

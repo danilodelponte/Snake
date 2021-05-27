@@ -72,7 +72,7 @@ public class SnakeSegment : MonoBehaviour
     }
 
     public int EvaluateScoreGain(int gain) {
-        if(Modifier != null) gain = Modifier.ScoreGainModifier(gain);
+        if(Modifier != null) Modifier.ScoreGainModifier(ref gain);
         if(!IsTail) return NextSegment.EvaluateScoreGain(gain);
 
         return gain;
@@ -97,7 +97,7 @@ public class SnakeSegment : MonoBehaviour
     }
 
     public Vector3 EvaluateDirection(Vector3 direction) {
-        if(Modifier != null) direction = Modifier.DirectionModifier(direction);
+        if(Modifier != null) Modifier.DirectionModifier(ref direction);
         if(!IsTail) return NextSegment.EvaluateDirection(direction);
 
         return direction;

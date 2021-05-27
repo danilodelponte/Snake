@@ -12,6 +12,7 @@ public class GameManager : Singleton<GameManager>
 
     private Player[] players;
     public Player[] Players { get => players; }
+    public GameplayMode GameMode = new MultiplayerMode();
 
     public void LoadGameplay(Player[] players) {
         this.players = players;

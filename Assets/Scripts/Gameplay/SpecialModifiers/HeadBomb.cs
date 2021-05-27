@@ -9,10 +9,9 @@ public class HeadBomb : SpecialModifier
     private float timer;
     private float maxTime = 10f;
 
-    public override void Activate()
-    {
+    public override void Activate(GameplayController controller) {
+        base.Activate(controller);
         Debug.Log("Got Bomb!");
-        base.Activate();
     }
 
     public override void FixedUpdate() {
@@ -28,7 +27,7 @@ public class HeadBomb : SpecialModifier
         if(other.gameObject.GetComponent<Collectable>() != null) {
             Collectable collectable = other.gameObject.GetComponent<Collectable>();
             collectable.Modifier = null;
-            GameplayController.Singleton.CollectablePickedUp(segmentCollided, collectable);
+            gameplayController.CollectablePickedUp(segmentCollided, collectable);
             Debug.Log("Got Bomb!");
             return true;
         }
@@ -36,15 +35,16 @@ public class HeadBomb : SpecialModifier
         // when another snake is hit, it also dies
         else if(other.gameObject.GetComponent<SnakeSegment>() != null) {
             SnakeSegment otherSegment = other.gameObject.GetComponent<SnakeSegment>();
-            GameplayController.Singleton.KillSnake(otherSegment.Snake);
+            gameplayController.KillSnake(otherSegment.Snake);
             Explode();
+            return true;
         }
         return false;
     }
 
     private void Explode() {
-        Deactivate();
         Snake snake = SnakeSegment.Snake;
+        Deactivate();
 
         // all segments accumulated in front of the head are severed off
         List<SnakeSegment> segments = new List<SnakeSegment>();

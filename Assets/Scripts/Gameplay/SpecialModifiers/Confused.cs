@@ -7,7 +7,8 @@ public class Confused : SpecialModifier
     private float timer;
     public float maxTime = 5f;
 
-    public override void Activate() {
+    public override void Activate(GameplayController controller) {
+        base.Activate(controller);
         Debug.Log($"{SnakeSegment} is confused!");
     }
 
@@ -23,8 +24,7 @@ public class Confused : SpecialModifier
     }
 
     // Invert keys direction
-    public override Vector3 DirectionModifier(Vector3 direction)
-    {
-        return direction * -1;
+    public override void DirectionModifier(ref Vector3 direction) {
+        direction *= -1;
     }
 }

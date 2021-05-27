@@ -6,9 +6,10 @@ public class TimeTravel : SpecialModifier
 {
     public Snapshot snapshot;
 
-    public override void Activate() {
+    public override void Activate(GameplayController controller) {
+        base.Activate(controller);
         DisablePrevious();
-        if(snapshot == null) snapshot = GameplayController.Singleton.CreateSnapshot();
+        if(snapshot == null) snapshot = gameplayController.CreateSnapshot();
         Debug.Log($"{SnakeSegment.Snake.name} saved time!");
     }
 
@@ -35,7 +36,7 @@ public class TimeTravel : SpecialModifier
 
         Snapshot travelTo = this.snapshot;
         Debug.Log($"{SnakeSegment.Snake.name} is time travelling!");
-        GameplayController.Singleton.LoadSnapshot(travelTo);
+        gameplayController.LoadSnapshot(travelTo);
         Deactivate();
         return true;
     }

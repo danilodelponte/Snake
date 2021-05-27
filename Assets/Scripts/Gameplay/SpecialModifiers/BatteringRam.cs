@@ -7,7 +7,8 @@ public class BatteringRam : SpecialModifier
     private Vector3 safePosition;
     private bool crossing = false;
 
-    public override void Activate() {
+    public override void Activate(GameplayController controller) {
+        base.Activate(controller);
         Debug.Log($"{SnakeSegment.Snake.name} got a battering ram!");
     }
 
@@ -16,7 +17,7 @@ public class BatteringRam : SpecialModifier
         base.Deactivate();
     }
 
-    public override void MovementModifier(ref float _maxDeltaTime){
+    public override void MovementModifier(ref float _){
         if(!crossing) return;
 
         SnakeSegment segment = SnakeSegment.Snake.Head;

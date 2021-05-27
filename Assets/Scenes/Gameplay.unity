@@ -1111,7 +1111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f485127845e28e2484a91a2d643d44f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gUI: {fileID: 1658263416}
+  GUI: {fileID: 1658263416}
   arena: {fileID: 0}
 --- !u!4 &1167248884
 Transform:

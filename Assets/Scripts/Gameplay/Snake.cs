@@ -31,7 +31,7 @@ public class Snake : MonoBehaviour
         Head.Color = color;
         Head.Modifier = template.Modifier(0);
         if(Head.Modifier!=null) {
-            Head.Modifier.Activate();
+            Head.Modifier.Activate(GameplayController.Singleton);
         }
         AddSegment(template.Modifier(1));
         AddSegment(template.Modifier(2));
@@ -50,7 +50,7 @@ public class Snake : MonoBehaviour
         Head = newHead;
         if(modifier != null) {
             Head.Modifier = modifier;
-            Head.Modifier.Activate();
+            Head.Modifier.Activate(GameplayController.Singleton);
         }
 
 	    return Head;

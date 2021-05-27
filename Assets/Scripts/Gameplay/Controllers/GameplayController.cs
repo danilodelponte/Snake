@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameplayController : MonoBehaviour
 {
     public static GameplayController Singleton;
-    [SerializeField] private GUIController gUI;
+    [SerializeField] private GUIController GUI;
     [SerializeField] private Arena arena;
 
     enum GameState
@@ -15,15 +15,13 @@ public class GameplayController : MonoBehaviour
         GAMEOVER
     }
     private GameState state = GameState.RUNNING;
+    public GameplayMode GameMode { get; set; }
 
-    void Awake()
+    void Start()
     {
         CreateSingleton();
-        CreateArena();
-
-        // InitSpecialPowerTesting();
-        InitWithPlayers();
-        // InitWithAiOnly(5);
+        GameMode = GameManager.Instance.GameMode;
+        GameMode.Start(this, GUI);
     }
 
     private void CreateSingleton() {
@@ -57,58 +55,33 @@ public class GameplayController : MonoBehaviour
     public void ResumeGame() {
         if(state != GameState.PAUSED) return;
         state = GameState.RUNNING;
-        gUI.HidePausePanel();
+        GUI.HidePausePanel();
         Time.timeScale = 1;
     }
 
     public void Restart() {
         if(state != GameState.GAMEOVER) return;
-        gUI.RemovePlayerLabels();
-        gUI.HideGameOverPanel();
+        GUI.RemovePlayerLabels();
+        GUI.HideGameOverPanel();
         DestroyAll();
-        InitWithPlayers();
+        GameMode.Start(this, GUI);
     }
 
     public void PauseGame() {
         if(state != GameState.RUNNING) return;
         state = GameState.PAUSED;
         Time.timeScale = 0;
-        gUI.ShowPausePanel();
+        GUI.ShowPausePanel();
     }
 
     public void GameOver() {
         state = GameState.GAMEOVER;
-        gUI.ShowGameOverPanel();
+        GUI.ShowGameOverPanel();
     }
 
     public void LoadSelectionMenu() {
         Time.timeScale = 1;
         GameManager.Instance.LoadMainMenu();
-    }
-
-    private void InitSpecialPowerTesting() {
-        Player player = new Player(KeyCode.A, KeyCode.S);
-        SpawnPlayerSnake(player);
-        SpawnDummySnake(8);
-        SpawnCollectable(new DoubleScore());
-        gUI.AddPlayerLabel(player);
-    }
-
-    private void InitWithPlayers() {
-        Player[] players = GameManager.Instance.Players;
-        foreach (Player player in players) {
-            gUI.AddPlayerLabel(player);
-            SpawnPlayerSnake(player);
-            SpawnEnemySnake();
-            SpawnCollectable();
-        }
-    }
-
-    private void InitWithAiOnly(int numberOfSnakes) {
-        for(int i = 0; i < numberOfSnakes; i++) {
-            SpawnEnemySnake();
-            SpawnCollectable();
-        }
     }
 
     public void CreateArena() {
@@ -120,7 +93,7 @@ public class GameplayController : MonoBehaviour
         arena.GridDebug();
     }
 
-    private void SpawnPlayerSnake(Player player) {
+    public void SpawnPlayerSnake(Player player) {
         var snake = SpawnSnake(player.SnakeTemplate);
         snake.Player = player;
         snake.Color = player.Color;
@@ -128,14 +101,17 @@ public class GameplayController : MonoBehaviour
         playerControl.SetKeys(snake.Player.LeftKey, snake.Player.RightKey);
     }
 
-    private Snake SpawnEnemySnake() {
+    public Snake SpawnEnemySnake() {
         Snake enemySnake = SpawnSnake();
+        // enemySnake.baseMovingDeltaTime = 0.01f;
+        // enemySnake.minMovingDeltaTime = 0.01f;
+        // enemySnake.maxMovingDeltaTime = 0.01f;
         enemySnake.Color = UnityEngine.Random.ColorHSV(0,1,.3f,.5f,.3f,.5f);
         AIControl aiControl = enemySnake.gameObject.AddComponent<AIControl>();
         return enemySnake;
     }
 
-    private Snake SpawnDummySnake(int numberOfSegments) {
+    public Snake SpawnDummySnake(int numberOfSegments = 8) {
         Snake snake = SpawnSnake();
         snake.Color = Color.gray;
         for(int i = 3; i < numberOfSegments; i++) {
@@ -150,20 +126,8 @@ public class GameplayController : MonoBehaviour
         snake.Init(template);
         return snake;
     }
-
-    public Collectable SpawnCollectable() {
-        int chance = UnityEngine.Random.Range(0,100);
-        SpecialModifier modifier = null;
-        
-        if(chance < 10) modifier = new EnginePower();
-        else if(chance < 30) modifier = new HeadBomb();
-        else if(chance < 80) modifier = new BatteringRam();
-        else if(chance < 60) modifier = new Confused();
-        else if(chance < 100) modifier = new TimeTravel();
-        return SpawnCollectable(modifier);
-    }
     
-    public Collectable SpawnCollectable(SpecialModifier modifier) {
+    public Collectable SpawnCollectable(SpecialModifier modifier = null) {
         Collectable collectable = Instantiate(Collectable.Prefab, arena.EquallyDistributedPosition(), Quaternion.identity);
         collectable.Modifier = modifier;
         return collectable;
@@ -181,7 +145,7 @@ public class GameplayController : MonoBehaviour
     public void CollectablePickedUp(SnakeSegment segment, Collectable collectable) {
         collectable.gameObject.SetActive(false);
         GameObject.Destroy(collectable.gameObject);
-        SpawnCollectable();
+        SpawnCollectable(GameMode.GenerateModifier());
 
         Snake snake = segment.Snake;
         if(snake.isAI) collectable.Modifier = null;
@@ -196,7 +160,7 @@ public class GameplayController : MonoBehaviour
         Player player = snake.Player;
         increment = snake.EvaluateScoreGain(increment);
         player.Score += increment;
-        gUI.UpdatePlayerScore(player);
+        GUI.UpdatePlayerScore(player);
     }
 
     public void SnakeCrash(SnakeSegment segment1, SnakeSegment segment2) {
@@ -204,17 +168,7 @@ public class GameplayController : MonoBehaviour
     }
 
     public void KillSnake(Snake snake) {
-        if(snake.isAI) SpawnEnemySnake();
-        if(snake.Die()) CheckGameOver();
-    }
-
-    public void CheckGameOver(){
-        GameObject[] activeSnakes = GameObject.FindGameObjectsWithTag("Snake");
-        foreach (var activeSnake in activeSnakes) { 
-            if(activeSnake.GetComponent<PlayerControl>() != null) return;
-        }
-
-        GameOver();
+        if(snake.Die()) GameMode.GameStateCheck();
     }
 
     public Snapshot CreateSnapshot() {

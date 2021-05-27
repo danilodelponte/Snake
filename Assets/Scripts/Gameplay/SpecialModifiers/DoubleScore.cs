@@ -7,10 +7,9 @@ public class DoubleScore : SpecialModifier {
     private float timer;
     private float maxTime = 15f;
 
-    public override void Activate()
-    {
+    public override void Activate(GameplayController controller) {
+        base.Activate(controller);
         Debug.Log("Doubles the score!");
-        base.Activate();
     }
 
     public override void FixedUpdate() {
@@ -19,7 +18,7 @@ public class DoubleScore : SpecialModifier {
     }
 
     // multiplies score by 2
-    public override int ScoreGainModifier(int gain) {
-        return gain * 2;
+    public override void ScoreGainModifier(ref int gain) {
+        gain *= 2;
     }
 }
