@@ -19,7 +19,7 @@ public class AIControl : SnakeControl
         PathNode endNode = ClosestCollectable(startNode);
         if(endNode == null) return Snake.Head.CurrentDirection;
 
-        var pathFinding = new PathFinding(Arena);
+        var pathFinding = new PathFinding(Arena, new PathNodeType[] { PathNodeType.SNAKE });
         List<PathNode> path = pathFinding.FindPath(startNode, endNode);
         if(path == null || path.Count < 2) return Snake.Head.CurrentDirection;
 

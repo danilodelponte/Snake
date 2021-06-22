@@ -7,8 +7,11 @@ public class PathFinding {
     private Arena arena;
     private List<PathNode> openList;
     private List<PathNode> closedList;
+    private List<PathNodeType> obstacleTypeList;
 
-    public PathFinding(Arena arena) {
+    public PathFinding(Arena arena, PathNodeType[] obstacleTypes = null) {
+        if(obstacleTypes == null) obstacleTypes = new PathNodeType[0];
+        obstacleTypeList = new List<PathNodeType>(obstacleTypes);
         this.arena = arena;
     }
 
@@ -41,7 +44,7 @@ public class PathFinding {
             closedList.Add(current);
 
             foreach(var node in current.Neighbours()) {
-                if(node.type == PathNodeType.SNAKE) {
+                if(node != endNode && obstacleTypeList.Contains(node.type)) {
                     closedList.Add(node);
                     continue;
                 }
