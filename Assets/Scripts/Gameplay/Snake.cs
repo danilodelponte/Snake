@@ -72,6 +72,16 @@ public class Snake : MonoBehaviour
         return modifiers;
     }
 
+    public List<SnakeSegment> Segments() { 
+        List<SnakeSegment> segments = new List<SnakeSegment>();
+        SnakeSegment segment = Head;
+        while(segment != null) {
+            segments.Add(segment);
+            segment = segment.NextSegment;
+        }
+        return segments;
+    }
+
     public void UpdateMovement() {
         movementDeltaTimer += Time.deltaTime;
         float movingDelta = EvaluateMovementDelta();
