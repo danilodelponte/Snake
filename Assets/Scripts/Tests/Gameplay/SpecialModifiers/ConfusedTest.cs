@@ -32,7 +32,7 @@ namespace Tests
         {
             modifier.maxTime = .01f;
             Assert.That(segment.Modifier, Is.EqualTo(modifier));
-            yield return new WaitForSeconds(.01f);
+            yield return new WaitForSeconds(.02f);
             Assert.That(segment.Modifier, Is.Null);
         }
     }
