@@ -17,7 +17,7 @@ public class TimeTravel : SpecialModifier
     {
         Debug.Log($"{SnakeSegment.Snake.name} deactivating time travel.");
         snapshot = null;
-        base.Deactivate();
+        SnakeSegment = null;
     }
 
     private void DisablePrevious(){

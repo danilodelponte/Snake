@@ -11,14 +11,16 @@ public class Trap : SpecialModifier
         base.Activate(controller);
         Debug.Log($"{SnakeSegment} got trapped!");
     }
+
+    public override void Deactivate() {
+        Debug.Log($"{SnakeSegment} is released!");
+        SnakeSegment = null;
+    }
     
     public override void FixedUpdate() {
         // explode after some time
         timer += Time.deltaTime;
-        if(timer > maxTime) {
-            Debug.Log($"{SnakeSegment} is released!");
-            Deactivate();
-        }
+        if(timer > maxTime) Deactivate();
     }
 
     public override void DirectionModifier(ref Vector3 direction){

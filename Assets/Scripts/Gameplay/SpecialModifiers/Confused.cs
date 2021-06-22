@@ -15,7 +15,7 @@ public class Confused : SpecialModifier
     public override void Deactivate()
     {
         Debug.Log($"{SnakeSegment} is back to normal!");
-        base.Deactivate();
+        SnakeSegment = null;
     }
 
     public override void FixedUpdate() {

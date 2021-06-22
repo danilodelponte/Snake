@@ -44,7 +44,6 @@ public class HeadBomb : SpecialModifier
 
     private void Explode() {
         Snake snake = SnakeSegment.Snake;
-        Deactivate();
 
         // all segments accumulated in front of the head are severed off
         List<SnakeSegment> segments = new List<SnakeSegment>();

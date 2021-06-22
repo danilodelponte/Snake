@@ -12,6 +12,10 @@ public class DoubleScore : SpecialModifier {
         Debug.Log("Doubles the score!");
     }
 
+    public override void Deactivate() {
+        SnakeSegment = null;
+    }
+
     public override void FixedUpdate() {
         timer += Time.deltaTime;
         if(timer > maxTime) Deactivate();

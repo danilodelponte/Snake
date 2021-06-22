@@ -12,11 +12,13 @@ public class SpecialComponent : MonoBehaviour
     }
 
     public void SetModifier(SpecialModifier newModifier) {
-        if(newModifier == null) {
+        if(modifier != null) {
             RemoveModifierDecoration();
-            modifier = null;
-        } else {
-            modifier = newModifier;
+            modifier.SnakeSegment = null;
+        }
+        modifier = newModifier;
+        
+        if(modifier != null) {
             modifier.SnakeSegment = Segment;
             AddModifierDecoration();
         }

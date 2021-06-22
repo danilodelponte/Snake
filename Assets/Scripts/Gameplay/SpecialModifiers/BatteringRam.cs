@@ -14,7 +14,7 @@ public class BatteringRam : SpecialModifier
 
     public override void Deactivate() {
         Debug.Log($"{SnakeSegment.Snake.name} battering ram used.");
-        base.Deactivate();
+        SnakeSegment = null;
     }
 
     public override void MovementModifier(ref float _){
