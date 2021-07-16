@@ -5,9 +5,10 @@ using UnityEngine;
 public class SnakeControl : MonoBehaviour
 {
     protected Snake Snake { get => GetSnake(); }
+    public Vector3 DefaultDirection { get => Vector3.up; }
 
     public virtual Vector3 GetDirection() {
-        return Vector3.up;
+        return DefaultDirection;
     }
 
     private Snake GetSnake() {

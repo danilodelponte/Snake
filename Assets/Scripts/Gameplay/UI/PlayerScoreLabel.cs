@@ -5,6 +5,8 @@ using TMPro;
 
 public class PlayerScoreLabel : MonoBehaviour
 {
+    public static PlayerScoreLabel Prefab { get => PrefabCache.Load<PlayerScoreLabel>("UI/PlayerScoreLabel"); }
+
     [SerializeField] private TextMeshProUGUI label;
 
     public Player Player { get; set; }

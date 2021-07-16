@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GUIController : MonoBehaviour
-{
-    [SerializeField] private PlayerScoreLabel scoreLabelPrefab;
+public class GUIController : MonoBehaviour {
     private GameObject PausePanel { get => transform.Find("PausePanel").gameObject; }
+    private GameObject GameOverPanel { get => transform.Find("GameOverPanel").gameObject; }
 
     public void ShowPausePanel() {
         PausePanel.SetActive(true);
@@ -15,9 +14,31 @@ public class GUIController : MonoBehaviour
         PausePanel.SetActive(false);
     }
 
+    public void ShowGameOverPanel() {
+        GameOverPanel.SetActive(true);
+        Transform playerScores = GameOverPanel.transform.Find("PlayersScores");
+        PlayerScoreLabel[] playerLabels = transform.GetComponentsInChildren<PlayerScoreLabel>();
+        Vector3 offset = new Vector3(10, 10);
+        foreach (var label in playerLabels) {
+            label.gameObject.transform.SetParent(playerScores, false);
+            label.transform.position += offset;
+        }
+    }
+
+    public void HideGameOverPanel() {
+        GameOverPanel.SetActive(false);
+    }
+
+    public void RemovePlayerLabels() {
+        PlayerScoreLabel[] playerLabels = transform.GetComponentsInChildren<PlayerScoreLabel>();
+        foreach (var label in playerLabels) {
+            GameObject.Destroy(label.gameObject);
+        }
+    }
+
     public void AddPlayerLabel(Player player) {
         RectTransform lastTransform = lastLabelTransform();
-        PlayerScoreLabel scoreLabel = Instantiate(scoreLabelPrefab, transform);
+        PlayerScoreLabel scoreLabel = Instantiate(PlayerScoreLabel.Prefab, transform);
         float offsetY = ((RectTransform) scoreLabel.transform).rect.height * ScoreLabels().Length;
         scoreLabel.transform.localPosition -= new Vector3(0, offsetY, 0);
         scoreLabel.Player = player;
@@ -30,7 +51,7 @@ public class GUIController : MonoBehaviour
         if(scoreLabels.Length == 0) return null;
 
         int lastIndex = scoreLabels.Length - 1;
-        return scoreLabels[lastIndex].transform as RectTransform;
+        return (RectTransform) scoreLabels[lastIndex].transform;
     }
 
     private PlayerScoreLabel[] ScoreLabels() {

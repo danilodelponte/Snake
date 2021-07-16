@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class PlayerSelection : MonoBehaviour
 {
-    public static PlayerSelection Prefab { get => PrefabCache.Load<PlayerSelection>("PlayerSelection"); }
+    public static PlayerSelection Prefab { get => PrefabCache.Load<PlayerSelection>("UI/PlayerSelection"); }
+    private static GameObject SnakeSelectionPrefab { get => PrefabCache.Load<GameObject>("UI/SelectionSnake"); }
 
     [SerializeField] private TextMeshProUGUI playerNameLabel;
     [SerializeField] private TextMeshProUGUI playerLeftKeyLabel;
     [SerializeField] private TextMeshProUGUI playerRightKeyLabel;
+    [SerializeField] private GameObject selectionSnake;
 
     private Player player;
     public Player Player { get => player; set => SetPlayer(value);}
@@ -24,29 +27,21 @@ public class PlayerSelection : MonoBehaviour
     }
 
     private void SetColor(Color color) {
-        MeshRenderer[] renderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-        foreach (var renderer in renderers) {
-            renderer.material.color = color;
+        SnakeSegment[] segments = gameObject.GetComponentsInChildren<SnakeSegment>();
+        foreach (var segment in segments) {
+            segment.GetComponent<MeshRenderer>().material.color = color;
         }
     }
 
     public void UpdateSnakeTemplate() {
-        Transform selectionSnake = transform.Find("SelectionSnake");
-        foreach (Transform child in selectionSnake) {
-            GameObject.Destroy(child.gameObject);
-        }
+        Vector3 position = selectionSnake.transform.position;
+        GameObject.Destroy(selectionSnake);
+        selectionSnake = GameObject.Instantiate(SnakeSelectionPrefab, position, Quaternion.identity, transform);
 
         SpecialModifier[] modifiers = player.SnakeTemplate.Modifiers;
-        int yOffset = -30;
-
-        foreach (var modifier in modifiers) {
-            SnakeSegment segment = Instantiate<SnakeSegment>(SnakeSegment.Prefab, selectionSnake);
-            segment.GetComponent<Rigidbody>().detectCollisions = false;
-            segment.GetComponent<SpecialComponent>().enabled = false;
-            segment.transform.localScale = Vector3.one * 30;
-            segment.transform.localPosition += new Vector3(0, yOffset, 0);
-            segment.Modifier = modifier;
-            yOffset += 30;
+        for(int i = 0; i < modifiers.Length; i++) {
+            Transform child = selectionSnake.transform.GetChild(i);
+            GameObject.Instantiate(modifiers[i].Decoration, child);
         }
         SetColor(player.Color); 
     }

@@ -6,13 +6,8 @@ public class EnginePower : SpecialModifier
 {
     private float movementDeltaDecrease = .03f;
 
-    public override void Activate()
-    {
-        Debug.Log($"{SnakeSegment.Snake} got engine power!");
-        base.Activate();
-    }
-
-    public override float MovementModifier(float maxDeltaTime){
-        return maxDeltaTime - movementDeltaDecrease;
+    // decreases time to move
+    public override void MovementModifier(ref float maxDeltaTime){
+        maxDeltaTime -= movementDeltaDecrease;
     }
 }

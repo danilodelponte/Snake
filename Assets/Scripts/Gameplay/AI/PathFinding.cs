@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class PathFinding {
@@ -7,8 +8,11 @@ public class PathFinding {
     private Arena arena;
     private List<PathNode> openList;
     private List<PathNode> closedList;
+    private List<Type> obstacleTypeList;
 
-    public PathFinding(Arena arena) {
+    public PathFinding(Arena arena, Type[] obstacleTypes = null) {
+        if(obstacleTypes == null) obstacleTypes = new Type[0];
+        this.obstacleTypeList = new List<Type>(obstacleTypes);
         this.arena = arena;
     }
 
@@ -41,7 +45,7 @@ public class PathFinding {
             closedList.Add(current);
 
             foreach(var node in current.Neighbours()) {
-                if(node.type == PathNodeType.SNAKE) {
+                if(node != endNode && IsObstacle(node)) {
                     closedList.Add(node);
                     continue;
                 }
@@ -60,6 +64,13 @@ public class PathFinding {
         }
 
         return null;
+    }
+
+    private bool IsObstacle(PathNode node) {
+        if(node.NodeObject == null)  return false;
+
+        Type type = node.NodeObject.GetType();
+        return obstacleTypeList.Contains(type);
     }
 
     private List<PathNode> PathFound(PathNode endNode) {

@@ -82,15 +82,17 @@ public class MainMenuController : MonoBehaviour
     }
 
     private Player FirstKeyPlayer() {
-        if(!keyPlayerMapping.ContainsKey(FirstKey())) return null;
+        if(keyPlayerMapping.TryGetValue(FirstKey(), out Player player)) 
+            return player;
 
-        return keyPlayerMapping[FirstKey()];
+        return null;
     }
 
     private Player SecondKeyPlayer() {
-        if(!keyPlayerMapping.ContainsKey(SecondKey())) return null;
+        if(keyPlayerMapping.TryGetValue(SecondKey(), out Player player)) 
+            return player;
 
-        return keyPlayerMapping[SecondKey()];
+        return null;
     }
 
     private void Update() {

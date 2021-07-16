@@ -5,31 +5,41 @@ using UnityEngine;
 public class BatteringRam : SpecialModifier
 {
     private Vector3 safePosition;
-    private bool crossingActive = false;
+    private bool crossing = false;
+    // MOVER PARA SCRIPTABLE
 
-    public override void Activate() {
-        Debug.Log($"{SnakeSegment.Snake} got a battering ram!");
-    }
+    public override void MovementModifier(ref float _){
+        if(!crossing) return;
 
-    public override void Deactivate()
-    {
-        base.Deactivate();
-        Debug.Log($"{SnakeSegment.Snake} battering ram used.");
-    }
-
-    public override bool CollisionModifier(SnakeSegment segmentCollided, Collider other) {
-        SnakeSegment otherSegment = other.gameObject.GetComponent<SnakeSegment>();
-        if(otherSegment == null || segmentCollided == null) return false;
-        if(segmentCollided.Snake == otherSegment.Snake) return false;
-
-        if(!crossingActive && segmentCollided.IsHead) {
-            safePosition = otherSegment.transform.position;
-            crossingActive = true;
+        Snake snake = Segment.Snake;
+        SnakeSegment segment = snake.Head;
+        while(segment != null) {
+            // while there is a segment at the safe position, keeps crossing
+            if(segment.transform.position == safePosition) return;
+            segment = segment.NextSegment;
         }
-        // If current segment is a tail, the crossing is finished
-        if(segmentCollided.IsTail || otherSegment.IsTail || otherSegment.IsHead) Deactivate();
-        if(otherSegment.transform.position == safePosition) return true;
-        
-        return false;
+        crossing = false;
+        Deactivate();
+    }
+
+    public override bool CollisionModifier(SnakeSegment segmentCollided, GameObject other) {
+        SnakeSegment otherSegment = other.GetComponent<SnakeSegment>();
+        if(otherSegment == null) return false;
+
+        // if head collides activates crossing
+        Snake snake = segmentCollided.Snake;
+        if(!crossing && snake.Head == segmentCollided) {
+            Debug.Log("crossing!");
+            safePosition = otherSegment.transform.position;
+            crossing = true;
+        }
+
+        // if object collided is not at safe position, must collide
+        if(crossing && otherSegment.transform.position != safePosition) {
+            Deactivate();
+            return false;
+        }
+
+        return crossing;
     }
 }

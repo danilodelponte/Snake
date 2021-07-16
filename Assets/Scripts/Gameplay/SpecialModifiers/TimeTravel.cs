@@ -6,27 +6,26 @@ public class TimeTravel : SpecialModifier
 {
     public Snapshot snapshot;
 
-    public override void Activate() {
+    public override void Activate(SnakeSegment segment, GameplayMode gameplayMode) {
+        base.Activate(segment, gameplayMode);
         DisablePrevious();
-        Debug.Log($"{SnakeSegment.Snake.name} saved time!");
-        if(snapshot == null) snapshot = GameplayController.Singleton.CreateSnapshot();
+        if(snapshot == null) snapshot = gameplayMode.CreateSnapshot();
+        Debug.Log("saved time!");
     }
 
     public override void Deactivate()
     {
-        Debug.Log($"{SnakeSegment.Snake.name} deactivating time travel.");
+        Debug.Log("deactivating time travel.");
         snapshot = null;
         base.Deactivate();
     }
 
     private void DisablePrevious(){
-        List<SpecialModifier> specialModifiers = SnakeSegment.Snake.Modifiers();
-        foreach (var specialModifier in specialModifiers) {
-            if(specialModifier == this) continue;
-
-            if(specialModifier is TimeTravel) {
-                specialModifier.Deactivate();
-            }
+        Snake snake = Segment.Snake;
+        foreach (SnakeSegment segment in snake.Segments()) {
+            SpecialModifier modifier = segment.GetComponent<SpecialComponent>().Modifier;
+            if(modifier == this) continue;
+            else if(modifier is TimeTravel) modifier.Deactivate();
         }
     }
 
@@ -34,10 +33,9 @@ public class TimeTravel : SpecialModifier
         if(snapshot == null) return false;
 
         Snapshot travelTo = this.snapshot;
-        Debug.Log($"{SnakeSegment.Snake.name} is time travelling!");
+        Debug.Log($"time travelling!");
+        GameplayMode.LoadSnapshot(travelTo);
         Deactivate();
-        GameplayController.Singleton.LoadSnapshot(travelTo);
-        GameplayController.Singleton.SpawnCollectable();
         return true;
     }
 }

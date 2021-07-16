@@ -21,23 +21,21 @@ namespace Tests
         [Test]
         public void KeepWithinBounds()
         {
-            Transform transform = new GameObject().transform;
-            transform.position = new Vector3(65, 35);
+            Vector3 position = new Vector3(65, 35);
             Vector3 expectedPosition = new Vector3(25, 15);
 
-            arena.KeepWithinBounds(ref transform);
-            Assert.That(transform.position, Is.EqualTo(expectedPosition));
+            arena.KeepWithinBounds(ref position);
+            Assert.That(position, Is.EqualTo(expectedPosition));
         }
 
         [Test]
         public void KeepWithinBoundsNegative()
         {
-            Transform transform = new GameObject().transform;
-            transform.position = new Vector3(-65, -35);
+            Vector3 position = new Vector3(-65, -35);
             Vector3 expectedPosition = new Vector3(15, 5);
 
-            arena.KeepWithinBounds(ref transform);
-            Assert.That(transform.position, Is.EqualTo(expectedPosition));
+            arena.KeepWithinBounds(ref position);
+            Assert.That(position, Is.EqualTo(expectedPosition));
         }
     }
 }

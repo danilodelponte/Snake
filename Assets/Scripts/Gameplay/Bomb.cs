@@ -7,6 +7,7 @@ public class Bomb : MonoBehaviour
     private float timer;
     private float maxTime = 5f;
     private float ShootForce = 10f;
+    public GameplayMode GameplayMode { get; set; }
 
     public void Shoot(Vector3 direction) {
         if(direction == Vector3.zero) return;
@@ -28,7 +29,7 @@ public class Bomb : MonoBehaviour
         // if bomb hits a snake, it is killed
         SnakeSegment segment = other.gameObject.GetComponent<SnakeSegment>();
         if(segment != null) {
-            GameplayController.Singleton.KillSnake(segment.Snake);
+            GameplayMode.KillSnake(segment.Snake);
         }
         Debug.Log("BOOOOM");
         Destroy(gameObject);

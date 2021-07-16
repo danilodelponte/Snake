@@ -9,12 +9,12 @@ public class GameplayEditor : Editor {
         base.OnInspectorGUI();
         GameplayController gameplay = (GameplayController) target;
 
-        if(GUILayout.Button("Spawn Snake")){
-            gameplay.SpawnSnake();
-        };
+        // if(GUILayout.Button("Spawn Snake")){
+        //     gameplay.SpawnSnake();
+        // };
 
-        if(GUILayout.Button("Generate Arena")){
-            gameplay.CreateArena();
-        };
+        // if(GUILayout.Button("Generate Arena")){
+        //     gameplay.CreateArena();
+        // };
     }
 }

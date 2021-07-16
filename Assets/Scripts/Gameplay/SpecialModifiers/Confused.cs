@@ -4,26 +4,16 @@ using UnityEngine;
 
 public class Confused : SpecialModifier
 {
-    private float timer;
-    public float maxTime = 5f;
-
-    public override void Activate() {
-        Debug.Log($"{SnakeSegment} is confused!");
-    }
-
-    public override void Deactivate()
-    {
-        base.Deactivate();
-        Debug.Log($"{SnakeSegment} is back to normal!");
-    }
+    public float Timer;
+    public float MaxTime = 5f;
 
     public override void FixedUpdate() {
-        timer += Time.deltaTime;
-        if(timer > maxTime) Deactivate();
+        Timer += Time.fixedDeltaTime;
+        if(Timer > MaxTime) Deactivate();
     }
 
-    public override Vector3 DirectionModifier(Vector3 direction)
-    {
-        return direction * -1;
+    // Invert keys direction
+    public override void DirectionModifier(ref Vector3 direction) {
+        direction *= -1;
     }
 }

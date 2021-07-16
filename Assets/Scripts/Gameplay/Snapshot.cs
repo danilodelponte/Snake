@@ -14,19 +14,26 @@ public class Snapshot
     }
 
     public static Snapshot Create() {
-        GameObject[] snakes = GameObject.FindGameObjectsWithTag("Snake");
-        SnakeSnapshot[] snappedSnakes = new SnakeSnapshot[snakes.Length];
-        for (int i = 0; i < snakes.Length; i++) {
-            snappedSnakes[i] = new SnakeSnapshot(snakes[i].GetComponent<Snake>());
-        }
-
-        GameObject[] collectables = GameObject.FindGameObjectsWithTag("Collectable");
-        CollectableSnapshot[] snapedCollectables = new CollectableSnapshot[collectables.Length];
-        for (int i = 0; i < collectables.Length; i++) {
-            snapedCollectables[i] = new CollectableSnapshot(collectables[i].GetComponent<Collectable>());
-        }
+        SnakeSnapshot[] snappedSnakes = SnapshotSnakes(SnakeRepository.All());
+        CollectableSnapshot[] snapedCollectables = SnapshotCollectable(CollectableRepository.All());
 
         return new Snapshot(snappedSnakes, snapedCollectables);
+    }
+
+    private static SnakeSnapshot[] SnapshotSnakes(List<Snake> snakes) {
+        SnakeSnapshot[] snappedSnakes = new SnakeSnapshot[snakes.Count];
+        for (int i = 0; i < snakes.Count; i++) {
+            snappedSnakes[i] = new SnakeSnapshot(snakes[i]);
+        }
+        return snappedSnakes;
+    }
+
+    private static CollectableSnapshot[] SnapshotCollectable(List<Collectable> collectables) {
+        CollectableSnapshot[] snapedCollectables = new CollectableSnapshot[collectables.Count];
+        for (int i = 0; i < collectables.Count; i++) {
+            snapedCollectables[i] = new CollectableSnapshot(collectables[i]);
+        }
+        return snapedCollectables;
     }
 
     public void Load() {

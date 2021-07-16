@@ -6,53 +6,31 @@ using UnityEngine.ProBuilder;
 
 public class Snake : MonoBehaviour
 {
-    public static Snake Prefab { get => PrefabCache.Load<Snake>("Snake"); }
-
-    [SerializeField] public float baseMovingDeltaTime;
-    [SerializeField] public float maxMovingDeltaTime;
-    [SerializeField] public float minMovingDeltaTime;
-
     public Player Player { get; set; }
     public bool IsPlayer { get => Player != null; }
     public bool isAI { get => GetComponent<AIControl>() != null; }
+
     public Color Color { get => color; set => SetColor(value); }
+    private Color color;
+
     public SnakeSegment Head { get; set; }
 
-    private Color color;
-    private float movementDeltaTimer = 0;
-    private Vector3 intendedDirection = Vector3.up;
+    public SnakeSegment AddHead() {
+        if(Head != null) return null;
 
-    public void Init(SpecialModifier[] modifiers = null) {
-        if(Head !=null) return;
-        if(modifiers == null || modifiers.Length != 3) modifiers = new SpecialModifier[3];
-
-        Head = Instantiate<SnakeSegment>(SnakeSegment.Prefab, transform);
-        Head.CurrentDirection = Vector3.up;
+        Head = SnakeSegmentRepository.Build(transform.position, transform.rotation, this);
         Head.Color = color;
-        Head.Modifier = modifiers[0];
-        if(Head.Modifier!=null) {
-            Head.Modifier.Activate();
-        }
-        AddSegment(modifiers[1]);
-        AddSegment(modifiers[2]);
+        return Head;
     }
 
-    public SnakeSegment AddSegment(SpecialModifier modifier = null) {
-        Vector3 newHeadPosition = Head.transform.position + Head.CurrentDirection;
-        Quaternion newHeadRotation = Head.transform.rotation;
-	    SnakeSegment newHead = Instantiate<SnakeSegment>(
-            SnakeSegment.Prefab, newHeadPosition, newHeadRotation, transform
-        );
+    public SnakeSegment AddSegment(Vector3 direction) {
+        Vector3 position = Head.transform.position + direction.normalized;
+        Quaternion rotation = GetRotation(direction);
 
+        SnakeSegment newHead = SnakeSegmentRepository.Build(position, rotation, this);
         newHead.NextSegment = Head;
-        newHead.CurrentDirection = Head.CurrentDirection;
         newHead.Color = Color;
         Head = newHead;
-        if(modifier != null) {
-            Head.Modifier = modifier;
-            Head.Modifier.Activate();
-        }
-
 	    return Head;
     }
 
@@ -61,78 +39,20 @@ public class Snake : MonoBehaviour
         Head.Color = color;
     }
 
-    public List<SpecialModifier> Modifiers() {
-        SpecialComponent[] components = GetComponentsInChildren<SpecialComponent>();
-        List<SpecialModifier> modifiers = new List<SpecialModifier>();
-        foreach (SpecialComponent component in components) {
-            if(component.Modifier != null) {
-                modifiers.Add(component.Modifier);
-            }
-        }
-        return modifiers;
-    }
-
-    public void UpdateMovement() {
-        movementDeltaTimer += Time.deltaTime;
-        float movingDelta = EvaluateMovementDelta();
-
-        if(movementDeltaTimer >= movingDelta) {
-            movementDeltaTimer -= movingDelta;
-            Move(intendedDirection);
+    public IEnumerable<SnakeSegment> Segments() { 
+        SnakeSegment segment = Head;
+        while(segment != null) {
+            yield return segment;
+            segment = segment.NextSegment;
         }
     }
 
-    public void UpdateDirection() {
-        intendedDirection = EvaluateDirection();
-    }
-
-    public void Move(Vector3 direction) {
-        Head.Move(direction);
-    }
-
-    public Vector3 ControlDirection() {
-        SnakeControl control = GetComponent<SnakeControl>();
-        if(control == null) return Head.CurrentDirection;
-
-        return control.GetDirection();
-    }
-
-    public void Die() {
-        if(EvaluateDeath()) return; 
-
-        Debug.Log($"{this} has died!");
-        gameObject.SetActive(false);
-        GameObject.Destroy(gameObject);
-    }
-
-    public int EvaluateScoreGain(int gain) {
-        return Head.EvaluateScoreGain(gain);
-    }
-
-    public bool EvaluateDeath() {
-        if(Head.EvaluateDeath()) return true;
-
-        return false;
-    }
-    
-    public Vector3 EvaluateDirection() {
-        Vector3 direction = ControlDirection();
-        direction = Head.EvaluateDirection(direction);
-        return direction;
-    }
-
-    public void EvaluateCollision(SnakeSegment segmentCollided, Collider other){
-        if(Head.EvaluateCollision(segmentCollided, other)) return;
-        GameplayController.Singleton.HandleCollision(segmentCollided, other);
-    }
-
-    public float EvaluateMovementDelta(){
-        float movingDelta = Head.EvaluateMovementDelta(baseMovingDeltaTime);
-        movingDelta = Mathf.Clamp(movingDelta, minMovingDeltaTime, maxMovingDeltaTime);
-        return movingDelta;
-    }
-
-    public override string ToString() {
-        return $"Snake {name}";
+    private Quaternion GetRotation(Vector3 direction) {
+        direction.Normalize();
+        Quaternion rotation = Quaternion.identity;
+        if(direction.x == -1) rotation = Quaternion.Euler(0,0,90);
+        else if(direction.y == -1) rotation = Quaternion.Euler(0,0,180);
+        else if(direction.x == 1) rotation = Quaternion.Euler(0,0,270);
+        return rotation;
     }
 }
