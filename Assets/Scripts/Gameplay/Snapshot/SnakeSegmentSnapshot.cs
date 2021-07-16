@@ -4,28 +4,26 @@ using UnityEngine;
 
 public class SnakeSegmentSnapshot {
 
-    private static GameObject segmentPrefab = Resources.Load("Prefabs/SnakeSegment") as GameObject;
+    private static GameObject segmentPrefab = (GameObject) Resources.Load("Prefabs/SnakeSegment");
 
     public SnakeSegmentSnapshot NextSegment { get; }
     public Vector3 Position { get; }
     public Quaternion Rotation { get; } 
     public Vector3 CurrentDirection { get; }
-    public SpecialModifier Modifier { get; }
+    public SpecialModifierSnapshot Modifier { get; }
 
     public SnakeSegmentSnapshot(SnakeSegment segment) {
         if(segment.NextSegment != null) NextSegment = new SnakeSegmentSnapshot(segment.NextSegment);
-        CurrentDirection = segment.CurrentDirection;
         Position = segment.transform.position;
         Rotation = segment.transform.rotation;
-        Modifier = segment.Modifier;
+        Modifier = new SpecialModifierSnapshot(segment.Modifier);
     }
 
-    public SnakeSegment Load(Snake parent) { 
-        GameObject go = (GameObject) GameObject.Instantiate(segmentPrefab, Position, Rotation, parent.transform);
-        SnakeSegment segment = (SnakeSegment) go.GetComponent<SnakeSegment>();
-        if(NextSegment != null) segment.NextSegment = NextSegment.Load(parent);
-        segment.CurrentDirection = CurrentDirection;
-        segment.Modifier = Modifier;
+    public SnakeSegment Load(Snake parentSnake) { 
+        SnakeSegment segment = SnakeSegmentRepository.Build(Position, Rotation, parentSnake);
+        if(NextSegment != null) segment.NextSegment = NextSegment.Load(parentSnake);
+        // Modifier.Load(segment);
+
         return segment;
     }
 }

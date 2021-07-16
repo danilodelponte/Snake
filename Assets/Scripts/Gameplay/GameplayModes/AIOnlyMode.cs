@@ -6,15 +6,15 @@ public class AIOnlyMode : GameplayMode
 {
     public int numberOfSnakes { get; set; }
 
-    public AIOnlyMode(int numberOfSnakes = 5) {
+    public AIOnlyMode(GameData gameData, GameplayController controller, int numberOfSnakes = 1) : base(gameData, controller) {
         this.numberOfSnakes = numberOfSnakes;
     }
 
-    public override void Start(GameplayController gameController, GUIController gui) {
-        gameController.CreateArena();
+    public override void Start() {
+        CreateArena();
         for(int i = 0; i < numberOfSnakes; i++) {
-            gameController.SpawnEnemySnake();
-            gameController.SpawnCollectable();
+            SpawnEnemySnake();
+            SpawnCollectable();
         }
     }
 }

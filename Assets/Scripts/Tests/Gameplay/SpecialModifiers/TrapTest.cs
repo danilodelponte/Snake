@@ -17,7 +17,7 @@ namespace Tests
             modifier = new Trap();
             segment = new GameObject().AddComponent<SnakeSegment>();
             segment.gameObject.AddComponent<SpecialComponent>();
-            segment.Modifier = modifier;
+            // segment.Modifier = modifier;
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace Tests
         [UnityTest]
         public IEnumerator DeactivatesAfterTime()
         {
-            modifier.maxTime = .01f;
+            modifier.MaxTime = .01f;
             Assert.That(segment.Modifier, Is.EqualTo(modifier));
             yield return new WaitForSeconds(.02f);
             Assert.That(segment.Modifier, Is.Null);

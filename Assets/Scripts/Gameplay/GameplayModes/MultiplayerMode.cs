@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class MultiplayerMode : GameplayMode
 {
-    private GameplayController gameController;
     private Player[] Players { get => GameManager.Instance.Players; }
 
-    public override void Start(GameplayController gameController, GUIController gui) {
-        this.gameController = gameController;
-        gameController.CreateArena();
+    public MultiplayerMode(GameData gameData, GameplayController controller) : base(gameData, controller) {}
+
+    public override void Start() {
+        CreateArena();
 
         if(Players == null || Players.Length < 1) return;
 
         foreach (Player player in Players) {
-            gui.AddPlayerLabel(player);
-            gameController.SpawnPlayerSnake(player);
-            gameController.SpawnEnemySnake();
-            gameController.SpawnCollectable();
+            controller.GUI.AddPlayerLabel(player);
+            SpawnPlayerSnake(player);
+            SpawnEnemySnake();
+            SpawnCollectable();
         }
     }
 
@@ -36,18 +36,18 @@ public class MultiplayerMode : GameplayMode
     }
 
     public override void GameStateCheck() {
-        GameObject[] snakes = GameObject.FindGameObjectsWithTag("Snake");
-        List<GameObject> playerSnakes = new List<GameObject>();
-        List<GameObject> aiSnakes = new List<GameObject>();
+        List<Snake> snakes = SnakeRepository.FindAll(obj => obj.isActiveAndEnabled);
+        int playerSnakesCount = 0;
+        int aiSnakesCount = 0;
 
         foreach (var snake in snakes) { 
-            if(snake.GetComponent<PlayerControl>() != null) playerSnakes.Add(snake);
-            else if(snake.GetComponent<AIControl>() != null) aiSnakes.Add(snake);
+            if(snake.GetComponent<PlayerControl>() != null) playerSnakesCount++;
+            else if(snake.GetComponent<AIControl>() != null) aiSnakesCount++;
         }
 
-        int aiSnakeDiff = Players.Length - aiSnakes.Count;
-        for(int i = 0; i < aiSnakeDiff; i++) gameController.SpawnEnemySnake();
+        int aiSnakeDiff = Players.Length - aiSnakesCount;
+        for(int i = 0; i < aiSnakeDiff; i++) SpawnEnemySnake();
 
-        if(playerSnakes.Count < 1) gameController.GameOver();
+        if(playerSnakesCount < 1) controller.GameOver();
     }
 }

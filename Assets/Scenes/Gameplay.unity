@@ -1092,6 +1092,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1167248884}
   - component: {fileID: 1167248883}
+  - component: {fileID: 1167248885}
   m_Layer: 0
   m_Name: GameplayController
   m_TagString: GameplayController
@@ -1113,6 +1114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GUI: {fileID: 1658263416}
   arena: {fileID: 0}
+  gameData: {fileID: 0}
 --- !u!4 &1167248884
 Transform:
   m_ObjectHideFlags: 0
@@ -1127,6 +1129,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1167248885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1167248882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03ade209af35fa6678b35fe325659d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMovementData: {fileID: 11400000, guid: 3a8d81ac155a12793b32b6f7ed81d2f4, type: 2}
+  aiMovementData: {fileID: 11400000, guid: 33028d658f0de6c25bd62061949910c4, type: 2}
 --- !u!1 &1428776121
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,21 +4,12 @@ using UnityEngine;
 
 public class DoubleScore : SpecialModifier {
 
-    private float timer;
-    private float maxTime = 15f;
-
-    public override void Activate(GameplayController controller) {
-        base.Activate(controller);
-        Debug.Log("Doubles the score!");
-    }
-
-    public override void Deactivate() {
-        SnakeSegment = null;
-    }
+    public float Timer;
+    public float MaxTime = 15f;
 
     public override void FixedUpdate() {
-        timer += Time.deltaTime;
-        if(timer > maxTime) Deactivate();
+        Timer += Time.fixedDeltaTime;
+        if(Timer > MaxTime) Deactivate();
     }
 
     // multiplies score by 2

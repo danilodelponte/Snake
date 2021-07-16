@@ -10,9 +10,10 @@ public class GameManager : Singleton<GameManager>
         public const string MainMenu = "MainMenu";
     }
 
+    // TODO colocar num scriptable object
     private Player[] players;
     public Player[] Players { get => players; }
-    public GameplayMode GameMode = new MultiplayerMode();
+    public GameMode GameMode = GameMode.Multiplayer;
 
     public void LoadGameplay(Player[] players) {
         this.players = players;

@@ -18,50 +18,45 @@ public class Arena : MonoBehaviour
         if(gridArray != null) return;
         this.width = width;
         this.height = height;
-        UpdateGrid();
         SpawnWalls();
     }
 
     public void UpdateGrid() {
         gridArray = new PathNode[width, height];
-        UpdateSnakeNodes();
-        UpdateCollectableNodes();
+        UpdateSnakeNodes(SnakeRepository.All());
+        UpdateCollectableNodes(CollectableRepository.All());
     }
 
-    private void UpdateSnakeNodes() {
-        GameObject[] snakeSegments = GameObject.FindGameObjectsWithTag("SnakeSegment");
+    private void UpdateSnakeNodes(IEnumerable<Snake> snakes) {
         SnakeHeadNodes = new List<PathNode>();
-        for (int i = 0; i < snakeSegments.Length; i++) {
-            SnakeSegment segment = snakeSegments[i].GetComponent<SnakeSegment>();
-            Transform segmentTransform = segment.transform;
-            KeepWithinBounds(ref segmentTransform);
-            Vector3 position = segmentTransform.position;
-            PathNode node = new PathNode(this, position, PathNodeType.SNAKE);
-            gridArray[(int) position.x, (int) position.y] = node;
-            if(segment.IsHead) SnakeHeadNodes.Add(node);
+
+        foreach (var snake in snakes) {
+            foreach (SnakeSegment segment in snake.Segments()) {
+                Transform segmentTransform = segment.transform;
+                Vector3 position = segmentTransform.position;
+                var node = new PathNode(this, position, segment.gameObject);
+                gridArray[(int) position.x, (int) position.y] = node;
+                if(segment == snake.Head) SnakeHeadNodes.Add(node);
+            }    
         }
     }
 
-    private void UpdateCollectableNodes() {
-        GameObject[] collectables = GameObject.FindGameObjectsWithTag("Collectable");
+    private void UpdateCollectableNodes(IEnumerable<Collectable> collectables) {
         CollectableNodes = new List<PathNode>();
-        for (int i = 0; i < collectables.Length; i++) {
-            Transform collectableTransform = collectables[i].transform;
-            KeepWithinBounds(ref collectableTransform);
+        foreach (var collectable in collectables) {
+            Transform collectableTransform = collectable.transform;
             Vector3 position = collectableTransform.position;
-            PathNode node = new PathNode(this, position, PathNodeType.COLLECTABLE);
+            PathNode node = new PathNode(this, position, collectable.gameObject);
             gridArray[(int) position.x, (int) position.y] = node;
             CollectableNodes.Add(node);
         }
     }
 
-    public void KeepWithinBounds(ref Transform transform){
-        Vector3 position = transform.position;
+    public void KeepWithinBounds(ref Vector3 position){
         position.x = position.x % width;
         if(position.x < 0) position.x = position.x + width;
         position.y = position.y % height;
         if(position.y < 0) position.y = position.y + height;
-        transform.position = position;
     }
 
     public PathNode GetNode(Vector3 position) {
@@ -72,6 +67,14 @@ public class Arena : MonoBehaviour
         if(gridArray[x, y] == null) gridArray[x, y] = new PathNode(this, x, y);
 
         return gridArray[x, y];
+    }
+
+    public void SetNode(Vector3 position, Object nodeObject) {
+        SetNode((int)position.x, (int)position.y, nodeObject);
+    }
+
+    public void SetNode(int x, int y, Object nodeObject) {
+        gridArray[x, y] = new PathNode(this, x, y, nodeObject);
     }
 
     private void SpawnWalls() {
@@ -115,7 +118,7 @@ public class Arena : MonoBehaviour
                 if(yy > height -1) yy -= height;
 
                 currentNode = GetNode(xx, yy);
-                if(currentNode.type != PathNodeType.FREE) continue;
+                if(currentNode.NodeObject != null) continue;
 
                 minDistance = int.MaxValue;
                 foreach (var node in targetNodes) {

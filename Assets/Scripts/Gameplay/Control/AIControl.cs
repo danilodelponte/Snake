@@ -6,25 +6,28 @@ using System;
 public class AIControl : SnakeControl
 {
     private Arena Arena { get => GetArena(); }
-    private Arena _arena;
+    private Arena arena;
 
     private Arena GetArena() {
-        if(_arena != null) return _arena;
+        if(arena != null) return arena;
 
-        return _arena = GameObject.Find("Arena").GetComponent<Arena>();
+        return arena = GameObject.Find("Arena").GetComponent<Arena>();
     }
 
     public override Vector3 GetDirection() {
         PathNode startNode = Arena.GetNode(Snake.Head.transform.position);
         PathNode endNode = ClosestCollectable(startNode);
-        if(endNode == null) return Snake.Head.CurrentDirection;
+        Vector3 direction = Snake.GetComponent<SnakeMovement>().CurrentDirection;
+        if(endNode == null) return direction;
 
-        var pathFinding = new PathFinding(Arena, new PathNodeType[] { PathNodeType.SNAKE });
+        var obstaclesTypes = new Type[]{ typeof(SnakeSegment) };
+        var pathFinding = new PathFinding(Arena, obstaclesTypes);
         List<PathNode> path = pathFinding.FindPath(startNode, endNode);
-        if(path == null || path.Count < 2) return Snake.Head.CurrentDirection;
+        if(path == null || path.Count < 2) return direction;
 
         PathNode nextMove = path[1];
-        return startNode.DirectionTo(nextMove);
+        direction = startNode.DirectionTo(nextMove);
+        return direction;
     }
 
     private PathNode ClosestCollectable(PathNode startNode) { 

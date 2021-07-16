@@ -10,7 +10,7 @@ namespace Tests
     {
         BatteringRam modifier;
         SnakeSegment segment;
-        Collider other;
+        GameObject other;
 
         [SetUp]
         public void SetUp() {
@@ -20,24 +20,24 @@ namespace Tests
             segment.transform.SetParent(snake.transform);
             snake.Head = segment;
 
-            GameObject otherObject = new GameObject();
-            other = otherObject.AddComponent<SphereCollider>();
+            GameObject otherGameObject = new GameObject();
+            // otherGameObject.AddComponent();
 
             modifier = new BatteringRam();
-            segment.Modifier = modifier;
+            // segment.Modifier = modifier;
         }
 
         [Test]
         public void CollidesWithCollectables() {
             other.gameObject.AddComponent<Collectable>();
-            bool collisionModified = modifier.CollisionModifier(segment, other.GetComponent<Collider>());
+            bool collisionModified = modifier.CollisionModifier(segment, other);
             Assert.That(collisionModified, Is.False);
         }
 
         [Test]
         public void SnakeHeadCrossesSnakeSegment() {
             other.gameObject.AddComponent<SnakeSegment>();
-            bool collisionModified = modifier.CollisionModifier(segment, other.GetComponent<Collider>());
+            bool collisionModified = modifier.CollisionModifier(segment, other);
             Assert.That(collisionModified, Is.True);
         }
 
@@ -45,25 +45,25 @@ namespace Tests
         public void WhenSegmentIsNotHeadDoNotModifyCollision() {
             segment.Snake.Head = null;
             other.gameObject.AddComponent<SnakeSegment>();
-            bool collisionModified = modifier.CollisionModifier(segment, other.GetComponent<Collider>());
+            bool collisionModified = modifier.CollisionModifier(segment, other);
             Assert.That(collisionModified, Is.False);
         }
 
         [Test]
         public void WhenCrossingModifyCollision() {
             other.gameObject.AddComponent<SnakeSegment>();
-            modifier.CollisionModifier(segment, other.GetComponent<Collider>());
+            modifier.CollisionModifier(segment, other);
             segment.Snake.Head = null;
-            bool collisionModified = modifier.CollisionModifier(segment, other.GetComponent<Collider>());
+            bool collisionModified = modifier.CollisionModifier(segment, other);
             Assert.That(collisionModified, Is.True);
         }
 
         [Test]
         public void WhenCrossingCollidesWithOtherPositions() {
             other.gameObject.AddComponent<SnakeSegment>();
-            modifier.CollisionModifier(segment, other.GetComponent<Collider>());
+            modifier.CollisionModifier(segment, other);
             other.transform.position += Vector3.one;
-            bool collisionModified = modifier.CollisionModifier(segment, other.GetComponent<Collider>());
+            bool collisionModified = modifier.CollisionModifier(segment, other);
             Assert.That(collisionModified, Is.False);
         }
     }

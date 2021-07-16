@@ -16,7 +16,6 @@ public class PlayerControl : SnakeControl
         return intendedDirection;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(LeftKey)) Turn(-1);
@@ -24,10 +23,10 @@ public class PlayerControl : SnakeControl
     }
 
     private void Turn(int direction) {
-        var dirIndex = Array.IndexOf(directions, Snake.Head.CurrentDirection);
+        Vector3 currentDirection = Snake.GetComponent<SnakeMovement>().CurrentDirection;
+        var dirIndex = Array.IndexOf(directions, currentDirection);
         dirIndex += direction;
-        if(dirIndex < 0) dirIndex = directions.Length -1;
-        else if(dirIndex > directions.Length -1) dirIndex = 0;
+        dirIndex = (dirIndex + directions.Length) % directions.Length;
         intendedDirection = directions[dirIndex];
     }
 

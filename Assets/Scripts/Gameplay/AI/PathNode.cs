@@ -2,39 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum PathNodeType
-{
-    SNAKE,
-    COLLECTABLE,
-    FREE,
-}
-
 public class PathNode {
-
     public int x;
     public int y;
     public int gCost;
     public int hCost;
     public int fCost { get => gCost + hCost; }
-    public PathNodeType type = PathNodeType.FREE;
 
     private Arena arena;
 
     public PathNode previousNode;
     private List<PathNode> neighbours;
+    private Object nodeObject;
+    public Object NodeObject { get => nodeObject; }
 
-    public PathNode(Arena arena, Vector3 position, PathNodeType type = PathNodeType.FREE) {
+    public PathNode(Arena arena, Vector3 position, Object nodeObject = null) {
         this.arena = arena;
         this.x = (int) position.x;
         this.y = (int) position.y;
-        this.type = type;
+        this.nodeObject = nodeObject;
     }
 
-    public PathNode(Arena arena, int x, int y, PathNodeType type = PathNodeType.FREE) {
+    public PathNode(Arena arena, int x, int y, Object nodeObject = null) {
         this.arena = arena;
         this.x = x;
         this.y = y;
-        this.type = type;
+        this.nodeObject = nodeObject;
     }
 
     public List<PathNode> Neighbours() {
@@ -73,9 +66,5 @@ public class PathNode {
         int yReverseDirection = arena.Height - Mathf.Abs(yDirection);
         if(yReverseDirection < Mathf.Abs(yDirection)) yDirection *= -1;
         return new Vector3(xDirection, yDirection).normalized;
-    }
-
-    public override string ToString() {
-        return type.ToString().ToCharArray()[0] + "";
     }
 }

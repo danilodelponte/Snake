@@ -6,25 +6,23 @@ using System;
 public class ModifiersPlayground : GameplayMode
 {
     private Player player;
-    private GameplayController gameController;
 
     public SpecialModifier[] SpecialModifiers { get; set; }
     private int currentModifier = -1;
 
-    public ModifiersPlayground(SpecialModifier[] modifiers = null) {
+    public ModifiersPlayground(GameData gameData, GameplayController controller, SpecialModifier[] modifiers = null) : base(gameData, controller) {
         if(modifiers == null) {
             SpecialModifiers = new SpecialModifier[] { new EnginePower() };
         } else SpecialModifiers = modifiers;
     }
 
-    public override void Start(GameplayController gameController, GUIController gui) {
+    public override void Start() {
         player = new Player(KeyCode.A, KeyCode.S);
-        this.gameController = gameController;
-        gameController.CreateArena();
-        gameController.SpawnPlayerSnake(player);
-        gameController.SpawnDummySnake();
-        gameController.SpawnCollectable(GenerateModifier());
-        gui.AddPlayerLabel(player);
+        CreateArena();
+        SpawnPlayerSnake(player);
+        SpawnDummySnake(8, Vector3.up);
+        SpawnCollectable(GenerateModifier());
+        controller.GUI.AddPlayerLabel(player);
     }
 
     public override SpecialModifier GenerateModifier() {
@@ -35,16 +33,16 @@ public class ModifiersPlayground : GameplayMode
     }
     
     public override void GameStateCheck() {
-        GameObject[] snakes = GameObject.FindGameObjectsWithTag("Snake");
-        List<GameObject> playerSnakes = new List<GameObject>();
-        List<GameObject> dummySnakes = new List<GameObject>();
+        List<Snake> snakes = SnakeRepository.FindAll(obj => obj.isActiveAndEnabled);
+        int playerSnakesCount = 0; 
+        int dummySnakesCount = 0;
 
         foreach (var snake in snakes) { 
-            if(snake.GetComponent<PlayerControl>() != null) playerSnakes.Add(snake);
-            else dummySnakes.Add(snake);
+            if(snake.GetComponent<PlayerControl>() != null) playerSnakesCount++;
+            else dummySnakesCount++;
         }
 
-        if(playerSnakes.Count < 1) gameController.SpawnPlayerSnake(player);
-        if(dummySnakes.Count < 1) gameController.SpawnDummySnake();
+        if(playerSnakesCount < 1) SpawnPlayerSnake(player);
+        if(dummySnakesCount < 1) SpawnDummySnake(8, Vector3.up);
     }
 }

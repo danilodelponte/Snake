@@ -51,7 +51,7 @@ public class GUIController : MonoBehaviour {
         if(scoreLabels.Length == 0) return null;
 
         int lastIndex = scoreLabels.Length - 1;
-        return scoreLabels[lastIndex].transform as RectTransform;
+        return (RectTransform) scoreLabels[lastIndex].transform;
     }
 
     private PlayerScoreLabel[] ScoreLabels() {

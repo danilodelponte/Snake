@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CollectableSnapshot {
 
-    private static GameObject collectablePrefab = Resources.Load("Prefabs/Collectable") as GameObject;
+    private static GameObject collectablePrefab = (GameObject) Resources.Load("Prefabs/Collectable");
 
     public SpecialModifier Modifier { get; set; }
     public int Score { get; set; }

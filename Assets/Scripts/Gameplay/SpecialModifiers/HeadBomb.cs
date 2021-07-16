@@ -4,38 +4,32 @@ using UnityEngine;
 
 public class HeadBomb : SpecialModifier
 {
-    public static Bomb Prefab { get => PrefabCache.Load<Bomb>("Bomb"); }
-
-    private float timer;
-    private float maxTime = 10f;
-
-    public override void Activate(GameplayController controller) {
-        base.Activate(controller);
-        Debug.Log("Got Bomb!");
-    }
+    public float Timer;
+    public float MaxTime = 10f;
 
     public override void FixedUpdate() {
         // explode after some time
-        timer += Time.deltaTime;
-        if(timer > maxTime) Explode();
+        Timer += Time.fixedDeltaTime;
+        if(Timer > MaxTime) Explode();
     }
 
-    public override bool CollisionModifier(SnakeSegment segmentCollided, Collider other) {
-        if(!segmentCollided.IsHead) return false;
+    public override bool CollisionModifier(SnakeSegment segmentCollided, GameObject other) {
+        Snake snake = segmentCollided.Snake;
+        if(segmentCollided != snake.Head) return false;
 
         // when another collectable is picked up they do not activate special Modifiers
-        if(other.gameObject.GetComponent<Collectable>() != null) {
-            Collectable collectable = other.gameObject.GetComponent<Collectable>();
+        if(other.GetComponent<Collectable>() != null) {
+            Collectable collectable = other.GetComponent<Collectable>();
             collectable.Modifier = null;
-            gameplayController.CollectablePickedUp(segmentCollided, collectable);
+            GameplayMode.CollectablePickUp(segmentCollided, collectable);
             Debug.Log("Got Bomb!");
             return true;
         }
 
         // when another snake is hit, it also dies
-        else if(other.gameObject.GetComponent<SnakeSegment>() != null) {
-            SnakeSegment otherSegment = other.gameObject.GetComponent<SnakeSegment>();
-            gameplayController.KillSnake(otherSegment.Snake);
+        else if(other.GetComponent<SnakeSegment>() != null) {
+            SnakeSegment otherSegment = other.GetComponent<SnakeSegment>();
+            GameplayMode.KillSnake(otherSegment.Snake);
             Explode();
             return true;
         }
@@ -43,27 +37,28 @@ public class HeadBomb : SpecialModifier
     }
 
     private void Explode() {
-        Snake snake = SnakeSegment.Snake;
+        Snake snake = Segment.Snake;
 
         // all segments accumulated in front of the head are severed off
         List<SnakeSegment> segments = new List<SnakeSegment>();
-        while(snake.Head != SnakeSegment) {
+        while(snake.Head != Segment) {
             segments.Add(snake.Head);
             snake.Head.gameObject.SetActive(false);
             snake.Head = snake.Head.NextSegment;
         }
 
         // head bomb is also removed
-        snake.Head = SnakeSegment.NextSegment;
-        SnakeSegment.gameObject.SetActive(false);
-        GameObject.Destroy(SnakeSegment.gameObject);
+        snake.Head = Segment.NextSegment;
+        Segment.gameObject.SetActive(false);
+        GameObject.Destroy(Segment.gameObject);
 
         // segments accumulated in front of the head are shot like bullets following their current direction
+        Vector3 direction = snake.GetComponent<SnakeMovement>().CurrentDirection;
         foreach (var segment in segments) {
-            Vector3 direction = segment.CurrentDirection;
-            Vector3 position = segment.gameObject.transform.position + direction;
+            Vector3 segmentPosition = segment.gameObject.transform.position;
+            Vector3 bombPosition = segmentPosition + direction;
             GameObject.Destroy(segment.gameObject);
-            Bomb bomb = GameObject.Instantiate(Prefab, position, Quaternion.Euler(0,0,0));
+            Bomb bomb = BombRepository.Build(bombPosition, GameplayMode);
             bomb.Shoot(direction);
         }
     }
